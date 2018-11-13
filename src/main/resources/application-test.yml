@@ -35,6 +35,6 @@ jwt:
   key: 0e00568f23686b08abae11534a0ef1020e00568f23686b08abae11534a0ef102
   exp: 1
 path:
-  filesave: /opt/package/
+  filesave: /data/package/
 server:
   port: 8082
