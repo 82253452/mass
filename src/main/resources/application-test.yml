@@ -14,6 +14,9 @@ spring:
     port: 6379
     password: fast4ward!@#$
     database: 0
+  thymeleaf:
+    prefix: classpath:/static/
+    suffix: .html
 mybatis:
   type-aliases-package: com.f4w.entity
 mapper:

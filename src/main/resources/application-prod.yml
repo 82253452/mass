@@ -1,9 +1,9 @@
 spring:
   datasource:
     druid:
-      url: jdbc:mysql://47.92.100.148:3306/fast4ward_used_shop?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Hongkong
+      url: jdbc:mysql://122.114.170.132:3306/xxx?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Hongkong&useSSL=false
       username: root
-      password: Fblife@20171019
+      password: 123
       driver-class-name: com.mysql.cj.jdbc.Driver
       initialSize: 10
       minIdle: 10
@@ -14,9 +14,12 @@ spring:
     port: 6379
     password: fast4ward!@#$
     database: 0
+  thymeleaf:
+    prefix: classpath:/static/
+    suffix: .html
 mybatis:
   type-aliases-package: com.f4w.entity
-  mapper-locations: classpath:com/f4w/mapper/*.xml
+  #  mapper-locations: classpath:com/f4w/mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 mapper:
@@ -24,6 +27,8 @@ mapper:
   - tk.mybatis.mapper.common.Mapper
   not-empty: false
   identity: MYSQL
+  wrapKeyword: '`{0}`'
+
 pagehelper:
   helperDialect: mysql
   reasonable: true
@@ -32,5 +37,7 @@ pagehelper:
 jwt:
   key: 0e00568f23686b08abae11534a0ef1020e00568f23686b08abae11534a0ef102
   exp: 1
+path:
+  filesave: D:/packzipfile/
 server:
-  port: 8080
+  port: 8082

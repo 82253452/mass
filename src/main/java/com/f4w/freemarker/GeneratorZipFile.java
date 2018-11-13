@@ -161,13 +161,19 @@ public class GeneratorZipFile implements Runnable {
         System.out.println("执行build");
         String shellPath = getPath("weapp", "shell");
         String tmpPath = getPath("weapp", "tmp", tmpName, "personCard");
-        if ("/".equals(tmpPath.substring(0, 1))) {
-            tmpPath = tmpPath.substring(1);
+        Process process = null;
+        if (System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0) {
+            process = Runtime.getRuntime().exec(shellPath + "go.sh " + tmpPath);
+        } else if (System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0) {
+            if ("/".equals(tmpPath.substring(0, 1))) {
+                tmpPath = tmpPath.substring(1);
+            }
+            if ("/".equals(shellPath.substring(0, 1))) {
+                shellPath = shellPath.substring(1);
+            }
+            process = Runtime.getRuntime().exec(shellPath + "go.bat " + tmpPath);
         }
-        if ("/".equals(shellPath.substring(0, 1))) {
-            shellPath = shellPath.substring(1);
-        }
-        Process process = Runtime.getRuntime().exec(shellPath + "go.bat " + tmpPath);
+
         BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuffer sb = new StringBuffer();
         String line;
