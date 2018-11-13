@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="useMapperCommentGenerator" value="false"/>
+        <!--<property name="basePath" value="file:///D:\workTest\comff42\"/>-->
+
+        <!--通用 Mapper 插件，可以生成带注解的实体类-->
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <property name="caseSensitive" value="true"/>
+            <property name="forceAnnotation" value="true"/>
+            <property name="beginningDelimiter" value="`"/>
+            <property name="endingDelimiter" value="`"/>
+        </plugin>
+        <!--entity-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="src/main/java"/>
+            <property name="targetPackage" value="com.f4w.entity"/>
+            <property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\entity.ftl"/>
+            <property name="mapperSuffix" value=""/>
+            <property name="fileName" value="${tableClass.shortClassName}${mapperSuffix}.java"/>
+        </plugin>
+        <!--dto-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="src/main/java"/>
+            <property name="targetPackage" value="com.f4w.dto"/>
+            <property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\dto.ftl"/>
+            <property name="mapperSuffix" value="Dto"/>
+            <property name="fileName" value="${tableClass.shortClassName}${mapperSuffix}.java"/>
+        </plugin>
+
+        <!--controller-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="src/main/java"/>
+            <property name="targetPackage" value="com.f4w.controller"/>
+            <property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\controller.ftl"/>
+            <property name="mapperSuffix" value="Controller"/>
+            <property name="fileName" value="${tableClass.shortClassName}${mapperSuffix}.java"/>
+        </plugin>
+
+        <!--mapper-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="src/main/java"/>
+            <property name="targetPackage" value="com.f4w.mapper"/>
+            <property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\mapper.ftl"/>
+            <property name="mapperSuffix" value="Mapper"/>
+            <property name="fileName" value="${tableClass.shortClassName}${mapperSuffix}.java"/>
+        </plugin>
+
+        <!--mapperXml-->
+        <!--<plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">-->
+            <!--<property name="targetProject" value="src/main/resources"/>-->
+            <!--<property name="targetPackage" value="mapper"/>-->
+            <!--<property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\mapperXML.ftl"/>-->
+            <!--<property name="mapperSuffix" value="Mapper"/>-->
+            <!--<property name="fileName" value="${tableClass.shortClassName}${mapperSuffix}.xml"/>-->
+        <!--</plugin>-->
+
+        <!--api-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="src/main/resources/admin/src/api"/>
+            <property name="targetPackage" value=""/>
+            <property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\api.ftl"/>
+            <property name="mapperSuffix" value=""/>
+            <property name="fileName" value="${tableClass.variableName}${mapperSuffix}.js"/>
+        </plugin>
+
+        <!--vue-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="src/main/resources/admin/src/busi"/>
+            <property name="targetPackage" value=""/>
+            <property name="templatePath" value="file:///D:\workTest\comff42\src\main\resources\tpl\vue.ftl"/>
+            <property name="mapperSuffix" value=""/>
+            <property name="fileName" value="${tableClass.variableName}${mapperSuffix}.vue"/>
+        </plugin>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://122.114.170.132:3306/xxx?useSSL=false"
+                        userId="root"
+                        password="123">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.f4w.entity" targetProject="src/main/java"/>
+
+
+        <!--<sqlMapGenerator targetPackage="com.f4w.mapper"-->
+        <!--targetProject="src/main/resources"/>-->
+
+        <!--<javaClientGenerator targetPackage="com.f4w.mapper"-->
+        <!--targetProject="src/main/java"-->
+        <!--type="XMLMAPPER"/>-->
+        <table tableName="sys_user_role" schema="xxx"></table>
+        <table tableName="sys_role_menu" schema="xxx"></table>
+        <table tableName="sys_role" schema="xxx"></table>
+        <table tableName="sys_menu" schema="xxx"></table>
+    </context>
+</generatorConfiguration>
