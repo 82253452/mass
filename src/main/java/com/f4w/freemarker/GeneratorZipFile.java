@@ -9,6 +9,7 @@ import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiAppPageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ResourceUtils;
 import org.zeroturnaround.zip.ZipUtil;
@@ -158,21 +159,9 @@ public class GeneratorZipFile implements Runnable {
     private void commondShell() throws IOException, InterruptedException {
         log.info("执行shell");
         System.out.println("执行build");
-        String shellPath = getPath("weapp", "shell");
         String tmpPath = getTmpPath(tmpName, "personCard");
-        Process process = null;
-        if (System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0) {
-            process = Runtime.getRuntime().exec(shellPath + "go.sh " + tmpPath);
-        } else if (System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0) {
-            if ("/".equals(tmpPath.substring(0, 1))) {
-                tmpPath = tmpPath.substring(1);
-            }
-            if ("/".equals(shellPath.substring(0, 1))) {
-                shellPath = shellPath.substring(1);
-            }
-            process = Runtime.getRuntime().exec(shellPath + "go.bat " + tmpPath);
-        }
-
+        String[] command = new String[]{"cd "+ tmpPath,"npm run build:weapp"};
+        Process process = Runtime.getRuntime().exec(command);
         BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuffer sb = new StringBuffer();
         String line;
