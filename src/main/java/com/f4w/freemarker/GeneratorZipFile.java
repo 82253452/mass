@@ -57,16 +57,16 @@ public class GeneratorZipFile implements Runnable {
             //更新表状态
             updateEntity();
         } catch (Exception e) {
-             e.printStackTrace();
-             log.error("异常"+e.getMessage());
+            e.printStackTrace();
+            log.error("异常" + e.getMessage());
             initError();
         } finally {
-           //            log.info("清理缓存");
-//            try {
-//                FileUtils.deleteDirectory(new File(fileTemp));
-//            } catch (IOException e) {
-//                log.error("清理缓存异常");
-//            }
+            log.info("清理缓存");
+            try {
+                FileUtils.deleteDirectory(getTmpFile(tmpName));
+            } catch (IOException e) {
+                log.error("清理缓存异常");
+            }
         }
 
     }
@@ -163,7 +163,7 @@ public class GeneratorZipFile implements Runnable {
         String[] command = new String[]{
                 "/bin/sh",
                 "-c",
-                "cd " + tmpPath+"&&npm install&&npm run build:weapp"};
+                "cd " + tmpPath + "&&npm install&&npm run build:weapp"};
         Process process = Runtime.getRuntime().exec(command);
         BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuffer sb = new StringBuffer();
