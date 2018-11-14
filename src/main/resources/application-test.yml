@@ -36,5 +36,6 @@ jwt:
   exp: 1
 path:
   filesave: /data/package/
+  filetemp: /data/temp/
 server:
   port: 8082

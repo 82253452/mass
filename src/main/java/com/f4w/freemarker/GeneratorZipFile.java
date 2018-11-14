@@ -197,6 +197,7 @@ public class GeneratorZipFile implements Runnable {
             rPath += path[i] + File.separator;
         }
         File file = new File(rPath.substring(0, rPath.length() - 1));
+        System.out.println("temp File" + file);
         return file;
     }
 
@@ -228,6 +229,7 @@ public class GeneratorZipFile implements Runnable {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        System.out.println("resourceFile" + file);
         return file;
     }
 
