@@ -225,6 +225,7 @@ public class GeneratorZipFile implements Runnable {
         }
         File file = null;
         try {
+            System.out.println("resourceFile path " + rPath.substring(0, rPath.length() - 1));
             file = ResourceUtils.getFile("classpath:" + rPath.substring(0, rPath.length() - 1));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
