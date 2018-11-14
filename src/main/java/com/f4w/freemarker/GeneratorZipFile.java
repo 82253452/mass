@@ -218,20 +218,29 @@ public class GeneratorZipFile implements Runnable {
         return file;
     }
 
-    private File getResourceFile(String... path) {
+//    private File getResourceFile(String... path) {
+//        String rPath = "";
+//        for (int i = 0; i < path.length; i++) {
+//            rPath += path[i] + File.separator;
+//        }
+//        File file = null;
+//        try {
+//            System.out.println("resourceFile path " + rPath.substring(0, rPath.length() - 1));
+//            file = ResourceUtils.getFile("classpath:" + rPath.substring(0, rPath.length() - 1));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("resourceFile" + file);
+//        return file;
+//    }
+
+    private InputStream getResourceFile(String... path) {
         String rPath = "";
         for (int i = 0; i < path.length; i++) {
             rPath += path[i] + File.separator;
         }
-        File file = null;
-        try {
-            System.out.println("resourceFile path " + rPath.substring(0, rPath.length() - 1));
-            file = ResourceUtils.getFile("classpath:" + rPath.substring(0, rPath.length() - 1));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.out.println("resourceFile" + file);
-        return file;
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(rPath.substring(0, rPath.length() - 1));
+        return stream;
     }
 
 
