@@ -61,12 +61,12 @@ public class GeneratorZipFile implements Runnable {
              log.error("异常"+e.getMessage());
             initError();
         } finally {
-            log.info("清理缓存");
-            try {
-                FileUtils.deleteDirectory(new File(fileTemp));
-            } catch (IOException e) {
-                log.error("清理缓存异常");
-            }
+           //            log.info("清理缓存");
+//            try {
+//                FileUtils.deleteDirectory(new File(fileTemp));
+//            } catch (IOException e) {
+//                log.error("清理缓存异常");
+//            }
         }
 
     }
