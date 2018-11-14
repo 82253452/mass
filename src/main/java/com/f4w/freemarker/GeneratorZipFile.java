@@ -57,9 +57,9 @@ public class GeneratorZipFile implements Runnable {
             //更新表状态
             updateEntity();
         } catch (Exception e) {
-            log.error("异常");
+             e.printStackTrace();
+             log.error("异常"+e.getMessage());
             initError();
-            e.printStackTrace();
         } finally {
             log.info("清理缓存");
             try {
