@@ -23,11 +23,12 @@ public class FreeMarkerTemplateUtils {
 
     static {
         //这里比较重要，用来指定加载模板所在的路径
-        try {
-            CONFIGURATION.setTemplateLoader(new FileTemplateLoader(new File(FreeMarkerTemplateUtils.class.getResource("/").getPath())));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            CONFIGURATION.setTemplateLoader(new ClassTemplateLoader(FreeMarkerTemplateUtils.class,""));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        CONFIGURATION.setClassForTemplateLoading(FreeMarkerTemplateUtils.class,"/");
         CONFIGURATION.setDefaultEncoding("UTF-8");
         CONFIGURATION.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         CONFIGURATION.setCacheStorage(NullCacheStorage.INSTANCE);
