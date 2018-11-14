@@ -10,12 +10,10 @@ import com.f4w.mapper.BusiAppPageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ResourceUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +27,15 @@ public class GeneratorZipFile implements Runnable {
     private BusiAppMapper busiAppMapper;
     private BusiAppPageMapper busiAppPageMapper;
     private Long id;
-    private String tmpFilePath;
+    private String fileSave;
+    private String fileTemp;
 
-    public GeneratorZipFile(BusiAppMapper busiAppMapper, BusiAppPageMapper busiAppPageMapper, Long id, String tmpFilePath) {
+    public GeneratorZipFile(BusiAppMapper busiAppMapper, BusiAppPageMapper busiAppPageMapper, Long id, String fileSave, String fileTemp) {
         this.busiAppPageMapper = busiAppPageMapper;
         this.busiAppMapper = busiAppMapper;
         this.id = id;
-        this.tmpFilePath = tmpFilePath;
+        this.fileSave = fileSave;
+        this.fileTemp = fileTemp;
     }
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
@@ -62,7 +62,7 @@ public class GeneratorZipFile implements Runnable {
         } finally {
             log.info("清理缓存");
             try {
-                FileUtils.deleteDirectory(new File(getFilePath("weapp", "tmp", tmpName)));
+                FileUtils.deleteDirectory(new File(fileTemp));
             } catch (IOException e) {
                 log.error("清理缓存异常");
             }
@@ -89,7 +89,7 @@ public class GeneratorZipFile implements Runnable {
                 if (null != busiAppPage) {
                     jsonArray = JSON.parseArray(busiAppPage.getContent());
                     if (StringUtils.isNotBlank(busiApp.getFileName())) {
-                        FileUtils.deleteQuietly(new File(getFilePath("weapp", "downloadFile", busiApp.getFileName() + ".zip")));
+                        FileUtils.deleteQuietly(new File(fileSave + busiApp.getFileName() + ".zip"));
                     }
                     busiApp.setFileName("");
                     busiApp.setStatus(2);
@@ -114,16 +114,15 @@ public class GeneratorZipFile implements Runnable {
 
     private void zipFile() {
         log.info("压缩文件");
-        String distPath = getPath("weapp", "tmp", tmpName, "personCard", "dist");
-//        String packPath = getPath("weapp", "downloadFile", tmpName + ".zip");
-        String packPath = tmpFilePath + tmpName + ".zip";
-        ZipUtil.pack(new File(distPath), new File(packPath));
+        File distPath = getTmpFile(tmpName, "personCard", "dist");
+        File packPath = getPackageFile(tmpName + ".zip");
+        ZipUtil.pack(distPath, packPath);
     }
 
     private void unPackZip() {
         log.info("解压缩文件");
         tmpName = UUID.randomUUID().toString().replaceAll("-", "");
-        ZipUtil.unpack(new File(getFilePath("weapp", "app", "personCard.zip")), new File(getPath("weapp", "tmp", tmpName)));
+        ZipUtil.unpack(getResourceFile("weapp", "app", "personCard.zip"), getTmpFile(tmpName));
     }
 
     private void freeMarker() throws Exception {
@@ -135,15 +134,15 @@ public class GeneratorZipFile implements Runnable {
         map.put("PageList", PageList);
         //app模板处理
         FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "app.ftl",
-                new File(getFilePath("weapp", "tmp", tmpName, "personCard", "src", "app.js")),
+                getTmpFile(tmpName, "personCard", "src", "app.js"),
                 map);
         //index 模板处理
         for (int i = 0; i < PageList.size(); i++) {
-            String indexTplToPath = getFilePath("weapp", "tmp", tmpName, "personCard", "src", "pages", "generator", "index_" + i + ".js");
+            File indexTplToPath = getTmpFile(tmpName, "personCard", "src", "pages", "generator", "index_" + i + ".js");
             map.put("pageData", PageList.get(i));
             map.put("pageIndex", i);
             FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "index.ftl",
-                    new File(indexTplToPath),
+                    indexTplToPath,
                     map);
         }
         //project json 模板处理
@@ -152,7 +151,7 @@ public class GeneratorZipFile implements Runnable {
             map.put("appId", busiApp.getAppId());
         }
         FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "projectConfig.ftl",
-                new File(getFilePath("weapp", "tmp", tmpName, "personCard", "project.config.json")),
+                getTmpFile(tmpName, "personCard", "project.config.json"),
                 map);
     }
 
@@ -160,7 +159,7 @@ public class GeneratorZipFile implements Runnable {
         log.info("执行shell");
         System.out.println("执行build");
         String shellPath = getPath("weapp", "shell");
-        String tmpPath = getPath("weapp", "tmp", tmpName, "personCard");
+        String tmpPath = getTmpPath(tmpName, "personCard");
         Process process = null;
         if (System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0) {
             process = Runtime.getRuntime().exec(shellPath + "go.sh " + tmpPath);
@@ -192,11 +191,45 @@ public class GeneratorZipFile implements Runnable {
         return rPath;
     }
 
-    private String getFilePath(String... path) {
-        String rPath = ROOT_PATH;
+    private File getTmpFile(String... path) {
+        String rPath = fileTemp;
         for (int i = 0; i < path.length; i++) {
             rPath += path[i] + File.separator;
         }
-        return rPath.substring(0, rPath.length() - 1);
+        File file = new File(rPath.substring(0, rPath.length() - 1));
+        return file;
     }
+
+    private String getTmpPath(String... path) {
+        String rPath = fileTemp;
+        for (int i = 0; i < path.length; i++) {
+            rPath += path[i] + File.separator;
+        }
+        return rPath;
+    }
+
+    private File getPackageFile(String... path) {
+        String rPath = fileSave;
+        for (int i = 0; i < path.length; i++) {
+            rPath += path[i] + File.separator;
+        }
+        File file = new File(rPath.substring(0, rPath.length() - 1));
+        return file;
+    }
+
+    private File getResourceFile(String... path) {
+        String rPath = "";
+        for (int i = 0; i < path.length; i++) {
+            rPath += path[i] + File.separator;
+        }
+        File file = null;
+        try {
+            file = ResourceUtils.getFile("classpath:" + rPath.substring(0, rPath.length() - 1));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+
 }

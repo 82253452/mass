@@ -39,5 +39,6 @@ jwt:
   exp: 1
 path:
   filesave: D:/packzipfile/
+  filetemp: D:/tmp/
 server:
   port: 8082

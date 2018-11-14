@@ -45,7 +45,9 @@ public class BusiAppController {
     private ExecutorService threadPoolExecutor;
 
     @Value("${path.filesave}")
-    private String filePath;
+    private String filesave;
+    @Value("${path.filetemp}")
+    private String filetemp;
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
@@ -55,7 +57,7 @@ public class BusiAppController {
         if (null != busiApp && null != busiApp.getPageId()) {
             busiApp.setStatus(2);
             busiAppMapper.updateByPrimaryKeySelective(busiApp);
-            threadPoolExecutor.execute(new GeneratorZipFile(busiAppMapper, busiAppPageMapper, busiApp.getId(), filePath));
+            threadPoolExecutor.execute(new GeneratorZipFile(busiAppMapper, busiAppPageMapper, busiApp.getId(), filesave,filetemp));
             return R.ok();
         }
         return R.error();
@@ -69,7 +71,7 @@ public class BusiAppController {
 //            if ("/".equals(packPath.substring(0, 1))) {
 //                packPath = packPath.substring(1);
 //            }
-            String packPath = filePath + busiApp.getFileName() + ".zip";
+            String packPath = filesave + busiApp.getFileName() + ".zip";
             HttpHeaders headers = new HttpHeaders();
             byte[] f = FileUtils.readFileToByteArray(new File(packPath));
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

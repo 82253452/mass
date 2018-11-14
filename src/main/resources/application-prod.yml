@@ -38,6 +38,7 @@ jwt:
   key: 0e00568f23686b08abae11534a0ef1020e00568f23686b08abae11534a0ef102
   exp: 1
 path:
-  filesave: D:/packzipfile/
+  filesave: /data/package/
+  filetemp: /data/temp/
 server:
   port: 8082
