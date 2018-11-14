@@ -163,7 +163,7 @@ public class GeneratorZipFile implements Runnable {
         String[] command = new String[]{
                 "/bin/sh",
                 "-c",
-                "cd " + tmpPath, "&&npm run build:weapp"};
+                "cd " + tmpPath+"&&npm run build:weapp"};
         Process process = Runtime.getRuntime().exec(command);
         BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuffer sb = new StringBuffer();
