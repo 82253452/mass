@@ -48,3 +48,5 @@ weapp:
     componentAesKey: r82FieYYZZ2tTG3Gklh9LBCh3k4Gxtwgsai4n2juvk1
 server:
   port: 8082
+  tomcat:
+    max-http-header-size: 10240000
