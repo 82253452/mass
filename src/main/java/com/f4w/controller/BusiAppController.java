@@ -10,9 +10,11 @@ import com.f4w.freemarker.GeneratorZipFile;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiAppPageMapper;
 import com.f4w.utils.R;
+import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +50,25 @@ public class BusiAppController {
     @Value("${path.filetemp}")
     private String filetemp;
 
+    @Resource
+    private WxOpenService wxOpenService;
+
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
+    @GetMapping("/tttt")
+    public R tttt() throws WxErrorException {
+        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("hsshhshsh");
+        System.out.println(url);
+        return R.error();
+    }
+
     @GetMapping("/generator")
-    public R generator(String id) throws IOException {
+    public R generator(String id) {
         BusiApp busiApp = busiAppMapper.selectByPrimaryKey(id);
         if (null != busiApp && null != busiApp.getPageId()) {
             busiApp.setStatus(2);
             busiAppMapper.updateByPrimaryKeySelective(busiApp);
-            threadPoolExecutor.execute(new GeneratorZipFile(busiAppMapper, busiAppPageMapper, busiApp.getId(), filesave,filetemp));
+            threadPoolExecutor.execute(new GeneratorZipFile(busiAppMapper, busiAppPageMapper, busiApp.getId(), filesave, filetemp));
             return R.ok();
         }
         return R.error();
