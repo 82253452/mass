@@ -15,20 +15,12 @@ import java.util.Date;
 @Data
 public class BusiApp extends BaseEntity {
 
-    /**
-     * 名称
-     */
     private String name;
-    /**
-     * app_id
-     */
     private String appId;
-    /**
-     * app_secret
-     */
     private String appSecret;
     private Long pageId;
     private Integer status;
     private String fileName;
     private Long uid;
+    private Integer auth;
 }

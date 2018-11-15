@@ -57,7 +57,7 @@ public class BusiAppController {
 
     @GetMapping("/getAuthUrl")
     public R getAuthUrl() throws WxErrorException {
-        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("hsshhshsh");
+        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://dev.innter.fast4ward.cn/testApi/index.html#/busi/busiApp");
         return R.ok().put("url", url);
     }
 

@@ -66,4 +66,12 @@ export function getAppPages(query) {
   })
 }
 
+export function getAuthUrl(query) {
+  return request({
+    url: space + '/getAuthUrl',
+    method: 'get',
+    params: query
+  })
+}
+
 

@@ -54,8 +54,10 @@
 
       <el-table-column align="center" label="操作" fixed="right" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
           <el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>
-          <a v-if="scope.row.status==1" :href="'https://dev.innter.fast4ward.cn/testApi/busiApp/downloadFile/?id='+scope.row.id"
+          <a v-if="scope.row.status==1"
+             :href="'https://dev.innter.fast4ward.cn/testApi/busiApp/downloadFile/?id='+scope.row.id"
              download="weapp.zip">
             <el-button type="primary" size="mini">
               下载
@@ -99,6 +101,9 @@
         <el-button v-else type="primary" @click="updateData">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="authShow">
+      <qrcode value="Hello, World!" :options="{ size: 200 }"></qrcode>
+    </el-dialog>
   </div>
 </template>
 
@@ -111,13 +116,18 @@
     deleteById,
     Generator,
     Download,
-    getAppPages
+    getAppPages,
+    getAuthUrl
   } from '@/api/busiApp'
   import waves from '@/directive/waves' // 水波纹指令
   import {parseTime} from '@/utils'
+  import VueQrcode from '@xkeshi/vue-qrcode'
 
   export default {
     name: 'complexTable',
+    components: {
+      VueQrcode,
+    },
     directives: {
       waves
     },
@@ -127,6 +137,7 @@
         list: null,
         total: null,
         listLoading: true,
+        authShow: false,
         listQuery: {
           page: 1,
           limit: 20,
@@ -138,6 +149,7 @@
         temp: {},
         dialogFormVisible: false,
         dialogStatus: '',
+        authUrl: '',
         textMap: {
           update: 'Edit',
           create: 'Create'
@@ -168,6 +180,12 @@
       }
     },
     methods: {
+      getAuthUrlInit() {
+        getAuthUrl().then(resp => {
+          this.authUrl = resp.data.url
+          this.authShow = true
+        })
+      },
       radioChange(id, pageId) {
         updateById({id: id, pageId: pageId}).then(() => {
 
