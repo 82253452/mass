@@ -102,7 +102,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="authShow">
-      <qrcode value="Hello, World!" :options="{ size: 200 }"></qrcode>
+      <VueQrcode value="Hello, World!" :options="{ size: 200 }"></VueQrcode>
     </el-dialog>
   </div>
 </template>
