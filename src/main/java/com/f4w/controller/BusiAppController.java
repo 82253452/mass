@@ -55,11 +55,10 @@ public class BusiAppController {
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
-    @GetMapping("/tttt")
-    public R tttt() throws WxErrorException {
+    @GetMapping("/getAuthUrl")
+    public R getAuthUrl() throws WxErrorException {
         String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("hsshhshsh");
-        System.out.println(url);
-        return R.error();
+        return R.ok().put("url", url);
     }
 
     @GetMapping("/generator")
