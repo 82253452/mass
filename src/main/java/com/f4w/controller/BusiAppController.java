@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxError;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
+import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
 import me.chanjar.weixin.open.util.json.WxOpenGsonBuilder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
@@ -68,10 +69,12 @@ public class BusiAppController {
 
     @GetMapping("/pushWeapp")
     public R pushWeapp(String appId) throws WxErrorException {
+        WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
+        extInfo.setExtAppid(appId);
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(appId)
-                .codeCommit(0L, "", "", null);
+                .codeCommit(0L, "1.0.1", "第一次提交", extInfo);
         if (StringUtils.isBlank(responseContent)) {
             return R.error();
         }
