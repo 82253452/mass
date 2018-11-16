@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-open</artifactId>
-            <version>3.2.4.B</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
