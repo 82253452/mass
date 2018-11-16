@@ -1,6 +1,8 @@
 package com.f4w.controller;
 
 
+import cn.binarywang.wx.miniapp.util.json.WxMaGsonBuilder;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.TokenIntecerpt;
@@ -14,6 +16,7 @@ import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +25,7 @@ import me.chanjar.weixin.common.error.WxError;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
+import me.chanjar.weixin.open.bean.result.WxOpenResult;
 import me.chanjar.weixin.open.util.json.WxOpenGsonBuilder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
@@ -71,15 +75,8 @@ public class BusiAppController {
     public R pushWeapp(String appId) throws WxErrorException {
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(appId);
-        String responseContent = wxOpenService
-                .getWxOpenComponentService()
-                .getWxMaServiceByAppid(appId)
-                .codeCommit(0L, "1.0.1", "第一次提交", extInfo);
-        if (StringUtils.isBlank(responseContent)) {
-            return R.error();
-        }
-        JSONObject response = JSONObject.parseObject(responseContent);
-        if (response == null || !"0".equals(response.getString("errcode"))) {
+        WxOpenResult responseContent = codeCommit(appId, 0L, "1.0.1", "第一次提交", extInfo);
+        if (responseContent == null || !"0".equals(responseContent.getErrcode())) {
             return R.error();
         }
         return R.ok();
@@ -187,6 +184,18 @@ public class BusiAppController {
     @PostMapping("/deleteById")
     public int deleteById(@RequestBody Map param) {
         return busiAppMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+    }
+
+    public WxOpenResult codeCommit(String appId, Long templateId, String userVersion, String userDesc, WxMaOpenCommitExtInfo extInfo) throws WxErrorException {
+        JsonObject params = new JsonObject();
+        params.addProperty("template_id", templateId);
+        params.addProperty("user_version", userVersion);
+        params.addProperty("user_desc", userDesc);
+        params.addProperty("ext_json", JSON.toJSONString(extInfo));
+        String responseContent = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMaServiceByAppid(appId).post("https://api.weixin.qq.com/wxa/commit", JSON.toJSONString(params));
+        return WxMaGsonBuilder.create().fromJson(responseContent, WxOpenResult.class);
     }
 
 
