@@ -85,7 +85,6 @@ public class BusiAppController {
     }
 
 
-
     @GetMapping("/submitWeapp")
     public R submitWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
         WxOpenMaPageListResult pagePath = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(param.get("appId")).getPageList();
@@ -106,7 +105,10 @@ public class BusiAppController {
         wxOpenMaSubmitAudit.setThirdId(Integer.valueOf(param.get("thirdId")));
         itemList.add(wxOpenMaSubmitAudit);
         wxOpenMaSubmitAuditMessage.setItemList(itemList);
-        WxOpenMaSubmitAuditResult resp = submitAudit(param.get("appId"), wxOpenMaSubmitAuditMessage);
+        WxOpenMaSubmitAuditResult resp = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMaServiceByAppid(param.get("appId"))
+                .submitAudit(wxOpenMaSubmitAuditMessage);
         if (!"0".equals(resp.getErrcode())) {
             return R.error(resp.getErrmsg());
         }
@@ -125,7 +127,10 @@ public class BusiAppController {
     public R pushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(param.get("appId"));
-        WxOpenResult responseContent = codeCommit(param.get("appId"), 0L, "1.0.1", "第一次提交", extInfo);
+        WxOpenResult responseContent = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMaServiceByAppid(param.get("appId"))
+                .codeCommit(0L, "1.0.1", "第一次提交", extInfo);
         if (responseContent == null || !"0".equals(responseContent.getErrcode())) {
             return R.error();
         }
@@ -235,26 +240,6 @@ public class BusiAppController {
     public int deleteById(@RequestBody Map param) {
         return busiAppMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
     }
-
-    private WxOpenResult codeCommit(String appId, Long templateId, String userVersion, String userDesc, WxMaOpenCommitExtInfo extInfo) throws WxErrorException {
-        JsonObject params = new JsonObject();
-        params.addProperty("template_id", templateId);
-        params.addProperty("user_version", userVersion);
-        params.addProperty("user_desc", userDesc);
-        params.addProperty("ext_json", JSON.toJSONString(extInfo));
-        String responseContent = wxOpenService
-                .getWxOpenComponentService()
-                .getWxMaServiceByAppid(appId).post("https://api.weixin.qq.com/wxa/commit", WxOpenGsonBuilder.create().toJson(params));
-        return WxMaGsonBuilder.create().fromJson(responseContent, WxOpenResult.class);
-    }
-
-    private WxOpenMaSubmitAuditResult submitAudit(String appId, WxOpenMaSubmitAuditMessage submitAuditMessage) throws WxErrorException {
-        String responseContent = wxOpenService
-                .getWxOpenComponentService()
-                .getWxMaServiceByAppid(appId).post("https://api.weixin.qq.com/wxa/submit_audit", WxOpenGsonBuilder.create().toJson(submitAuditMessage));
-        return WxMaGsonBuilder.create().fromJson(responseContent, WxOpenMaSubmitAuditResult.class);
-    }
-
 
     public static void main(String[] args) {
         try {
