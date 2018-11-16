@@ -19,8 +19,10 @@ public class BusiApp extends BaseEntity {
     private String appId;
     private String appSecret;
     private Long pageId;
+    //1 生成模板成功 2生成模板中 3 生成模板失败
     private Integer status;
     private String fileName;
     private Long uid;
     private Integer auth;
+    private Long auditId;
 }

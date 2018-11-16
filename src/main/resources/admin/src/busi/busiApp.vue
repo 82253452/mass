@@ -72,9 +72,9 @@
             @show="getTestQrcode(scope.row.appId)"
           >
             <img :src="testCodeUrl" width="200px" height="200px">
-            <el-button type="primary" slot="reference" >预览</el-button>
+            <el-button slot="reference" type="primary">预览</el-button>
           </el-popover>
-          <el-button type="primary" size="mini" @click="pushWeapp(scope.row.appId)">一键发版</el-button>
+          <el-button type="primary" size="mini" @click="pushShow(scope.row.appId)">一键发版</el-button>
           <el-button type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
           <el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>
           <a
@@ -134,6 +134,34 @@
         <el-button v-else type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="pushWeappShow" title="一键发版小程序">
+      <el-form
+        ref="pushForm"
+        :model="pushTemp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="pushTemp.title"/>
+        </el-form-item>
+        <el-form-item label="标签" prop="tag">
+          <el-input v-model="pushTemp.tag"/>
+        </el-form-item>
+        <el-form-item label="类目">
+          <el-select placeholder="请选择类目">
+            <el-option
+              v-for="(item,index) in pushTemp"
+              :key="index"
+              :label="item.firstClass+'-'+item.secondClass+'-'+item.thirdClass"
+              @change="pushItemChange(item)"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="pushWeapp">确认发版</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -148,7 +176,8 @@
     Download,
     getAppPages,
     getAuthUrl,
-    pushWeappByAppId
+    pushWeappByAppId,
+    getItemList
   } from '@/api/busiApp'
   import waves from '@/directive/waves' // 水波纹指令
   import {parseTime} from '@/utils'
@@ -202,7 +231,10 @@
           create: 'Create'
         },
         rules: {},
-        pages: {}
+        pages: {},
+        pushWeappShow: false,
+        itemList: [],
+        pushTemp: {}
       }
     },
     created() {
@@ -210,8 +242,23 @@
       this.getPages()
     },
     methods: {
+      pushShow(appId) {
+        this.getItemListByAppId(appId)
+        this.pushWeappShow = true
+        this.pushTemp.appId = appId
+      },
+      pushItemChange(item) {
+        this.pushTemp = {...item, ...this.pushTemp}
+      },
+      getItemListByAppId(appId) {
+        if (!this.itemList || this.itemList.length === 0) {
+          getItemList({appId: appId}).then(resp => {
+            this.itemList = resp.data.list
+          })
+        }
+      },
       getTestQrcode(appId) {
-        this.testCodeUrl = process.env.BASE_API + '/getTestQrcode/busiApp?appId=' + appId + '&uuid=' + Math.random()
+        this.testCodeUrl = process.env.BASE_API + 'busiApp/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
       },
       pushWeapp(appId) {
         pushWeappByAppId({appId: appId}).then(resp => {

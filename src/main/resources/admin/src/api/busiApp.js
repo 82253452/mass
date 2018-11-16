@@ -80,3 +80,10 @@ export function pushWeappByAppId(query) {
     params: query
   })
 }
+export function getItemList(query) {
+  return request({
+    url: space + '/getItemList',
+    method: 'get',
+    params: query
+  })
+}
