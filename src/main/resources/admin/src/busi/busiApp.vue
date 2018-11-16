@@ -126,9 +126,6 @@
         <el-button v-else type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="authShow">
-      <VueQrcode :value="authUrl" :options="{ size: 200 }"/>
-    </el-dialog>
   </div>
 </template>
 
@@ -179,7 +176,6 @@
         list: null,
         total: null,
         listLoading: true,
-        authShow: false,
         listQuery: {
           page: 1,
           limit: 20,
@@ -191,7 +187,6 @@
         temp: {},
         dialogFormVisible: false,
         dialogStatus: '',
-        authUrl: '',
         textMap: {
           update: 'Edit',
           create: 'Create'
@@ -206,8 +201,9 @@
     },
     methods: {
       getAuthUrlInit() {
-        this.authUrl = 'https://dev.innter.fast4ward.cn/testApi/index.html#/weappAuth'
-        this.authShow = true
+        getAuthUrl().then(resp => {
+          window.open(resp.data.url,'微信授权')
+        })
       },
       radioChange(id, pageId) {
         updateById({id: id, pageId: pageId}).then(() => {
