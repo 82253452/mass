@@ -194,7 +194,7 @@ public class BusiAppController {
         params.addProperty("ext_json", JSON.toJSONString(extInfo));
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
-                .getWxMaServiceByAppid(appId).post("https://api.weixin.qq.com/wxa/commit", JSON.toJSONString(params));
+                .getWxMaServiceByAppid(appId).post("https://api.weixin.qq.com/wxa/commit", WxOpenGsonBuilder.create().toJson(params));
         return WxMaGsonBuilder.create().fromJson(responseContent, WxOpenResult.class);
     }
 
