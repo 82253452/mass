@@ -1,8 +1,6 @@
 package com.f4w.controller;
 
 
-import cn.binarywang.wx.miniapp.util.json.WxMaGsonBuilder;
-import com.alibaba.fastjson.JSON;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.BusiApp;
@@ -15,7 +13,6 @@ import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
@@ -24,8 +21,6 @@ import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenMaCategoryListResult;
 import me.chanjar.weixin.open.bean.result.WxOpenMaPageListResult;
 import me.chanjar.weixin.open.bean.result.WxOpenMaSubmitAuditResult;
-import me.chanjar.weixin.open.bean.result.WxOpenResult;
-import me.chanjar.weixin.open.util.json.WxOpenGsonBuilder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,10 +71,10 @@ public class BusiAppController {
      */
     @GetMapping("/releaseWeapp")
     public R releaseWeapp(String appId) throws WxErrorException {
-        WxOpenResult wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
-        if (!"0".equals(wxOpenResult.getErrcode())) {
-            return R.error(wxOpenResult.getErrmsg());
-        }
+        String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
+//        if (!"0".equals(wxOpenResult.getErrcode())) {
+//            return R.error(wxOpenResult.getErrmsg());
+//        }
         //todo 更新状态
         return R.ok();
     }
@@ -127,13 +122,13 @@ public class BusiAppController {
     public R pushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(param.get("appId"));
-        WxOpenResult responseContent = wxOpenService
+        String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
                 .codeCommit(0L, "1.0.1", "第一次提交", extInfo);
-        if (responseContent == null || !"0".equals(responseContent.getErrcode())) {
-            return R.error();
-        }
+//        if (responseContent == null || !"0".equals(responseContent.getErrcode())) {
+//            return R.error();
+//        }
         return submitWeapp(param);
     }
 
