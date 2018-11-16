@@ -1,44 +1,57 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item"
-                :placeholder="$t('table.title')" v-model="listQuery.title">
-      </el-input>
-      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="handleFilter">
-        {{$t('table.search')}}
+      <el-input
+        :placeholder="$t('table.title')"
+        v-model="listQuery.title"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"/>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        {{ $t('table.search') }}
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary"
-                 icon="el-icon-edit">{{$t('table.add')}}
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate">{{ $t('table.add') }}
       </el-button>
     </div>
 
-    <el-table :key='tableKey' :data="list" v-loading="listLoading" border fit highlight-current-row
-              style="width: 100%;min-height:500px;">
+    <el-table
+      v-loading="listLoading"
+      :key="tableKey"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;min-height:500px;">
       <el-table-column align="center" label="id" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row.id}}</span>
+          <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="名称" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row.name}}</span>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="appId" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row.appId}}</span>
+          <span>{{ scope.row.appId }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="appSecret" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row.appSecret}}</span>
+          <span>{{ scope.row.appSecret }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="模板" width="150">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <el-radio-group @change="radioChange(scope.row.id,scope.row.pageId)" v-model="scope.row.pageId">
-              <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{p}}</el-radio-button>
+            <el-radio-group v-model="scope.row.pageId" @change="radioChange(scope.row.id,scope.row.pageId)">
+              <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{ p }}</el-radio-button>
             </el-radio-group>
             <div slot="reference" class="name-wrapper">
               <el-tag size="medium">{{ pages[scope.row.pageId]?pages[scope.row.pageId]:'无' }}</el-tag>
@@ -48,7 +61,7 @@
       </el-table-column>
       <el-table-column align="center" label="状态" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row.status|getStatus}}</span>
+          <span>{{ scope.row.status|getStatus }}</span>
         </template>
       </el-table-column>
 
@@ -56,53 +69,65 @@
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
           <el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>
-          <a v-if="scope.row.status==1"
-             :href="'https://dev.innter.fast4ward.cn/testApi/busiApp/downloadFile/?id='+scope.row.id"
-             download="weapp.zip">
+          <a
+            v-if="scope.row.status==1"
+            :href="'https://dev.innter.fast4ward.cn/testApi/busiApp/downloadFile/?id='+scope.row.id"
+            download="weapp.zip">
             <el-button type="primary" size="mini">
               下载
             </el-button>
           </a>
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{$t('table.edit')}}</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{$t('table.delete')}}
+          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{ $t('table.delete') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pagination-container" style="text-align: center">
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit"
-                     layout="total, sizes, prev, pager, next, jumper" :total="total">
-      </el-pagination>
+      <el-pagination
+        :current-page="listQuery.page"
+        :page-sizes="[10,20,30, 50]"
+        :page-size="listQuery.limit"
+        :total="total"
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"/>
     </div>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form :rules="rules" ref="dataForm" :model="temp" label-position="left" label-width="70px"
-               style='width: 400px; margin-left:50px;'>
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name"></el-input>
+          <el-input v-model="temp.name"/>
         </el-form-item>
         <el-form-item label="appId" prop="appId">
-          <el-input v-model="temp.appId"></el-input>
+          <el-input v-model="temp.appId"/>
         </el-form-item>
         <el-form-item label="appSecret" prop="appSecret">
-          <el-input v-model="temp.appSecret"></el-input>
+          <el-input v-model="temp.appSecret"/>
         </el-form-item>
         <el-form-item label="模板" prop="pageId">
           <el-radio-group v-model="temp.pageId">
-            <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{p}}</el-radio-button>
+            <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{ p }}</el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">{{$t('table.cancel')}}</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
-        <el-button v-else type="primary" @click="updateData">{{$t('table.confirm')}}</el-button>
+        <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('table.confirm') }}
+        </el-button>
+        <el-button v-else type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="authShow">
-      <VueQrcode :value="authUrl" :options="{ size: 200 }"></VueQrcode>
+      <VueQrcode :value="authUrl" :options="{ size: 200 }"/>
     </el-dialog>
   </div>
 </template>
@@ -124,12 +149,29 @@
   import VueQrcode from '@xkeshi/vue-qrcode'
 
   export default {
-    name: 'complexTable',
+    name: 'ComplexTable',
     components: {
-      VueQrcode,
+      VueQrcode
     },
     directives: {
       waves
+    },
+    filters: {
+      getStatus: function (status) {
+        if (status) {
+          if (status === 1) {
+            return '成功'
+          }
+          if (status === 2) {
+            return '正在生成'
+          }
+          if (status === 3) {
+            return '生成失败'
+          }
+          return '初始状态'
+        }
+        return '初始状态'
+      }
     },
     data() {
       return {
@@ -155,36 +197,17 @@
           create: 'Create'
         },
         rules: {},
-        pages: {},
+        pages: {}
       }
     },
     created() {
       this.getList()
       this.getPages()
     },
-    filters: {
-      getStatus: function (status) {
-        if (status) {
-          if (status === 1) {
-            return '成功';
-          }
-          if (status === 2) {
-            return '正在生成';
-          }
-          if (status === 3) {
-            return '生成失败';
-          }
-          return '初始状态';
-        }
-        return '初始状态';
-      }
-    },
     methods: {
       getAuthUrlInit() {
-        getAuthUrl().then(resp => {
-          this.authUrl = resp.data.url
-          this.authShow = true
-        })
+        this.authUrl = 'https://dev.innter.fast4ward.cn/testApi/index.html#/weappAuth'
+        this.authShow = true
       },
       radioChange(id, pageId) {
         updateById({id: id, pageId: pageId}).then(() => {
@@ -198,7 +221,7 @@
       },
       generator(row) {
         Generator({id: row.id}).then(resp => {
-          this.getList();
+          this.getList()
         })
       },
       download(row) {
@@ -251,7 +274,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             insert(this.temp).then((id) => {
-              this.getList();
+              this.getList()
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -278,7 +301,7 @@
             const tempData = Object.assign({}, this.temp)
             tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
             updateById(tempData).then(() => {
-              this.getList();
+              this.getList()
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -289,7 +312,7 @@
             })
           }
         })
-      },
+      }
     }
   }
 </script>

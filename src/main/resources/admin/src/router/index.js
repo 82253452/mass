@@ -1,4 +1,4 @@
-  import Vue from 'vue'
+import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router)
@@ -9,7 +9,7 @@ import Layout from '@/views/layout/Layout'
 /* Router Modules */
 import componentsRouter from './modules/components'
 import busiRouter from './modules/busi'
-  import busiData from './modules/busiData'
+import busiData from './modules/busiData'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
@@ -77,6 +77,11 @@ export const constantRouterMap = [
       }
     ]
   },
+  {
+    path: '/weappAuth',
+    component: () => import('@/busi/weappAuth'),
+    hidden: true
+  }
   // {
   //   path: '/documentation',
   //   component: Layout,
