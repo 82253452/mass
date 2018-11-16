@@ -2,11 +2,15 @@ package com.f4w.weapp;
 
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.open.api.impl.WxOpenInMemoryConfigStorage;
+import me.chanjar.weixin.open.api.impl.WxOpenInRedisConfigStorage;
 import me.chanjar.weixin.open.api.impl.WxOpenMessageRouter;
 import me.chanjar.weixin.open.api.impl.WxOpenServiceImpl;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import redis.clients.jedis.JedisPool;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -17,10 +21,13 @@ import javax.annotation.Resource;
 public class WxOpenService extends WxOpenServiceImpl {
     @Resource
     private WeiXinOpenConfig weiXinOpenConfig;
+    @Resource
+    private RedisProperties redisProperies;
+    private static JedisPool pool;
 
     @PostConstruct
     public void init() {
-        WxOpenInMemoryConfigStorage wxOpenInMemoryConfigStorage = new WxOpenInMemoryConfigStorage();
+        WxOpenInRedisConfigStorage wxOpenInMemoryConfigStorage = new WxOpenInRedisConfigStorage(getJedisPool());
         wxOpenInMemoryConfigStorage.setComponentAppId(weiXinOpenConfig.getComponentAppId());
         wxOpenInMemoryConfigStorage.setComponentAppSecret(weiXinOpenConfig.getComponentSecret());
         wxOpenInMemoryConfigStorage.setComponentToken(weiXinOpenConfig.getComponentToken());
@@ -36,6 +43,13 @@ public class WxOpenService extends WxOpenServiceImpl {
             return null;
         }).next();
         return wxOpenMessageRouter;
+    }
+
+    private JedisPool getJedisPool() {
+        if (pool == null) {
+            pool = new JedisPool(new GenericObjectPoolConfig(), redisProperies.getHost(), redisProperies.getPort(), 2000, redisProperies.getPassword());
+        }
+        return pool;
     }
 
 }
