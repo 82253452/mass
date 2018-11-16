@@ -91,7 +91,7 @@ public class BusiAppController {
             File file = wxOpenService
                     .getWxOpenComponentService()
                     .getWxMaServiceByAppid(appId)
-                    .getTestQrcode("", null);
+                    .getTestQrcode("", new HashMap<>());
             return FileUtils.readFileToByteArray(file);
         } catch (IOException | WxErrorException e) {
             e.printStackTrace();
