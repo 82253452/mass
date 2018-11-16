@@ -73,5 +73,10 @@ export function getAuthUrl(query) {
     params: query
   })
 }
-
-
+export function pushWeappByAppId(query) {
+  return request({
+    url: space + '/pushWeapp',
+    method: 'get',
+    params: query
+  })
+}

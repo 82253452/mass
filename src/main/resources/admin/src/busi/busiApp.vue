@@ -67,6 +67,14 @@
 
       <el-table-column align="center" label="操作" fixed="right" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-popover
+            trigger="click"
+            @show="getTestQrcode(scope.row.appId)"
+          >
+            <img :src="testCodeUrl" width="200px" height="200px">
+            <el-button type="primary" slot="reference" >预览</el-button>
+          </el-popover>
+          <el-button type="primary" size="mini" @click="pushWeapp(scope.row.appId)">一键发版</el-button>
           <el-button type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
           <el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>
           <a
@@ -139,7 +147,8 @@
     Generator,
     Download,
     getAppPages,
-    getAuthUrl
+    getAuthUrl,
+    pushWeappByAppId
   } from '@/api/busiApp'
   import waves from '@/directive/waves' // 水波纹指令
   import {parseTime} from '@/utils'
@@ -185,6 +194,7 @@
           sort: '+id'
         },
         temp: {},
+        testCodeUrl: '',
         dialogFormVisible: false,
         dialogStatus: '',
         textMap: {
@@ -200,9 +210,17 @@
       this.getPages()
     },
     methods: {
+      getTestQrcode(appId) {
+        this.testCodeUrl = process.env.BASE_API + '/getTestQrcode/busiApp?appId=' + appId + '&uuid=' + Math.random()
+      },
+      pushWeapp(appId) {
+        pushWeappByAppId({appId: appId}).then(resp => {
+          console.log(resp)
+        })
+      },
       getAuthUrlInit() {
         getAuthUrl().then(resp => {
-          window.open(resp.data.url,'微信授权')
+          window.open(resp.data.url, '微信授权')
         })
       },
       radioChange(id, pageId) {

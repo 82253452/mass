@@ -18,6 +18,20 @@ public class NotifyController {
     @Autowired
     protected WxOpenService wxOpenService;
 
+    @RequestMapping("authorizerRefreshToken")
+    public Object authorizerRefreshToken(
+            @RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expiresIn) {
+        log.info(
+                "\n接收微信请求：[authCode=[{}], expiresIn=[{}]",
+                authCode, expiresIn);
+        try {
+            wxOpenService.getWxOpenComponentService().getQueryAuth(authCode);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+        }
+        return "授权成功";
+    }
+
     @RequestMapping("message")
     public Object receiveTicket(@RequestBody(required = false) String requestBody, @RequestParam("timestamp") String timestamp,
                                 @RequestParam("nonce") String nonce, @RequestParam("signature") String signature,

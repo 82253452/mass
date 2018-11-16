@@ -1,6 +1,7 @@
 package com.f4w.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.BusiApp;
@@ -13,11 +14,20 @@ import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxError;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
+import me.chanjar.weixin.open.util.json.WxOpenGsonBuilder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.http2.ByteUtil;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,9 +66,39 @@ public class BusiAppController {
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
+    @GetMapping("/pushWeapp")
+    public R pushWeapp(String appId) throws WxErrorException {
+        String responseContent = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMaServiceByAppid(appId)
+                .codeCommit(0L, "", "", null);
+        if (StringUtils.isBlank(responseContent)) {
+            return R.error();
+        }
+        JSONObject response = JSONObject.parseObject(responseContent);
+        if (response == null || !"0".equals(response.getString("errcode"))) {
+            return R.error();
+        }
+        return R.ok();
+    }
+
+    @GetMapping("/getTestQrcode")
+    public byte[] getTestQrcode(String appId) {
+        try {
+            File file = wxOpenService
+                    .getWxOpenComponentService()
+                    .getWxMaServiceByAppid(appId)
+                    .getTestQrcode("", null);
+            return FileUtils.readFileToByteArray(file);
+        } catch (IOException | WxErrorException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/getAuthUrl")
     public R getAuthUrl() throws WxErrorException {
-        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://dev.innter.fast4ward.cn/testApi/index.html#/busi/busiApp");
+        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://dev.innter.fast4ward.cn/testApi/notify/authorizerRefreshToken", "2", "");
         return R.ok().put("url", url);
     }
 
@@ -144,6 +185,7 @@ public class BusiAppController {
     public int deleteById(@RequestBody Map param) {
         return busiAppMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
     }
+
 
     public static void main(String[] args) {
         try {
