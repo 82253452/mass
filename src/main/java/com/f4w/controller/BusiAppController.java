@@ -26,7 +26,9 @@ import me.chanjar.weixin.open.bean.result.WxOpenMaSubmitAuditResult;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -61,6 +63,8 @@ public class BusiAppController {
 
     @Resource
     private WxOpenService wxOpenService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
@@ -160,7 +164,7 @@ public class BusiAppController {
         if (null == busiApp) {
             return R.error("appId异常");
         }
-        busiApp.setVersion(busiApp.getVersion()+1);
+        busiApp.setVersion(busiApp.getVersion() + 1);
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(param.get("appId"));
@@ -172,7 +176,7 @@ public class BusiAppController {
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
-                .codeCommit(0L, busiApp.getVersion().toString(), "提交审核", extInfo);
+                .codeCommit(Long.valueOf(stringRedisTemplate.opsForValue().get("templateId")), busiApp.getVersion().toString(), "提交审核", extInfo);
         JSONObject resp = JSONObject.parseObject(responseContent);
         if (!"0".equals(resp.getString("errcode"))) {
             return R.error(resp.getString("errmsg"));
