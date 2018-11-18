@@ -1,6 +1,7 @@
 package com.f4w.controller;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.TokenIntecerpt;
@@ -173,6 +174,24 @@ public class BusiAppController {
         wxMaOpenWindow.setNavigationBarTitleText(busiApp.getName());
         wxMaOpenWindow.setNavigationBarTextStyle("black");
         extInfo.setWindow(wxMaOpenWindow);
+        //set ext
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("title", "haha");
+        jsonArray.add(jsonObject);
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject.put("title", "haha");
+        jsonArray.add(jsonObject2);
+        JSONObject jsonObject3 = new JSONObject();
+        jsonObject.put("title", "haha");
+        jsonArray.add(jsonObject3);
+        JSONObject jsonObject4 = new JSONObject();
+        jsonObject.put("title", "haha");
+        jsonArray.add(jsonObject4);
+        Map ext = new HashMap();
+        ext.put("appId", param.get("appId"));
+        ext.put("pages", jsonArray.toString());
+        extInfo.setExtMap(ext);
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
