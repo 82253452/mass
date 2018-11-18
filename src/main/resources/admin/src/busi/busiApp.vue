@@ -251,7 +251,7 @@ export default {
       this.pushTemp.appId = appId
     },
     pushItemChange(item) {
-      this.pushTemp = { ...item, ...this.pushTemp }
+      this.pushTemp = { ...itemList[item], ...this.pushTemp }
     },
     getItemListByAppId(appId) {
       if (!this.itemList || this.itemList.length === 0) {
