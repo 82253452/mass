@@ -1,6 +1,7 @@
 package com.f4w.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.BusiApp;
@@ -72,14 +73,22 @@ public class BusiAppController {
     @GetMapping("/releaseWeapp")
     public R releaseWeapp(String appId) throws WxErrorException {
         String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
-//        if (!"0".equals(wxOpenResult.getErrcode())) {
-//            return R.error(wxOpenResult.getErrmsg());
-//        }
+        JSONObject resp = JSONObject.parseObject(wxOpenResult);
+        if (!"0".equals(resp.getString("errcode"))) {
+            return R.error(resp.getString("errmsg"));
+        }
         //todo 更新状态
         return R.ok();
     }
 
 
+    /**
+     * 将第三方提交的代码包提交审核
+     *
+     * @param param
+     * @return
+     * @throws WxErrorException
+     */
     @GetMapping("/submitWeapp")
     public R submitWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
         WxOpenMaPageListResult pagePath = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(param.get("appId")).getPageList();
@@ -112,12 +121,36 @@ public class BusiAppController {
         return R.ok();
     }
 
+    /**
+     * 获取授权小程序帐号的可选类目
+     *
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
     @GetMapping("/getItemList")
     public R getItemList(String appId) throws WxErrorException {
         WxOpenMaCategoryListResult wxOpenMaCategoryListResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getCategoryList();
         return R.ok().put("list", wxOpenMaCategoryListResult.getCategoryList());
     }
 
+
+    public List<String> getPageList(String appId) throws WxErrorException {
+        WxOpenMaPageListResult wxOpenMaPageListResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getPageList();
+        if (!"0".equals(wxOpenMaPageListResult.getErrcode())) {
+            return null;
+        }
+        return wxOpenMaPageListResult.getPageList();
+    }
+
+
+    /**
+     * 为授权的小程序帐号上传小程序代码
+     *
+     * @param param
+     * @return
+     * @throws WxErrorException
+     */
     @GetMapping("/pushWeapp")
     public R pushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
@@ -126,19 +159,26 @@ public class BusiAppController {
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
                 .codeCommit(0L, "1.0.1", "第一次提交", extInfo);
-//        if (responseContent == null || !"0".equals(responseContent.getErrcode())) {
-//            return R.error();
-//        }
+        JSONObject resp = JSONObject.parseObject(responseContent);
+        if (!"0".equals(resp.getString("errcode"))) {
+            return R.error(resp.getString("errmsg"));
+        }
         return submitWeapp(param);
     }
 
+    /**
+     * 获取体验二维码
+     *
+     * @param appId
+     * @return
+     */
     @GetMapping("/getTestQrcode")
     public byte[] getTestQrcode(String appId) {
         try {
             File file = wxOpenService
                     .getWxOpenComponentService()
                     .getWxMaServiceByAppid(appId)
-                    .getTestQrcode("", new HashMap<>());
+                    .getTestQrcode(getPageList(appId).get(0), new HashMap<>());
             return FileUtils.readFileToByteArray(file);
         } catch (IOException | WxErrorException e) {
             e.printStackTrace();
