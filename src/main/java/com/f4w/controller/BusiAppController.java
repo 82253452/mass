@@ -104,7 +104,7 @@ public class BusiAppController {
         WxOpenMaSubmitAuditMessage wxOpenMaSubmitAuditMessage = new WxOpenMaSubmitAuditMessage();
         List<WxOpenMaSubmitAudit> itemList = new ArrayList<>();
         WxOpenMaSubmitAudit wxOpenMaSubmitAudit = new WxOpenMaSubmitAudit();
-        wxOpenMaSubmitAudit.setPagePath(pagePath.getPageList().toString());
+        wxOpenMaSubmitAudit.setPagePath(pagePath.getPageList().get(0));
         wxOpenMaSubmitAudit.setTag(param.get("tag"));
         wxOpenMaSubmitAudit.setTitle(param.get("title"));
         wxOpenMaSubmitAudit.setFirstClass(param.get("firstClass"));
