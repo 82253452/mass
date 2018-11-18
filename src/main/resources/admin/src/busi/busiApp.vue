@@ -260,8 +260,8 @@ export default {
     getTestQrcode(appId) {
       this.testCodeUrl = process.env.BASE_API + 'busiApp/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
     },
-    pushWeapp(appId) {
-      pushWeappByAppId({ appId: appId }).then(resp => {
+    pushWeapp() {
+      pushWeappByAppId(this.pushTemp).then(resp => {
         console.log(resp)
       })
     },
