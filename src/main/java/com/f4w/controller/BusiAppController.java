@@ -17,6 +17,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
+import me.chanjar.weixin.open.bean.ma.WxMaOpenWindow;
 import me.chanjar.weixin.open.bean.ma.WxOpenMaSubmitAudit;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenMaCategoryListResult;
@@ -153,12 +154,25 @@ public class BusiAppController {
      */
     @GetMapping("/pushWeapp")
     public R pushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(param.get("appId"));
+        busiApp = busiAppMapper.selectOne(busiApp);
+        if (null == busiApp) {
+            return R.error("appId异常");
+        }
+        busiApp.setVersion(busiApp.getVersion()+1);
+        busiAppMapper.updateByPrimaryKeySelective(busiApp);
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(param.get("appId"));
+        WxMaOpenWindow wxMaOpenWindow = new WxMaOpenWindow();
+        wxMaOpenWindow.setBackgroundTextStyle("light");
+        wxMaOpenWindow.setNavigationBarTitleText(busiApp.getName());
+        wxMaOpenWindow.setNavigationBarTextStyle("black");
+        extInfo.setWindow(wxMaOpenWindow);
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
-                .codeCommit(0L, "1.0.1", "第一次提交", extInfo);
+                .codeCommit(0L, busiApp.getVersion().toString(), "提交审核", extInfo);
         JSONObject resp = JSONObject.parseObject(responseContent);
         if (!"0".equals(resp.getString("errcode"))) {
             return R.error(resp.getString("errmsg"));

@@ -152,7 +152,7 @@
             <el-option
               v-for="(item,index) in itemList"
               :key="index"
-              :label="item.firstClass+'-'+item.secondClass+'-'+item.thirdClass"
+              :label="item.firstClass+'-'+item.secondClass+'-'+item.thirdClass?'无':item.thirdClass"
               @change="pushItemChange(item)"
             />
           </el-select>

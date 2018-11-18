@@ -127,33 +127,33 @@ public class GeneratorZipFile implements Runnable {
     }
 
     private void freeMarker() throws Exception {
-        log.info("模板文件处理");
-        String tplPath = "weapp" + File.separator + "tpl" + File.separator;
-        //数据
-        List<PageEntity> PageList = jsonArray.toJavaList(PageEntity.class);
-        Map map = new HashMap();
-        map.put("PageList", PageList);
-        //app模板处理
-        FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "app.ftl",
-                getTmpFile(tmpName, "personCard", "src", "app.js"),
-                map);
-        //index 模板处理
-        for (int i = 0; i < PageList.size(); i++) {
-            File indexTplToPath = getTmpFile(tmpName, "personCard", "src", "pages", "generator", "index_" + i + ".js");
-            map.put("pageData", PageList.get(i));
-            map.put("pageIndex", i);
-            FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "index.ftl",
-                    indexTplToPath,
-                    map);
-        }
-        //project json 模板处理
-        BusiApp busiApp = busiAppMapper.selectByPrimaryKey(id);
-        if (null != busiApp) {
-            map.put("appId", busiApp.getAppId());
-        }
-        FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "projectConfig.ftl",
-                getTmpFile(tmpName, "personCard", "project.config.json"),
-                map);
+//        log.info("模板文件处理");
+//        String tplPath = "weapp" + File.separator + "tpl" + File.separator;
+//        //数据
+//        List<PageEntity> PageList = jsonArray.toJavaList(PageEntity.class);
+//        Map map = new HashMap();
+//        map.put("PageList", PageList);
+//        //app模板处理
+//        FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "app.ftl",
+//                getTmpFile(tmpName, "personCard", "src", "app.js"),
+//                map);
+//        //index 模板处理
+//        for (int i = 0; i < PageList.size(); i++) {
+//            File indexTplToPath = getTmpFile(tmpName, "personCard", "src", "pages", "generator", "index_" + i + ".js");
+//            map.put("pageData", PageList.get(i));
+//            map.put("pageIndex", i);
+//            FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "index.ftl",
+//                    indexTplToPath,
+//                    map);
+//        }
+//        //project json 模板处理
+//        BusiApp busiApp = busiAppMapper.selectByPrimaryKey(id);
+//        if (null != busiApp) {
+//            map.put("appId", busiApp.getAppId());
+//        }
+//        FreeMarkerTemplateUtils.generateFileByTemplate(tplPath + "projectConfig.ftl",
+//                getTmpFile(tmpName, "personCard", "project.config.json"),
+//                map);
     }
 
     private void commondShell() throws IOException, InterruptedException {
