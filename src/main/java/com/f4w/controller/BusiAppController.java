@@ -111,8 +111,8 @@ public class BusiAppController {
         wxOpenMaSubmitAudit.setFirstId(Integer.valueOf(param.get("firstId")));
         wxOpenMaSubmitAudit.setSecondClass(param.get("secondClass"));
         wxOpenMaSubmitAudit.setSecondId(Integer.valueOf(param.get("secondId")));
-        wxOpenMaSubmitAudit.setThirdClass(param.get("thirdClass"));
-        wxOpenMaSubmitAudit.setThirdId(Integer.valueOf(param.get("thirdId")));
+        wxOpenMaSubmitAudit.setThirdClass(param.get("thirdClass") == null ? "" : param.get("thirdClass"));
+        wxOpenMaSubmitAudit.setThirdId(Integer.valueOf(param.get("thirdId") == null ? "0" : param.get("thirdId")));
         itemList.add(wxOpenMaSubmitAudit);
         wxOpenMaSubmitAuditMessage.setItemList(itemList);
         WxOpenMaSubmitAuditResult resp = wxOpenService
@@ -314,11 +314,7 @@ public class BusiAppController {
     }
 
     public static void main(String[] args) {
-        try {
-            Runtime.getRuntime().exec("D:\\workTest\\comff42\\target\\classes\\weapp\\tmp\\5c7e48c3c3fc4f94849f33864e24b2b9\\personCard\\go.bat");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println(Integer.valueOf(""));
     }
 }
 
