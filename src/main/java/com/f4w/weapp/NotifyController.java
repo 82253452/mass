@@ -1,5 +1,7 @@
 package com.f4w.weapp;
 
+import com.f4w.entity.BusiApp;
+import com.f4w.mapper.BusiAppMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
@@ -11,12 +13,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+
 @Slf4j
 @RestController
 @RequestMapping("notify")
 public class NotifyController {
     @Autowired
     protected WxOpenService wxOpenService;
+    @Resource
+    private BusiAppMapper busiAppMapper;
 
     @RequestMapping("authorizerRefreshToken")
     public Object authorizerRefreshToken(
@@ -100,13 +106,31 @@ public class NotifyController {
                         wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
                     }
                 } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
-                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
-                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+                    if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
+                        updateBusiAppStatus(appId, 6, "审核通过");
+                    } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
+                        updateBusiAppStatus(appId, 7, inMessage.getFailReason());
+                    }
+//                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
+//                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
                 }
             } catch (WxErrorException e) {
                 log.error("callback", e);
             }
         }
         return out;
+    }
+
+    private String updateBusiAppStatus(String appId, Integer status, String msg) {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+        if (null == busiApp) {
+            return "success";
+        }
+        busiApp.setStatus(status);
+        busiApp.setAuditMsg(msg);
+        busiAppMapper.updateByPrimaryKey(busiApp);
+        return "success";
     }
 }

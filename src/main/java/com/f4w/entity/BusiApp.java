@@ -26,4 +26,5 @@ public class BusiApp extends BaseEntity {
     private Integer auth;
     private Long auditId;
     private Integer version;
+    private String auditMsg;
 }

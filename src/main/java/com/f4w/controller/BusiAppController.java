@@ -70,6 +70,43 @@ public class BusiAppController {
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
     /**
+     * 查询某个指定版本的审核状态
+     *
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("getAuditstatus")
+    public R getAuditstatus(String appId, Long auditid) throws WxErrorException {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+        String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getAuditStatus(busiApp.getAuditId());
+        JSONObject resp = JSONObject.parseObject(wxOpenResult);
+        if (!"0".equals(resp.getString("errcode"))) {
+            return R.error(resp.getString("errmsg"));
+        }
+        return R.ok().put("reason", resp.getString("reason"));
+    }
+
+    /**
+     * 查询某个指定版本的审核状态
+     *
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("getLastAuditstatus")
+    public R getLastAuditstatus(String appId) throws WxErrorException {
+        String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getLatestAuditStatus(null);
+        JSONObject resp = JSONObject.parseObject(wxOpenResult);
+        if (!"0".equals(resp.getString("errcode"))) {
+            return R.error(resp.getString("errmsg"));
+        }
+        return R.ok().put("reason", resp.getString("reason"));
+    }
+
+    /**
      * 发布已经审核通过的小程序
      *
      * @param appId
