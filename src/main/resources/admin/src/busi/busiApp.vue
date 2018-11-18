@@ -149,11 +149,12 @@
         </el-form-item>
         <el-form-item label="类目">
           <el-select placeholder="请选择类目"
+                     v-model="itemIndex"
                      @change="pushItemChange">
             <el-option
               v-for="(item,index) in itemList"
               :key="index"
-              :value="item"
+              :value="index"
               :label="item.firstClass+'-'+item.secondClass+'-'+item.thirdClass"
             />
           </el-select>
@@ -235,7 +236,8 @@ export default {
       pages: {},
       pushWeappShow: false,
       itemList: [],
-      pushTemp: {}
+      pushTemp: {},
+      itemIndex:''
     }
   },
   created() {
