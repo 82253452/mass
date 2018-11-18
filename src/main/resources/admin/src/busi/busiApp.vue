@@ -148,12 +148,13 @@
           <el-input v-model="pushTemp.tag"/>
         </el-form-item>
         <el-form-item label="类目">
-          <el-select placeholder="请选择类目">
+          <el-select placeholder="请选择类目"
+                     @change="pushItemChange">
             <el-option
               v-for="(item,index) in itemList"
               :key="index"
+              :value="item"
               :label="item.firstClass+'-'+item.secondClass+'-'+item.thirdClass"
-              @change="pushItemChange(item)"
             />
           </el-select>
         </el-form-item>
