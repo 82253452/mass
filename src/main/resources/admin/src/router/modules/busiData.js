@@ -18,6 +18,12 @@ const busiRouter = {
       name: 'busiArticle',
       meta: { title: '文章管理' }
     },
+    {
+      path: 'busiQuestion',
+      component: () => import('@/busi/busiQuestion'),
+      name: 'busiQuestion',
+      meta: { title: '答题管理' }
+    }
   ]
 }
 

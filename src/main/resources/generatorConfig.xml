@@ -95,9 +95,6 @@
         <!--<javaClientGenerator targetPackage="com.f4w.mapper"-->
         <!--targetProject="src/main/java"-->
         <!--type="XMLMAPPER"/>-->
-        <table tableName="sys_user_role" schema="xxx"></table>
-        <table tableName="sys_role_menu" schema="xxx"></table>
-        <table tableName="sys_role" schema="xxx"></table>
-        <table tableName="sys_menu" schema="xxx"></table>
+        <table tableName="busi_question" schema="xxx"></table>
     </context>
 </generatorConfiguration>

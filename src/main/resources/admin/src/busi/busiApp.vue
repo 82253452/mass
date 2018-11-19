@@ -68,23 +68,29 @@
       <el-table-column align="center" label="操作" fixed="right" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-popover
+            v-if="status===2||status===3||status===4"
             trigger="click"
             @show="getTestQrcode(scope.row.appId)"
           >
             <img :src="testCodeUrl" width="200px" height="200px">
             <el-button slot="reference" type="primary">预览</el-button>
           </el-popover>
-          <el-button type="primary" size="mini" @click="pushShow(scope.row.appId)">一键发版</el-button>
-          <el-button type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
-          <el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>
-          <a
-            v-if="scope.row.status==1"
-            :href="'https://dev.innter.fast4ward.cn/testApi/busiApp/downloadFile/?id='+scope.row.id"
-            download="weapp.zip">
-            <el-button type="primary" size="mini">
-              下载
-            </el-button>
-          </a>
+          <el-button
+            v-if="status===1||status===4||status===3"
+            type="primary"
+            size="mini"
+            @click="pushShow(scope.row.appId)">一键发版
+          </el-button>
+          <el-button v-if="!status||status===0" type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
+          <!--<el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>-->
+          <!--<a-->
+          <!--v-if="scope.row.status==1"-->
+          <!--:href="'https://dev.innter.fast4ward.cn/testApi/busiApp/downloadFile/?id='+scope.row.id"-->
+          <!--download="weapp.zip">-->
+          <!--<el-button type="primary" size="mini">-->
+          <!--下载-->
+          <!--</el-button>-->
+          <!--</a>-->
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{ $t('table.delete') }}
           </el-button>
@@ -148,9 +154,10 @@
           <el-input v-model="pushTemp.tag"/>
         </el-form-item>
         <el-form-item label="类目">
-          <el-select placeholder="请选择类目"
-                     v-model="itemIndex"
-                     @change="pushItemChange">
+          <el-select
+            v-model="itemIndex"
+            placeholder="请选择类目"
+            @change="pushItemChange">
             <el-option
               v-for="(item,index) in itemList"
               :key="index"
@@ -197,17 +204,20 @@ export default {
     getStatus: function(status) {
       if (status) {
         if (status === 1) {
-          return '成功'
+          return '授权成功'
         }
         if (status === 2) {
-          return '正在生成'
+          return '发版审核中'
         }
         if (status === 3) {
-          return '生成失败'
+          return '审核通过'
+        }
+        if (status === 4) {
+          return '审核不通过'
         }
         return '初始状态'
       }
-      return '初始状态'
+      return '待授权'
     }
   },
   data() {
@@ -237,7 +247,7 @@ export default {
       pushWeappShow: false,
       itemList: [],
       pushTemp: {},
-      itemIndex:''
+      itemIndex: ''
     }
   },
   created() {

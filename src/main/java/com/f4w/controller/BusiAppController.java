@@ -70,6 +70,19 @@ public class BusiAppController {
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
     /**
+     * 开启自动答题回复
+     *
+     * @param appId
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/startReplay")
+    public R startReplay(String appId) throws WxErrorException {
+
+        return R.ok();
+    }
+
+    /**
      * 查询某个指定版本的审核状态
      *
      * @param appId
@@ -262,7 +275,7 @@ public class BusiAppController {
 
     @GetMapping("/getAuthUrl")
     public R getAuthUrl() throws WxErrorException {
-        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://dev.innter.fast4ward.cn/testApi/notify/authorizerRefreshToken", "2", "");
+        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://dev.innter.fast4ward.cn/testApi/notify/authorizerRefreshToken");
         return R.ok().put("url", url);
     }
 
