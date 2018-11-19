@@ -84,39 +84,38 @@ public class NotifyController {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
 
-        String out = "";
+        String out = "success";
         // aes加密的消息
+        log.info("开始解密");
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
-        if (StringUtils.equalsAnyIgnoreCase(appId, "wxd101a85aa106f53e", "wx570bc396a51b8ff8")) {
-            try {
-                if (StringUtils.equals(inMessage.getMsgType(), "text")) {
-                    if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
-                        out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
-                                WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
-                                        .fromUser(inMessage.getToUser())
-                                        .toUser(inMessage.getFromUser())
-                                        .build()
-                                        .toXml()
-                        );
-                    } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
-                        String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
-                        WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
-                        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
-                    }
-                } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
-                    if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
-                        updateBusiAppStatus(appId, 6, "审核通过");
-                    } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
-                        updateBusiAppStatus(appId, 7, inMessage.getFailReason());
-                    }
+        try {
+            if (StringUtils.equals(inMessage.getMsgType(), "text")) {
+                if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
+                    out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
+                            WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
+                                    .fromUser(inMessage.getToUser())
+                                    .toUser(inMessage.getFromUser())
+                                    .build()
+                                    .toXml()
+                    );
+                } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
+                    String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
+                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
+                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+                }
+            } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
+                if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
+                    updateBusiAppStatus(appId, 6, "审核通过");
+                } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
+                    updateBusiAppStatus(appId, 7, inMessage.getFailReason());
+                }
 //                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
 //                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
-                }
-            } catch (WxErrorException e) {
-                log.error("callback", e);
             }
+        } catch (WxErrorException e) {
+            log.error("callback", e);
         }
         return out;
     }
