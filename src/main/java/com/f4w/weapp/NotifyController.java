@@ -83,10 +83,17 @@ public class NotifyController {
         if (!StringUtils.equalsIgnoreCase("aes", encType) || !wxOpenService.getWxOpenComponentService().checkSignature(timestamp, nonce, signature)) {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
-
         String out = "success";
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+        if (null == busiApp) {
+            return out;
+        }
+        log.info("有appid");
         // aes加密的消息
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
+        log.info("解密后");
         log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
         try {
@@ -106,9 +113,13 @@ public class NotifyController {
                 }
             } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
                 if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
-                    updateBusiAppStatus(appId, 6, "审核通过");
+                    busiApp.setStatus(6);
+                    busiApp.setAuditMsg("审核通过");
+                    busiAppMapper.updateByPrimaryKey(busiApp);
                 } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
-                    updateBusiAppStatus(appId, 7, inMessage.getFailReason());
+                    busiApp.setStatus(7);
+                    busiApp.setAuditMsg(inMessage.getFailReason());
+                    busiAppMapper.updateByPrimaryKey(busiApp);
                 }
 //                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
 //                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
@@ -117,18 +128,5 @@ public class NotifyController {
             log.error("callback", e);
         }
         return out;
-    }
-
-    private String updateBusiAppStatus(String appId, Integer status, String msg) {
-        BusiApp busiApp = new BusiApp();
-        busiApp.setAppId(appId);
-        busiApp = busiAppMapper.selectOne(busiApp);
-        if (null == busiApp) {
-            return "success";
-        }
-        busiApp.setStatus(status);
-        busiApp.setAuditMsg(msg);
-        busiAppMapper.updateByPrimaryKey(busiApp);
-        return "success";
     }
 }
