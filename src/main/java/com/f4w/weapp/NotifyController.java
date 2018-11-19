@@ -86,7 +86,6 @@ public class NotifyController {
 
         String out = "success";
         // aes加密的消息
-        log.info("开始解密");
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
