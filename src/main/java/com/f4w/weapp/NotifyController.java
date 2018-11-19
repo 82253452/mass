@@ -94,7 +94,7 @@ public class NotifyController {
         // aes加密的消息
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         log.info("解密后");
-        log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+        log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
         try {
             if (StringUtils.equals(inMessage.getMsgType(), "text")) {
