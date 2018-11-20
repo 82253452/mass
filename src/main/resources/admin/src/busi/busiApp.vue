@@ -1,21 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input
-        :placeholder="$t('table.title')"
-        v-model="listQuery.title"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"/>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
-      </el-button>
+      <!--<el-input-->
+      <!--:placeholder="$t('table.title')"-->
+      <!--v-model="listQuery.title"-->
+      <!--style="width: 200px;"-->
+      <!--class="filter-item"-->
+      <!--@keyup.enter.native="handleFilter"/>-->
+      <!--<el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
+      <!--{{ $t('table.search') }}-->
+      <!--</el-button>-->
+      <!--<el-button-->
+      <!--class="filter-item"-->
+      <!--style="margin-left: 10px;"-->
+      <!--type="primary"-->
+      <!--icon="el-icon-edit"-->
+      <!--@click="handleCreate">{{ $t('table.add') }}-->
+      <!--</el-button>-->
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleCreate">{{ $t('table.add') }}
+        @click="getAuthUrlInit">授权应用
       </el-button>
     </div>
 
@@ -91,8 +98,8 @@
           <!--下载-->
           <!--</el-button>-->
           <!--</a>-->
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{ $t('table.delete') }}
+          <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>-->
+          <!--<el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{ $t('table.delete') }}-->
           </el-button>
         </template>
       </el-table-column>

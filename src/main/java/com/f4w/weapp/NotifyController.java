@@ -11,12 +11,16 @@ import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
+import me.chanjar.weixin.open.bean.result.WxOpenQueryAuthResult;
 import me.chanjar.weixin.open.util.WxOpenCryptUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import static com.f4w.utils.Constant.REPLAY_REQUESTION;
 
@@ -32,17 +36,26 @@ public class NotifyController {
     private BusiQuestionMapper busiQuestionMapper;
 
     @RequestMapping("authorizerRefreshToken")
-    public Object authorizerRefreshToken(
-            @RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expiresIn) {
+    public void authorizerRefreshToken(
+            @RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expiresIn, HttpServletResponse response) throws IOException {
         log.info(
                 "\n接收微信请求：[authCode=[{}], expiresIn=[{}]",
                 authCode, expiresIn);
         try {
-            wxOpenService.getWxOpenComponentService().getQueryAuth(authCode);
+            WxOpenQueryAuthResult wxOpenQueryAuthResult = wxOpenService.getWxOpenComponentService().getQueryAuth(authCode);
+            String appId = wxOpenQueryAuthResult.getAuthorizationInfo().getAuthorizerAppid();
+            BusiApp busiApp = new BusiApp();
+            busiApp.setAppId(appId);
+            busiApp = busiAppMapper.selectOne(busiApp);
+            if (null == busiApp) {
+                busiApp = new BusiApp();
+                busiApp.setAppId(appId);
+                busiAppMapper.insert(busiApp);
+            }
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-        return "授权成功";
+        response.sendRedirect("/testApi/index.html#/busi/busiApp");
     }
 
     @RequestMapping("message")
