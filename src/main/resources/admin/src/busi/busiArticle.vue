@@ -191,7 +191,7 @@
     filters: {},
     methods: {
       getApps() {
-        getApps().then(resp => {
+        getApps({type:2}).then(resp => {
           this.apps = resp.data
         })
       },
