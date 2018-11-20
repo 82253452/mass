@@ -143,6 +143,7 @@ public class NotifyController {
 //                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
 //                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
         }
+        log.info("返回的内容为：\n{}" + out);
         return out;
     }
 }

@@ -19,7 +19,7 @@ public class BusiQuestionDto extends BusiQuestion {
         if (ArrayUtils.isNotEmpty(question)) {
             out += "选项：" + "\n";
             for (int i = 0; i < question.length; i++) {
-                out += pList[i] + question[i] + "\n";
+                out += pList[i] + "：" + question[i] + "\n";
             }
             out += "正确答案：" + pList[this.getRight()];
         }
