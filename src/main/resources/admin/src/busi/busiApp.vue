@@ -307,8 +307,8 @@ export default {
     },
     getItemListByAppId(appId) {
       if (!this.itemList || this.itemList.length === 0) {
-        getItemList({ appId: appId }).then(resp => {
-          this.itemList = resp.data.list
+        getItemList({ appId: appId }).then(data => {
+          this.itemList = data.list
         })
       }
     },
@@ -321,8 +321,8 @@ export default {
       })
     },
     getAuthUrlInit() {
-      getAuthUrl().then(resp => {
-        window.open(resp.data.url, '微信授权')
+      getAuthUrl().then(data => {
+        window.open(data.url, '微信授权')
       })
     },
     radioChange(id, pageId) {
@@ -331,8 +331,8 @@ export default {
       })
     },
     getPages() {
-      getAppPages().then(resp => {
-        this.pages = resp.data
+      getAppPages().then(data => {
+        this.pages = data
       })
     },
     generator(row) {
@@ -348,9 +348,9 @@ export default {
     },
     getList() {
       this.listLoading = true
-      selectByPage(this.listQuery).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
+      selectByPage(this.listQuery).then(data => {
+        this.list = data.list
+        this.total = data.total
         this.listLoading = false
       })
     },

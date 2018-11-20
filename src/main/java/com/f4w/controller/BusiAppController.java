@@ -320,14 +320,16 @@ public class BusiAppController {
 
 
     @GetMapping("/selectByPage")
-    public PageInfo<BusiApp> selectByPage(@RequestParam Map map) {
+    public R selectByPage(@CurrentUser SysUser user, @RequestParam Map map) {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setUid(user.getId());
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
-        PageInfo<BusiApp> page = new PageInfo<>(busiAppMapper.selectAll());
-        return page;
+        PageInfo<BusiApp> page = new PageInfo<>(busiAppMapper.select(busiApp));
+        return R.ok().put("data", page);
     }
 
     @GetMapping("/getAppPages")
-    public Map getAppPages(@CurrentUser SysUser sysUser, @RequestParam Map map) {
+    public R getAppPages(@CurrentUser SysUser sysUser, @RequestParam Map map) {
         BusiAppPage busiAppPage = new BusiAppPage();
         busiAppPage.setUid(sysUser.getId());
         List<BusiAppPage> list = busiAppPageMapper.select(busiAppPage);
@@ -335,32 +337,37 @@ public class BusiAppController {
         list.forEach(e -> {
             render.put(e.getId(), e.getPageName());
         });
-        return render;
+        return R.ok().put("data", render);
     }
 
     @PostMapping("/insert")
-    public int insert(@RequestBody BusiApp BusiApp) {
-        return busiAppMapper.insert(BusiApp);
+    public R insert(@RequestBody BusiApp BusiApp) {
+        int r = busiAppMapper.insert(BusiApp);
+        return R.ok().put("data", r);
     }
 
     @GetMapping("/selectById")
-    public BusiApp selectById(String id) {
-        return busiAppMapper.selectByPrimaryKey(id);
+    public R selectById(String id) {
+        BusiApp r = busiAppMapper.selectByPrimaryKey(id);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/updateById")
-    public int updateById(@RequestBody BusiApp BusiApp) {
-        return busiAppMapper.updateByPrimaryKeySelective(BusiApp);
+    public R updateById(@RequestBody BusiApp BusiApp) {
+        int r = busiAppMapper.updateByPrimaryKeySelective(BusiApp);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody String ids) {
-        return busiAppMapper.deleteByIds(ids);
+    public R deleteByIds(@RequestBody String ids) {
+        int r = busiAppMapper.deleteByIds(ids);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteById")
-    public int deleteById(@RequestBody Map param) {
-        return busiAppMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+    public R deleteById(@RequestBody Map param) {
+        int r = busiAppMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+        return R.ok().put("data", r);
     }
 
     public static void main(String[] args) {

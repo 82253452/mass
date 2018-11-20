@@ -43,7 +43,9 @@ public class LoginController {
                 key.put("uid", sysUser.getId());
                 key.put("username", sysUser.getUserName());
                 String token = jwtUtils.creatKey(key);
-                return R.ok().put("token", token);
+                Map render = new HashMap();
+                render.put("token", token);
+                return R.ok().put("data", render);
             }
         }
         return R.error(1002, "账号或密码错误");

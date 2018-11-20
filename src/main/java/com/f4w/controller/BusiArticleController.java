@@ -8,6 +8,7 @@ import com.f4w.entity.BusiArticle;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiArticleMapper;
+import com.f4w.utils.R;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.MapUtils;
@@ -31,16 +32,16 @@ public class BusiArticleController {
     private BusiAppMapper busiAppMapper;
 
     @GetMapping("/selectByPage")
-    public PageInfo<BusiArticle> selectByPage(@CurrentUser SysUser sysUser, @RequestParam Map map) {
+    public R selectByPage(@CurrentUser SysUser sysUser, @RequestParam Map map) {
         BusiArticle busiArticle = new BusiArticle();
         busiArticle.setUid(sysUser.getId());
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
         PageInfo<BusiArticle> page = new PageInfo<>(busiArticleMapper.select(busiArticle));
-        return page;
+        return R.ok().put("data", page);
     }
 
     @GetMapping("/getApps")
-    public Map getApps(@CurrentUser SysUser sysUser, @RequestParam Integer type) {
+    public R getApps(@CurrentUser SysUser sysUser, @RequestParam Integer type) {
         BusiApp busiApp = new BusiApp();
         busiApp.setUid(sysUser.getId());
         if (type != null) {
@@ -51,34 +52,39 @@ public class BusiArticleController {
         list.forEach(e -> {
             map.put(e.getAppId(), e.getNickName());
         });
-        return map;
+        return R.ok().put("data", map);
     }
 
 
     @PostMapping("/insert")
-    public int insert(@CurrentUser SysUser sysUser, @RequestBody BusiArticle busiArticle) {
+    public R insert(@CurrentUser SysUser sysUser, @RequestBody BusiArticle busiArticle) {
         busiArticle.setUid(sysUser.getId());
-        return busiArticleMapper.insert(busiArticle);
+        int r = busiArticleMapper.insert(busiArticle);
+        return R.ok().put("data", r);
     }
 
     @GetMapping("/selectById")
-    public BusiArticle selectById(String id) {
-        return busiArticleMapper.selectByPrimaryKey(id);
+    public R selectById(String id) {
+        BusiArticle r = busiArticleMapper.selectByPrimaryKey(id);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/updateById")
-    public int updateById(@RequestBody BusiArticle BusiArticle) {
-        return busiArticleMapper.updateByPrimaryKeySelective(BusiArticle);
+    public R updateById(@RequestBody BusiArticle BusiArticle) {
+        int r = busiArticleMapper.updateByPrimaryKeySelective(BusiArticle);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody String ids) {
-        return busiArticleMapper.deleteByIds(ids);
+    public R deleteByIds(@RequestBody String ids) {
+        int r = busiArticleMapper.deleteByIds(ids);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteById")
-    public int deleteById(@RequestBody Map param) {
-        return busiArticleMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+    public R deleteById(@RequestBody Map param) {
+        int r = busiArticleMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+        return R.ok().put("data", r);
     }
 }
 

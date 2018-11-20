@@ -41,7 +41,7 @@
             effect="dark"
             placement="top">
             <el-button>{{ scope.row.title.length<=8?scope.row.title:scope.row.title.substring(0,8)+'...'
-              }}
+            }}
             </el-button>
           </el-tooltip>
         </template>
@@ -51,7 +51,7 @@
           <el-tooltip
             placement="top">
             <div slot="content">
-              <div v-for="(item,i) in scope.row.questions.split('&')">{{listQue[i]}}：{{item}}</div>
+              <div v-for="(item,i) in scope.row.questions.split('&')">{{ listQue[i] }}：{{ item }}</div>
             </div>
             <el-button>选项</el-button>
           </el-tooltip>
@@ -140,193 +140,193 @@
 </template>
 
 <script>
-  import {selectByPage, insert, selectById, updateById, deleteById} from '@/api/busiQuestion'
-  import {getApps} from '@/api/busiArticle'
-  import waves from '@/directive/waves' // 水波纹指令
-  import {parseTime} from '@/utils'
+import { selectByPage, insert, selectById, updateById, deleteById } from '@/api/busiQuestion'
+import { getApps } from '@/api/busiArticle'
+import waves from '@/directive/waves' // 水波纹指令
+import { parseTime } from '@/utils'
 
-  export default {
-    name: 'ComplexTable',
-    directives: {
-      waves
-    },
-    data() {
-      const checkOptions = (rule, value, callback) => {
-        if (!value) {
+export default {
+  name: 'ComplexTable',
+  directives: {
+    waves
+  },
+  data() {
+    const checkOptions = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('选项不能为空'))
+      }
+      const array = value.split('&')
+      array.map(m => {
+        if (!m) {
           return callback(new Error('选项不能为空'))
         }
-        const array = value.split('&')
-        array.map(m => {
-          if (!m) {
-            return callback(new Error('选项不能为空'))
-          }
-        })
-        callback()
-      }
-      return {
-        tableKey: 0,
-        list: null,
-        total: null,
-        listLoading: true,
-        listQuery: {
-          page: 1,
-          limit: 20,
-          importance: undefined,
-          title: undefined,
-          type: undefined,
-          sort: '+id'
-        },
-        temp: {},
-        dialogFormVisible: false,
-        dialogStatus: '',
-        listQue: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-        textMap: {
-          update: 'Edit',
-          create: 'Create'
-        },
-        rules: {
-          questions: [
-            {validator: checkOptions, message: '选项不能为空', trigger: 'blur'}
-          ]
-        },
-        options: [
-          '',
-          '',
-          '',
-          ''
-        ],
-        apps: []
-      }
-    },
-    watch: {
-      'options': {
-        handler: function (newValue, oldValue) {
-          this.temp.questions = newValue.join('&')
-        },
-        deep: true
-      }
-    },
-    created() {
-      this.getList()
-      this.getApps()
-    },
-    methods: {
-      getQueList(text) {
-        let r = '';
-        let array = text.split('&')
-        if (!array) {
-          return r
-        }
-        array.map(v => {
-          r += v+'<br/>';
-        })
+      })
+      callback()
+    }
+    return {
+      tableKey: 0,
+      list: null,
+      total: null,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 20,
+        importance: undefined,
+        title: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      temp: {},
+      dialogFormVisible: false,
+      dialogStatus: '',
+      listQue: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      textMap: {
+        update: 'Edit',
+        create: 'Create'
+      },
+      rules: {
+        questions: [
+          { validator: checkOptions, message: '选项不能为空', trigger: 'blur' }
+        ]
+      },
+      options: [
+        '',
+        '',
+        '',
+        ''
+      ],
+      apps: []
+    }
+  },
+  watch: {
+    'options': {
+      handler: function(newValue, oldValue) {
+        this.temp.questions = newValue.join('&')
+      },
+      deep: true
+    }
+  },
+  created() {
+    this.getList()
+    this.getApps()
+  },
+  methods: {
+    getQueList(text) {
+      let r = ''
+      const array = text.split('&')
+      if (!array) {
         return r
-      },
-      getApps() {
-        getApps({type: 1}).then(resp => {
-          this.apps = resp.data
-        })
-      },
-      rightKey(i) {
-        this.temp.right = i
-      },
-      minusInput(i) {
-        this.options.splice(i, 1)
-      },
-      addInput() {
-        this.options.push('')
-      },
-      getList() {
-        this.listLoading = true
-        selectByPage(this.listQuery).then(response => {
-          this.list = response.data.list
-          this.total = response.data.total
-          this.listLoading = false
-        })
-      },
-      handleFilter() {
-        this.listQuery.page = 1
-        this.getList()
-      },
-      handleSizeChange(val) {
-        this.listQuery.limit = val
-        this.getList()
-      },
-      handleCurrentChange(val) {
-        this.listQuery.page = val
-        this.getList()
-      },
-      handleDelete(row, status) {
-        deleteById({id: row.id}).then(response => {
-          this.list.splice(this.list.indexOf(row), 1)
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-        })
-      },
-      handleCreate() {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      resetTemp() {
-        this.temp = {
-          questions: '',
-          right: ''
-        }
-      },
-      createData() {
-        console.log('add')
-        this.$refs['dataForm'].validate((valid) => {
-          console.log(222)
-          console.log(valid)
-          if (valid) {
-            console.log('yes')
-            insert(this.temp).then((id) => {
-              this.getList()
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
-        })
-      },
-      handleUpdate(row) {
-        this.temp = Object.assign({}, row) // copy obj
-        this.options = this.temp.questions.split('&')
-        this.temp.timestamp = new Date(this.temp.timestamp)
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      updateData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.temp)
-            tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            updateById(tempData).then(() => {
-              this.getList()
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '更新成功',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
-        })
       }
+      array.map(v => {
+        r += v + '<br/>'
+      })
+      return r
+    },
+    getApps() {
+      getApps({ type: 1 }).then(data => {
+        this.apps = data
+      })
+    },
+    rightKey(i) {
+      this.temp.right = i
+    },
+    minusInput(i) {
+      this.options.splice(i, 1)
+    },
+    addInput() {
+      this.options.push('')
+    },
+    getList() {
+      this.listLoading = true
+      selectByPage(this.listQuery).then(data => {
+        this.list = data.list
+        this.total = data.total
+        this.listLoading = false
+      })
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    handleSizeChange(val) {
+      this.listQuery.limit = val
+      this.getList()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.page = val
+      this.getList()
+    },
+    handleDelete(row, status) {
+      deleteById({ id: row.id }).then(data => {
+        this.list.splice(this.list.indexOf(row), 1)
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+      })
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    resetTemp() {
+      this.temp = {
+        questions: '',
+        right: ''
+      }
+    },
+    createData() {
+      console.log('add')
+      this.$refs['dataForm'].validate((valid) => {
+        console.log(222)
+        console.log(valid)
+        if (valid) {
+          console.log('yes')
+          insert(this.temp).then((id) => {
+            this.getList()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '创建成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.options = this.temp.questions.split('&')
+      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          updateById(tempData).then(() => {
+            this.getList()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
     }
   }
+}
 </script>

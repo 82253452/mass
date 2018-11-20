@@ -9,7 +9,8 @@ const busiRouter = {
   name: 'weapp',
   meta: {
     title: '小程序管理',
-    icon: 'component'
+    icon: 'component',
+    roles: ['admin', 'user']
   },
   children: [
     {
@@ -23,7 +24,7 @@ const busiRouter = {
       component: () => import('@/busi/busiAppPage'),
       name: 'busiAppPage',
       meta: { title: '小程序模板' }
-    },
+    }
   ]
 }
 

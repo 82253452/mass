@@ -26,7 +26,8 @@ public class SysTokenAspect {
     @Resource
     private JWTUtils jwtUtils;
 
-    @Pointcut("@annotation(com.f4w.annotation.TokenIntecerpt)")
+    //    @Pointcut("@annotation(com.f4w.annotation.TokenIntecerpt)")
+    @Pointcut("@within(com.f4w.annotation.TokenIntecerpt)")
     public void tokenIntecerpt() {
 
     }

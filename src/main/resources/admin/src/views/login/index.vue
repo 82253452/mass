@@ -40,12 +40,12 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
       <!--<div class="tips">-->
-        <!--<span>{{ $t('login.username') }} : admin</span>-->
-        <!--<span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>-->
+      <!--<span>{{ $t('login.username') }} : admin</span>-->
+      <!--<span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>-->
       <!--</div>-->
       <!--<div class="tips">-->
-        <!--<span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>-->
-        <!--<span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>-->
+      <!--<span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>-->
+      <!--<span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>-->
       <!--</div>-->
 
       <!--<el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button>-->
@@ -72,11 +72,12 @@ export default {
   components: { LangSelect, SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
+      // if (!isvalidUsername(value)) {
+      //   callback(new Error('Please enter the correct user name'))
+      // } else {
+      //   callback()
+      // }
+      callback()
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {

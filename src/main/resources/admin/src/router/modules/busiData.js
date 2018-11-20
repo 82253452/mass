@@ -9,7 +9,8 @@ const busiRouter = {
   name: 'data',
   meta: {
     title: '数据管理',
-    icon: 'component'
+    icon: 'component',
+    roles: ['admin', 'user']
   },
   children: [
     {

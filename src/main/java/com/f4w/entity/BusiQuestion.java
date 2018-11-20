@@ -37,6 +37,6 @@ public class BusiQuestion extends BaseEntity {
     /**
      * 
      */
-    private Integer uid;
+    private Long uid;
 
 }

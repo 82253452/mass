@@ -4,6 +4,7 @@ package com.f4w.controller;
 import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.SysUserRole;
 import com.f4w.mapper.SysUserRoleMapper;
+import com.f4w.utils.R;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.MapUtils;
@@ -20,35 +21,40 @@ public class SysUserRoleController {
     public SysUserRoleMapper sysUserRoleMapper;
 
     @GetMapping("/selectByPage")
-    public PageInfo<SysUserRole> selectByPage(@RequestParam Map map) {
+    public R selectByPage(@RequestParam Map map) {
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
         PageInfo<SysUserRole> page = new PageInfo<>(sysUserRoleMapper.selectAll());
-        return page;
+        return R.ok().put("data", page);
     }
 
     @PostMapping("/insert")
-    public int insert(@RequestBody SysUserRole SysUserRole) {
-        return sysUserRoleMapper.insert(SysUserRole);
+    public R insert(@RequestBody SysUserRole SysUserRole) {
+        int r = sysUserRoleMapper.insert(SysUserRole);
+        return R.ok().put("data", r);
     }
 
     @GetMapping("/selectById")
-    public SysUserRole selectById(String id) {
-        return sysUserRoleMapper.selectByPrimaryKey(id);
+    public R selectById(String id) {
+        SysUserRole r = sysUserRoleMapper.selectByPrimaryKey(id);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/updateById")
-    public int updateById(@RequestBody SysUserRole SysUserRole) {
-        return sysUserRoleMapper.updateByPrimaryKeySelective(SysUserRole);
+    public R updateById(@RequestBody SysUserRole SysUserRole) {
+        int r = sysUserRoleMapper.updateByPrimaryKeySelective(SysUserRole);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody String ids) {
-        return sysUserRoleMapper.deleteByIds(ids);
+    public R deleteByIds(@RequestBody String ids) {
+        int r = sysUserRoleMapper.deleteByIds(ids);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteById")
-    public int deleteById(@RequestBody Map param) {
-        return sysUserRoleMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+    public R deleteById(@RequestBody Map param) {
+        int r = sysUserRoleMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+        return R.ok().put("data", r);
     }
 }
 

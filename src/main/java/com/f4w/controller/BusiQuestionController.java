@@ -1,8 +1,11 @@
 package com.f4w.controller;
 
 
+import com.f4w.annotation.CurrentUser;
 import com.f4w.entity.BusiQuestion;
+import com.f4w.entity.SysUser;
 import com.f4w.mapper.BusiQuestionMapper;
+import com.f4w.utils.R;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.MapUtils;
@@ -19,35 +22,43 @@ public class BusiQuestionController {
     public BusiQuestionMapper busiQuestionMapper;
 
     @GetMapping("/selectByPage")
-    public PageInfo<BusiQuestion> selectByPage(@RequestParam Map map) {
+    public R selectByPage(@CurrentUser SysUser user, @RequestParam Map map) {
+        BusiQuestion busiQuestion = new BusiQuestion();
+        busiQuestion.setUid(user.getId());
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
-        PageInfo<BusiQuestion> page =new PageInfo<>(busiQuestionMapper.selectAll());
-    return page;
+        PageInfo<BusiQuestion> page = new PageInfo<>(busiQuestionMapper.select(busiQuestion));
+        return R.ok().put("data", page);
     }
 
     @PostMapping("/insert")
-    public int insert(@RequestBody BusiQuestion BusiQuestion) {
-        return busiQuestionMapper.insert(BusiQuestion);
+    public R insert(@CurrentUser SysUser user, @RequestBody BusiQuestion BusiQuestion) {
+        BusiQuestion.setUid(user.getId());
+        int r = busiQuestionMapper.insert(BusiQuestion);
+        return R.ok().put("data", r);
     }
 
     @GetMapping("/selectById")
-    public BusiQuestion selectById(String id) {
-        return busiQuestionMapper.selectByPrimaryKey(id);
+    public R selectById(String id) {
+        BusiQuestion r = busiQuestionMapper.selectByPrimaryKey(id);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/updateById")
-    public int updateById(@RequestBody BusiQuestion BusiQuestion) {
-        return busiQuestionMapper.updateByPrimaryKeySelective(BusiQuestion);
+    public R updateById(@RequestBody BusiQuestion BusiQuestion) {
+        int r = busiQuestionMapper.updateByPrimaryKeySelective(BusiQuestion);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody String ids) {
-        return busiQuestionMapper.deleteByIds(ids);
+    public R deleteByIds(@RequestBody String ids) {
+        int r = busiQuestionMapper.deleteByIds(ids);
+        return R.ok().put("data", r);
     }
 
     @PostMapping("/deleteById")
-    public int deleteById(@RequestBody Map param) {
-        return busiQuestionMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+    public R deleteById(@RequestBody Map param) {
+        int r = busiQuestionMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+        return R.ok().put("data", r);
     }
 }
 
