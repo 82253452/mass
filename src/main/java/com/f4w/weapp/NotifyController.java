@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static com.f4w.utils.Constant.REPLAY_REQUESTION;
 
@@ -143,10 +144,10 @@ public class NotifyController {
         }
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
-                BusiQuestionDto busiQuestionDto = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getAppId());
+                List<BusiQuestionDto> list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getAppId());
                 String render = "未发现相关题目，请换个关键词试试！";
-                if (null != busiQuestionDto) {
-                    render = busiQuestionDto.toString();
+                if (null != list) {
+                    render = buildQuestion(list);
                 }
                 out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
                         WxMpXmlOutMessage.TEXT().content(render)
@@ -169,6 +170,14 @@ public class NotifyController {
         }
         log.info("返回的内容为：\n{}" + out);
         return out;
+    }
+
+    private String buildQuestion(List<BusiQuestionDto> list) {
+        final String[] out = {""};
+        list.forEach(m -> {
+            out[0] += m.toString();
+        });
+        return out[0];
     }
 
     private String buildPust(String appId, WxMpXmlMessage inMessage) {

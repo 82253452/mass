@@ -5,6 +5,8 @@ import com.f4w.dto.BusiQuestionDto;
 import com.f4w.utils.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 public interface BusiQuestionMapper extends BaseMapper<BusiQuestion> {
 
     @Select("select * from busi_question")
@@ -43,8 +45,8 @@ public interface BusiQuestionMapper extends BaseMapper<BusiQuestion> {
     )
     BusiQuestionDto findDtoAll();
 
-    @Select("select  * from busi_question where title like '%' #{title} '%' and app_id=#{appId} limit 1")
+    @Select("select  * from busi_question where title like '%' #{title} '%' and app_id=#{appId}")
     @ResultMap("baseDto")
-    BusiQuestionDto getOneListQuestion(@Param("title") String title, @Param("appId") String appId);
+    List<BusiQuestionDto> getOneListQuestion(@Param("title") String title, @Param("appId") String appId);
 
 }
