@@ -63,7 +63,10 @@ public class NotifyController {
                 busiApp.setPrincipalName(wxOpenAuthorizerInfo.getPrincipalName());
                 busiApp.setQrcodeUrl(wxOpenAuthorizerInfo.getQrcodeUrl());
                 busiApp.setSignature(wxOpenAuthorizerInfo.getSignature());
-                busiApp.setMiniProgramInfo(wxOpenAuthorizerInfo.getMiniProgramInfo().getVisitStatus());
+                if (null == wxOpenAuthorizerInfo.getMiniProgramInfo()) {
+                    busiApp.setMiniProgramInfo(1);
+                }
+                busiApp.setMiniProgramInfo(2);
                 busiAppMapper.insert(busiApp);
             }
         } catch (WxErrorException e) {
