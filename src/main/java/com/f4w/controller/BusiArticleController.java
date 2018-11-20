@@ -46,7 +46,7 @@ public class BusiArticleController {
         List<BusiApp> list = busiAppMapper.select(busiApp);
         Map map = new HashMap();
         list.forEach(e -> {
-            map.put(e.getAppId(), e.getName());
+            map.put(e.getAppId(), e.getNickName());
         });
         return map;
     }

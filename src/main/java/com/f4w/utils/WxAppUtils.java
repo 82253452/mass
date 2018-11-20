@@ -11,7 +11,7 @@ public class WxAppUtils {
     public static WxMaUserService getWxMaUserService(BusiApp busiApp) {
         WxMaInMemoryConfig config = new WxMaInMemoryConfig();
         config.setAppid(busiApp.getAppId());
-        config.setSecret(busiApp.getAppSecret());
+//        config.setSecret(busiApp.getAppSecret());
         WxMaService service = new WxMaServiceImpl();
         service.setWxMaConfig(config);
         return new WxMaUserServiceImpl(service);

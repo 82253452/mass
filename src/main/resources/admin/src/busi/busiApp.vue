@@ -41,17 +41,24 @@
       </el-table-column>
       <el-table-column align="center" label="名称" width="150">
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <span>{{ scope.row.nickName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="简介" width="150">
+        <template slot-scope="scope">
+          <el-tooltip v-if="scope.row.signature" :content="scope.row.signature" class="item" effect="dark" placement="top">
+            <el-button>{{ scope.row.signature.length<=8?scope.row.signature:scope.row.signature.substring(0,8)+'...' }}</el-button>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="头像" width="150">
+        <template slot-scope="scope">
+          <img :src="scope.row.headImg" width="50px" height="50px">
         </template>
       </el-table-column>
       <el-table-column align="center" label="appId" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.appId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="appSecret" width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.appSecret }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="模板" width="150">

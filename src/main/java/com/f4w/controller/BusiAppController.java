@@ -221,7 +221,7 @@ public class BusiAppController {
         extInfo.setExtAppid(param.get("appId"));
         WxMaOpenWindow wxMaOpenWindow = new WxMaOpenWindow();
         wxMaOpenWindow.setBackgroundTextStyle("light");
-        wxMaOpenWindow.setNavigationBarTitleText(busiApp.getName());
+        wxMaOpenWindow.setNavigationBarTitleText(busiApp.getNickName());
         wxMaOpenWindow.setNavigationBarTextStyle("black");
         extInfo.setWindow(wxMaOpenWindow);
         //set ext
