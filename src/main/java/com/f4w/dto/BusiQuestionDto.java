@@ -14,11 +14,11 @@ public class BusiQuestionDto extends BusiQuestion {
     private static final String[] pList = {"A", "B", "C", "D", "E", "H"};
 
     public String toString() {
-        String out = this.getTitle() + "<br/>";
+        String out = this.getTitle() + "\n";
         String[] question = this.getQuestions().split("&");
         if (ArrayUtils.isNotEmpty(question)) {
             for (int i = 0; i < question.length; i++) {
-                out += pList[i] + question[i] + "<br/>";
+                out += pList[i] + question[i] + "\n";
             }
             out += "正确答案：" + pList[this.getRight()];
         }
