@@ -88,7 +88,7 @@
             size="mini"
             @click="pushShow(scope.row.appId)">一键发版
           </el-button>
-          <el-button v-if="!status||status===0" type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>
+          <!--<el-button v-if="!status||status===0" type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>-->
           <!--<el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>-->
           <!--<a-->
           <!--v-if="scope.row.status==1"-->
