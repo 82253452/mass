@@ -11,13 +11,16 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 @Data
 public class BusiQuestionDto extends BusiQuestion {
+    private static final String[] pList = {"A", "B", "C", "D", "E", "H"};
+
     public String toString() {
-        String out = this.getTitle() + "/n";
+        String out = this.getTitle() + "<br/>";
         String[] question = this.getQuestions().split("&");
         if (ArrayUtils.isNotEmpty(question)) {
             for (int i = 0; i < question.length; i++) {
-                out += question[i] + "/n";
+                out += pList[i] + question[i] + "<br/>";
             }
+            out += "正确答案：" + pList[this.getRight()];
         }
         return out;
     }
