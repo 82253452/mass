@@ -116,7 +116,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('table.confirm') }}</el-button>
+        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('table.confirm') }}
+        </el-button>
         <el-button v-else type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
@@ -195,7 +196,7 @@ export default {
   },
   methods: {
     getApps() {
-      getApps().then(resp => {
+      getApps({ type: 1 }).then(resp => {
         this.apps = resp.data
       })
     },

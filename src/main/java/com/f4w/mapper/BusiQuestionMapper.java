@@ -24,6 +24,7 @@ public interface BusiQuestionMapper extends BaseMapper<BusiQuestion> {
             }
     )
     BusiQuestion findAll();
+
     @Select("select * from busi_question")
     @Results(
             id = "baseDto",
@@ -41,8 +42,9 @@ public interface BusiQuestionMapper extends BaseMapper<BusiQuestion> {
             }
     )
     BusiQuestionDto findDtoAll();
-    @Select("select  * from busi_question where title like '%' #{title} '%' limit 1")
+
+    @Select("select  * from busi_question where title like '%' #{title} '%' and app_id=#{appId} limit 1")
     @ResultMap("baseDto")
-    BusiQuestionDto getOneListQuestion(String title);
+    BusiQuestionDto getOneListQuestion(@Param("title") String title, @Param("appId") String appId);
 
 }

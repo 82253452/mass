@@ -40,9 +40,12 @@ public class BusiArticleController {
     }
 
     @GetMapping("/getApps")
-    public Map getApps(@CurrentUser SysUser sysUser) {
+    public Map getApps(@CurrentUser SysUser sysUser, @RequestParam Integer type) {
         BusiApp busiApp = new BusiApp();
         busiApp.setUid(sysUser.getId());
+        if (type != null) {
+            busiApp.setMiniProgramInfo(type);
+        }
         List<BusiApp> list = busiAppMapper.select(busiApp);
         Map map = new HashMap();
         list.forEach(e -> {

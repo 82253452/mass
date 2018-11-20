@@ -2,12 +2,10 @@ package com.f4w.weapp;
 
 import com.f4w.dto.BusiQuestionDto;
 import com.f4w.entity.BusiApp;
-import com.f4w.entity.BusiQuestion;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiQuestionMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
@@ -16,12 +14,10 @@ import me.chanjar.weixin.open.bean.result.WxOpenAuthorizerInfoResult;
 import me.chanjar.weixin.open.bean.result.WxOpenQueryAuthResult;
 import me.chanjar.weixin.open.util.WxOpenCryptUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 import static com.f4w.utils.Constant.REPLAY_REQUESTION;
@@ -39,10 +35,13 @@ public class NotifyController {
 
     @RequestMapping("authorizerRefreshToken")
     public void authorizerRefreshToken(
-            @RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expiresIn, HttpServletResponse response) throws IOException {
+            @RequestParam("auth_code") String authCode
+            , @RequestParam("expires_in") String expiresIn
+            , @RequestParam("uid") Long uid
+            , HttpServletResponse response) throws IOException {
         log.info(
-                "\n接收微信请求：[authCode=[{}], expiresIn=[{}]",
-                authCode, expiresIn);
+                "\n接收微信请求：[authCode=[{}], expiresIn=[{}], uid=[{}]",
+                authCode, expiresIn, uid);
         try {
             WxOpenQueryAuthResult wxOpenQueryAuthResult = wxOpenService.getWxOpenComponentService().getQueryAuth(authCode);
             String appId = wxOpenQueryAuthResult.getAuthorizationInfo().getAuthorizerAppid();
@@ -64,6 +63,8 @@ public class NotifyController {
                 busiApp.setQrcodeUrl(wxOpenAuthorizerInfo.getQrcodeUrl());
                 busiApp.setSignature(wxOpenAuthorizerInfo.getSignature());
                 busiApp.setStatus(1);
+                busiApp.setReplay(0);
+                busiApp.setUid(uid);
                 if (null == wxOpenAuthorizerInfo.getMiniProgramInfo()) {
                     busiApp.setMiniProgramInfo(1);
                 } else {
@@ -136,7 +137,7 @@ public class NotifyController {
         // 全网发布测试用例
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
-                BusiQuestionDto busiQuestionDto = busiQuestionMapper.getOneListQuestion(inMessage.getContent());
+                BusiQuestionDto busiQuestionDto = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getAppId());
                 String render = "未发现相关题目，请换个关键词试试！";
                 if (null != busiQuestionDto) {
                     render = busiQuestionDto.toString();

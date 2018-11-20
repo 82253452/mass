@@ -46,8 +46,15 @@
       </el-table-column>
       <el-table-column align="center" label="简介" width="150">
         <template slot-scope="scope">
-          <el-tooltip v-if="scope.row.signature" :content="scope.row.signature" class="item" effect="dark" placement="top">
-            <el-button>{{ scope.row.signature.length<=8?scope.row.signature:scope.row.signature.substring(0,8)+'...' }}</el-button>
+          <el-tooltip
+            v-if="scope.row.signature"
+            :content="scope.row.signature"
+            class="item"
+            effect="dark"
+            placement="top">
+            <el-button>{{ scope.row.signature.length<=8?scope.row.signature:scope.row.signature.substring(0,8)+'...'
+            }}
+            </el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -56,23 +63,23 @@
           <img :src="scope.row.headImg" width="50px" height="50px">
         </template>
       </el-table-column>
-      <el-table-column align="center" label="appId" width="150">
+      <el-table-column align="center" label="类型" width="150">
         <template slot-scope="scope">
-          <span>{{ scope.row.appId }}</span>
+          <span>{{ scope.row.miniProgramInfo===1?'公众号':'小程序' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="模板" width="150">
-        <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <el-radio-group v-model="scope.row.pageId" @change="radioChange(scope.row.id,scope.row.pageId)">
-              <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{ p }}</el-radio-button>
-            </el-radio-group>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ pages[scope.row.pageId]?pages[scope.row.pageId]:'无' }}</el-tag>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
+      <!--<el-table-column align="center" label="模板" width="150">-->
+      <!--<template slot-scope="scope">-->
+      <!--<el-popover trigger="hover" placement="top">-->
+      <!--<el-radio-group v-model="scope.row.pageId" @change="radioChange(scope.row.id,scope.row.pageId)">-->
+      <!--<el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{ p }}</el-radio-button>-->
+      <!--</el-radio-group>-->
+      <!--<div slot="reference" class="name-wrapper">-->
+      <!--<el-tag size="medium">{{ pages[scope.row.pageId]?pages[scope.row.pageId]:'无' }}</el-tag>-->
+      <!--</div>-->
+      <!--</el-popover>-->
+      <!--</template>-->
+      <!--</el-table-column>-->
       <el-table-column align="center" label="状态" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.status|getStatus }}</span>
@@ -82,7 +89,7 @@
       <el-table-column align="center" label="操作" fixed="right" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-popover
-            v-if="status===2||status===3||status===4"
+            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===2||scope.row.status===3||scope.row.status===4)"
             trigger="click"
             @show="getTestQrcode(scope.row.appId)"
           >
@@ -90,10 +97,14 @@
             <el-button slot="reference" type="primary">预览</el-button>
           </el-popover>
           <el-button
-            v-if="status===1||status===4||status===3"
+            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===1||scope.row.status===4||scope.row.status===3)"
             type="primary"
-            size="mini"
-            @click="pushShow(scope.row.appId)">一键发版
+            @click="pushShow(scope.row.appId)">发版
+          </el-button>
+          <el-button
+            v-if="scope.row.miniProgramInfo===1"
+            type="primary"
+            @click="startReplay(scope.row.replay,scope.row.id)">{{ scope.row.replay?'关闭答题回复':'开启答题回复' }}
           </el-button>
           <!--<el-button v-if="!status||status===0" type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>-->
           <!--<el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>-->
@@ -269,6 +280,23 @@ export default {
     this.getPages()
   },
   methods: {
+    startReplay(status, id) {
+      var param = { id: id }
+      if (status) {
+        param.replay = 0
+      } else {
+        param.replay = 1
+      }
+      updateById(param).then(() => {
+        this.getList()
+        this.$notify({
+          title: '成功',
+          message: '更新成功',
+          type: 'success',
+          duration: 2000
+        })
+      })
+    },
     pushShow(appId) {
       this.getItemListByAppId(appId)
       this.pushWeappShow = true
