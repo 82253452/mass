@@ -91,9 +91,11 @@ public class NotifyController {
             return out;
         }
         log.info("有appid");
+        WxOpenXmlMessage.fromEncryptedXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         // aes加密的消息
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         log.info("解密后");
+        log.info("content" + inMessage.getContent());
         log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
         try {
