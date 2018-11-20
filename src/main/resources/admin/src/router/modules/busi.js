@@ -8,7 +8,7 @@ const busiRouter = {
   redirect: 'noredirect',
   name: 'weapp',
   meta: {
-    title: '小程序管理',
+    title: '应用管理',
     icon: 'component',
     roles: ['admin', 'user']
   },
@@ -17,7 +17,7 @@ const busiRouter = {
       path: 'busiApp',
       component: () => import('@/busi/busiApp'),
       name: 'busiApp',
-      meta: { title: '小程序管理' }
+      meta: { title: '应用管理' }
     },
     {
       path: 'busiAppPage',
