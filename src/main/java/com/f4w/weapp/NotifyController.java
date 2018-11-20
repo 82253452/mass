@@ -138,6 +138,7 @@ public class NotifyController {
         // 全网发布测试用例
         String pushOut = buildPust(appId, inMessage);
         if (StringUtils.isNotBlank(pushOut)) {
+            log.info("返回测试--{}" + pushOut);
             return pushOut;
         }
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
@@ -174,6 +175,7 @@ public class NotifyController {
         String out = "";
         if (StringUtils.equalsAnyIgnoreCase(appId, "wxd101a85aa106f53e", "wx570bc396a51b8ff8")) {
             try {
+                log.info("测试content--{}" + inMessage.getContent());
                 if (StringUtils.equals(inMessage.getMsgType(), "text")) {
                     if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
                         out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(
