@@ -1,9 +1,11 @@
 package com.f4w.entity;
 
 import lombok.Data;
+import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -29,4 +31,13 @@ public class BusiApp extends BaseEntity {
     private Integer version;
     private String auditMsg;
     private Integer replay;
+    private String nickName;
+    private String headImg;
+    private Integer serviceTypeInfo;
+    private Integer verifyTypeInfo;
+    private String userName;
+    private String principalName;
+    private String qrcodeUrl;
+    private String signature;
+    private Integer miniProgramInfo;
 }

@@ -10,7 +10,9 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
+import me.chanjar.weixin.open.bean.result.WxOpenAuthorizerInfoResult;
 import me.chanjar.weixin.open.bean.result.WxOpenQueryAuthResult;
 import me.chanjar.weixin.open.util.WxOpenCryptUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -48,8 +50,20 @@ public class NotifyController {
             busiApp.setAppId(appId);
             busiApp = busiAppMapper.selectOne(busiApp);
             if (null == busiApp) {
+                //获取应用信息
+                WxOpenAuthorizerInfoResult wxOpenAuthorizerInfoResult = wxOpenService.getWxOpenComponentService().getAuthorizerInfo(appId);
+                WxOpenAuthorizerInfo wxOpenAuthorizerInfo = wxOpenAuthorizerInfoResult.getAuthorizerInfo();
                 busiApp = new BusiApp();
                 busiApp.setAppId(appId);
+                busiApp.setNickName(wxOpenAuthorizerInfo.getNickName());
+                busiApp.setHeadImg(wxOpenAuthorizerInfo.getHeadImg());
+                busiApp.setServiceTypeInfo(wxOpenAuthorizerInfo.getServiceTypeInfo());
+                busiApp.setVerifyTypeInfo(wxOpenAuthorizerInfo.getVerifyTypeInfo());
+                busiApp.setUserName(wxOpenAuthorizerInfo.getUserName());
+                busiApp.setPrincipalName(wxOpenAuthorizerInfo.getPrincipalName());
+                busiApp.setQrcodeUrl(wxOpenAuthorizerInfo.getQrcodeUrl());
+                busiApp.setSignature(wxOpenAuthorizerInfo.getSignature());
+                busiApp.setMiniProgramInfo(wxOpenAuthorizerInfo.getMiniProgramInfo().getVisitStatus());
                 busiAppMapper.insert(busiApp);
             }
         } catch (WxErrorException e) {
