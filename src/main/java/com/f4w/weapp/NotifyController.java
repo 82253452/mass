@@ -6,6 +6,7 @@ import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiQuestionMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
@@ -135,6 +136,10 @@ public class NotifyController {
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
+        String pushOut = buildPust(appId, inMessage);
+        if (StringUtils.isNotBlank(pushOut)) {
+            return pushOut;
+        }
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
                 BusiQuestionDto busiQuestionDto = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getAppId());
@@ -177,6 +182,36 @@ public class NotifyController {
 //                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
         }
         log.info("返回的内容为：\n{}" + out);
+        return out;
+    }
+
+    private String buildPust(String appId, WxMpXmlMessage inMessage) {
+        String out = "";
+        if (StringUtils.equalsAnyIgnoreCase(appId, "wxd101a85aa106f53e", "wx570bc396a51b8ff8")) {
+            try {
+                if (StringUtils.equals(inMessage.getMsgType(), "text")) {
+                    if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
+                        out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(
+                                WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
+                                        .fromUser(inMessage.getToUser())
+                                        .toUser(inMessage.getFromUser())
+                                        .build(),
+                                wxOpenService.getWxOpenConfigStorage()
+                        );
+                    } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
+                        String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
+                        WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
+                        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+                    }
+                } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
+                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
+                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+                    out = "success";
+                }
+            } catch (WxErrorException e) {
+                log.error("callback", e);
+            }
+        }
         return out;
     }
 }
