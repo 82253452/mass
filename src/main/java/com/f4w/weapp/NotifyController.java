@@ -1,7 +1,10 @@
 package com.f4w.weapp;
 
+import com.f4w.dto.BusiQuestionDto;
 import com.f4w.entity.BusiApp;
+import com.f4w.entity.BusiQuestion;
 import com.f4w.mapper.BusiAppMapper;
+import com.f4w.mapper.BusiQuestionMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
@@ -15,14 +18,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+import static com.f4w.utils.Constant.REPLAY_REQUESTION;
+
 @Slf4j
 @RestController
 @RequestMapping("notify")
 public class NotifyController {
-    @Autowired
+    @Resource
     protected WxOpenService wxOpenService;
     @Resource
     private BusiAppMapper busiAppMapper;
+    @Resource
+    private BusiQuestionMapper busiQuestionMapper;
 
     @RequestMapping("authorizerRefreshToken")
     public Object authorizerRefreshToken(
@@ -90,44 +97,51 @@ public class NotifyController {
         if (null == busiApp) {
             return out;
         }
-        log.info("有appid");
         WxOpenXmlMessage.fromEncryptedXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         // aes加密的消息
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-        log.info("解密后");
-        log.info("content" + inMessage.getContent());
         log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
-        try {
-            if (StringUtils.equals(inMessage.getMsgType(), "text")) {
-                if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
-                    out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
-                            WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
-                                    .fromUser(inMessage.getToUser())
-                                    .toUser(inMessage.getFromUser())
-                                    .build()
-                                    .toXml()
-                    );
-                } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
-                    String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
-                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
-                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+        if (StringUtils.equals(inMessage.getMsgType(), "text")) {
+            if (REPLAY_REQUESTION == busiApp.getReplay()) {
+                BusiQuestionDto busiQuestionDto = busiQuestionMapper.getOneListQuestion(inMessage.getContent());
+                String render = "未发现相关题目，请换个关键词试试！";
+                if (null != busiQuestionDto) {
+                    render = busiQuestionDto.toString();
                 }
-            } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
-                if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
-                    busiApp.setStatus(6);
-                    busiApp.setAuditMsg("审核通过");
-                    busiAppMapper.updateByPrimaryKey(busiApp);
-                } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
-                    busiApp.setStatus(7);
-                    busiApp.setAuditMsg(inMessage.getFailReason());
-                    busiAppMapper.updateByPrimaryKey(busiApp);
-                }
+                out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
+                        WxMpXmlOutMessage.TEXT().content(render)
+                                .fromUser(inMessage.getToUser())
+                                .toUser(inMessage.getFromUser())
+                                .build()
+                                .toXml()
+                );
+            }
+//                if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
+//                    out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
+//                            WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
+//                                    .fromUser(inMessage.getToUser())
+//                                    .toUser(inMessage.getFromUser())
+//                                    .build()
+//                                    .toXml()
+//                    );
+//                } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
+//                    String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
+//                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
+//                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+//                }
+        } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
+            if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
+                busiApp.setStatus(6);
+                busiApp.setAuditMsg("审核通过");
+                busiAppMapper.updateByPrimaryKey(busiApp);
+            } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
+                busiApp.setStatus(7);
+                busiApp.setAuditMsg(inMessage.getFailReason());
+                busiAppMapper.updateByPrimaryKey(busiApp);
+            }
 //                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
 //                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
-            }
-        } catch (WxErrorException e) {
-            log.error("callback", e);
         }
         return out;
     }

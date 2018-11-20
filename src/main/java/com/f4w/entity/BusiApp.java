@@ -28,4 +28,5 @@ public class BusiApp extends BaseEntity {
     private Long auditId;
     private Integer version;
     private String auditMsg;
+    private Integer replay;
 }

@@ -41,5 +41,8 @@ public interface BusiQuestionMapper extends BaseMapper<BusiQuestion> {
             }
     )
     BusiQuestionDto findDtoAll();
+    @Select("select  * from busi_question where title like '%' #{title} '%' limit 1")
+    @ResultMap("baseDto")
+    BusiQuestionDto getOneListQuestion(String title);
 
 }
