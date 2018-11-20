@@ -155,19 +155,6 @@ public class NotifyController {
                                 .toXml()
                 );
             }
-//                if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
-//                    out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
-//                            WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
-//                                    .fromUser(inMessage.getToUser())
-//                                    .toUser(inMessage.getFromUser())
-//                                    .build()
-//                                    .toXml()
-//                    );
-//                } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
-//                    String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
-//                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
-//                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
-//                }
         } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
             if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
                 busiApp.setStatus(6);
@@ -178,8 +165,6 @@ public class NotifyController {
                 busiApp.setAuditMsg(inMessage.getFailReason());
                 busiAppMapper.updateByPrimaryKey(busiApp);
             }
-//                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
-//                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
         }
         log.info("返回的内容为：\n{}" + out);
         return out;
