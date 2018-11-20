@@ -125,12 +125,6 @@ public class NotifyController {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
         String out = "success";
-        BusiApp busiApp = new BusiApp();
-        busiApp.setAppId(appId);
-        busiApp = busiAppMapper.selectOne(busiApp);
-        if (null == busiApp) {
-            return out;
-        }
         WxOpenXmlMessage.fromEncryptedXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         // aes加密的消息
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
@@ -140,6 +134,12 @@ public class NotifyController {
         if (StringUtils.isNotBlank(pushOut)) {
             log.info("返回测试--{}" + pushOut);
             return pushOut;
+        }
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+        if (null == busiApp) {
+            return out;
         }
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
