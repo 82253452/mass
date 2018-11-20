@@ -14,9 +14,10 @@ public class BusiQuestionDto extends BusiQuestion {
     private static final String[] pList = {"A", "B", "C", "D", "E", "H"};
 
     public String toString() {
-        String out = this.getTitle() + "\n";
+        String out = "题目：" + this.getTitle() + "\n";
         String[] question = this.getQuestions().split("&");
         if (ArrayUtils.isNotEmpty(question)) {
+            out += "选项：" + "\n";
             for (int i = 0; i < question.length; i++) {
                 out += pList[i] + question[i] + "\n";
             }
