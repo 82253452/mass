@@ -2,6 +2,7 @@ package com.f4w.dto;
 
 import lombok.Data;
 import com.f4w.entity.BusiQuestion;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author yp
  */
+@Slf4j
 @Data
 public class BusiQuestionDto extends BusiQuestion {
     private static final String[] pList = {"A", "B", "C", "D", "E", "H"};
@@ -36,7 +38,11 @@ public class BusiQuestionDto extends BusiQuestion {
         out += "答案： \n";
         for (Integer i = 0; i < l; i++) {
             char a = getAnswer().charAt(i);
-            out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
+            try {
+                out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
+            } catch (Exception e) {
+                log.error("匹配答案失败:" + getId());
+            }
         }
         return out;
     }
