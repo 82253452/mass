@@ -36,7 +36,7 @@ public class BusiQuestionDto extends BusiQuestion {
         out += "答案： \n";
         for (Integer i = 0; i < l; i++) {
             char a = getAnswer().charAt(i);
-            out += queArray[Integer.valueOf(a)] + "\n";
+            out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
         }
         return out;
     }
