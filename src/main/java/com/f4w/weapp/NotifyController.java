@@ -14,12 +14,16 @@ import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenAuthorizerInfoResult;
 import me.chanjar.weixin.open.bean.result.WxOpenQueryAuthResult;
 import me.chanjar.weixin.open.util.WxOpenCryptUtil;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.plaf.ListUI;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static com.f4w.utils.Constant.REPLAY_REQUESTION;
@@ -146,7 +150,7 @@ public class NotifyController {
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
                 List<BusiQuestionDto> list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getAppId());
                 String render = "未发现相关题目，请换个关键词试试！";
-                if (null != list) {
+                if (CollectionUtils.isNotEmpty(list)) {
                     render = buildQuestion(list);
                 }
                 out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
