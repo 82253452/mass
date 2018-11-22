@@ -41,6 +41,7 @@ public class BusiQuestionDto extends BusiQuestion {
             try {
                 out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
             } catch (Exception e) {
+                out += "无效答案\n";
                 log.error("匹配答案失败:" + getId());
             }
         }
