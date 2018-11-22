@@ -64,7 +64,6 @@ public class BusiQuestionController {
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
         List<BusiQuestion> list = busiQuestionMapper.select(busiQuestion);
         PageInfo<BusiQuestion> page = new PageInfo<>(list);
-        System.out.println(list.toString());
         return R.ok().put("data", page);
     }
 
