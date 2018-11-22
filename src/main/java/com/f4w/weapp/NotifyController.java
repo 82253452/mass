@@ -153,6 +153,9 @@ public class NotifyController {
                 if (CollectionUtils.isNotEmpty(list)) {
                     render = buildQuestion(list);
                 }
+                if (render.getBytes().length >= 2048) {
+                    render = "返回内容过多，请换个关键词试试！";
+                }
                 out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
                         WxMpXmlOutMessage.TEXT().content(render)
                                 .fromUser(inMessage.getToUser())
