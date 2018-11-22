@@ -29,7 +29,7 @@ public class BusiQuestion extends BaseEntity {
     /**
      * 正确答案
      */
-    private Integer right;
+    private String answer;
     /**
      * 
      */
@@ -38,5 +38,7 @@ public class BusiQuestion extends BaseEntity {
      * 
      */
     private Long uid;
+
+    private Integer type;
 
 }

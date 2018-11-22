@@ -17,6 +17,26 @@
         icon="el-icon-edit"
         @click="handleCreate">{{ $t('table.add') }}
       </el-button>
+      <div
+        class="filter-item"
+        style="margin-left: 10px;">
+        <el-upload
+          ref="upload"
+          :headers="getToken()"
+          :data="temp.appId"
+          :show-file-list="false"
+          :before-upload="valiteData"
+          action="http://localhost:8082/busiQuestion/importQue">
+          <el-select v-model="temp.appId" placeholder="Select">
+            <el-option
+              v-for="(item,v) in apps"
+              :key="item"
+              :label="item"
+              :value="v"/>
+          </el-select>
+          <el-button type="primary">上传</el-button>
+        </el-upload>
+      </div>
     </div>
 
     <el-table
@@ -32,7 +52,7 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="题目" width="150">
+      <el-table-column align="center" label="题目" width="200">
         <template slot-scope="scope">
           <el-tooltip
             v-if="scope.row.title"
@@ -40,26 +60,25 @@
             class="item"
             effect="dark"
             placement="top">
-            <el-button>{{ scope.row.title.length<=8?scope.row.title:scope.row.title.substring(0,8)+'...'
-            }}
+            <el-button>{{ scope.row.title.length<=8?scope.row.title:scope.row.title.substring(0,8)+'...' }}
             </el-button>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="答题" width="150">
+      <el-table-column align="center" label="类型" width="150">
         <template slot-scope="scope">
-          <el-tooltip
-            placement="top">
-            <div slot="content">
-              <div v-for="(item,i) in scope.row.questions.split('&')">{{ listQue[i] }}：{{ item }}</div>
-            </div>
-            <el-button>选项</el-button>
-          </el-tooltip>
+          <span>{{ scope.row.type===1?'单选题':scope.row.type===2?'多选题':'判断题' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="正确答案" width="150">
+      <el-table-column align="center" label="正确答案" width="200">
         <template slot-scope="scope">
-          <span>{{ listQue[scope.row.right] }}</span>
+          <el-tooltip
+            :content="getContent(scope)"
+            class="item"
+            effect="dark"
+            placement="top">
+            <el-button>{{ getContent(scope,1) }}</el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column align="center" label="状态" width="150">
@@ -144,6 +163,7 @@ import { selectByPage, insert, selectById, updateById, deleteById } from '@/api/
 import { getApps } from '@/api/busiArticle'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'ComplexTable',
@@ -211,6 +231,39 @@ export default {
     this.getApps()
   },
   methods: {
+    getContent(scope, short) {
+      const type = scope.row.type
+      if (type === 3) {
+        if (answer == 1) {
+          return '正确'
+        }
+        return '错误'
+      }
+      const ques = scope.row.questions
+      const answer = scope.row.answer
+      let render = ''
+      const queArray = ques.split('&')
+      const n = answer.length
+      for (let i = 0; i < n; i++) {
+        render += queArray[answer.charAt(i)] + '-'
+      }
+      if (short) {
+        return render.substring(0, render.length - 1).substring(0, 8) + '...'
+      }
+      return render.substring(0, render.length - 1)
+    },
+    valiteData() {
+      if (!this.temp.appId) {
+        this.$message({
+          message: '请先选择小程序',
+          type: 'success'
+        })
+        return false
+      }
+    },
+    getToken() {
+      return { 'X-Token': getToken() }
+    },
     getQueList(text) {
       let r = ''
       const array = text.split('&')
