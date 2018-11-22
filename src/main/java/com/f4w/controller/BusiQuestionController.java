@@ -35,7 +35,7 @@ public class BusiQuestionController {
     @PostMapping("/importQue")
     public R importQue(@CurrentUser SysUser user, String appId, @RequestParam("file") MultipartFile file) throws IOException {
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(file.getInputStream());
-        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(xssfWorkbook.getActiveSheetIndex());
         XSSFRow row;
         int i = 0;
         String t = "";
@@ -50,6 +50,9 @@ public class BusiQuestionController {
             i++;
             data.append(t);
             data.append("&");
+            if (i > 10000) {
+                break;
+            }
         }
         String d = data.toString();
         System.out.println(d);

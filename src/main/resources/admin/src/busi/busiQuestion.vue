@@ -26,6 +26,7 @@
           :data="temp.appId"
           :show-file-list="false"
           :before-upload="valiteData"
+          :on-success="handleDataSuccess"
           action="busiQuestion/importQue">
           <el-select v-model="temp.appId" placeholder="Select">
             <el-option
@@ -188,236 +189,242 @@
 </template>
 
 <script>
-import { selectByPage, insert, selectById, updateById, deleteById } from '@/api/busiQuestion'
-import { getApps } from '@/api/busiArticle'
-import waves from '@/directive/waves' // 水波纹指令
-import { parseTime } from '@/utils'
-import { getToken } from '@/utils/auth'
+  import {selectByPage, insert, selectById, updateById, deleteById} from '@/api/busiQuestion'
+  import {getApps} from '@/api/busiArticle'
+  import waves from '@/directive/waves' // 水波纹指令
+  import {parseTime} from '@/utils'
+  import {getToken} from '@/utils/auth'
+  import {Loading} from 'element-ui';
 
-export default {
-  name: 'ComplexTable',
-  directives: {
-    waves
-  },
-  data() {
-    const checkOptions = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('选项不能为空'))
-      }
-      const array = value.split('&')
-      array.map(m => {
-        if (!m) {
+  export default {
+    name: 'ComplexTable',
+    directives: {
+      waves
+    },
+    data() {
+      const checkOptions = (rule, value, callback) => {
+        if (!value) {
           return callback(new Error('选项不能为空'))
         }
-      })
-      callback()
-    }
-    return {
-      tableKey: 0,
-      list: null,
-      total: null,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
-      },
-      temp: {},
-      dialogFormVisible: false,
-      dialogStatus: '',
-      listQue: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
-      },
-      rules: {
-        questions: [
-          { validator: checkOptions, message: '选项或答案不能为空', trigger: 'blur' }
-        ]
-      },
-      options: [
-        '',
-        '',
-        '',
-        ''
-      ],
-      apps: []
-    }
-  },
-  watch: {
-    'options': {
-      handler: function(newValue, oldValue) {
-        this.temp.questions = newValue.join('&')
-      },
-      deep: true
-    }
-  },
-  created() {
-    this.getList()
-    this.getApps()
-  },
-  methods: {
-    getContent(scope, short) {
-      const type = scope.row.type
-      if (type === 3) {
-        if (answer == 1) {
-          return '正确'
-        }
-        return '错误'
-      }
-      const ques = scope.row.questions
-      const answer = scope.row.answer
-      let render = ''
-      const queArray = ques.split('&')
-      const n = answer.length
-      for (let i = 0; i < n; i++) {
-        render += queArray[answer.charAt(i)] + '-'
-      }
-      if (short) {
-        return render.substring(0, render.length - 1).substring(0, 8) + '...'
-      }
-      return render.substring(0, render.length - 1)
-    },
-    valiteData() {
-      if (!this.temp.appId) {
-        this.$message({
-          message: '请先选择小程序',
-          type: 'success'
+        const array = value.split('&')
+        array.map(m => {
+          if (!m) {
+            return callback(new Error('选项不能为空'))
+          }
         })
-        return false
+        callback()
+      }
+      return {
+        tableKey: 0,
+        list: null,
+        total: null,
+        listLoading: true,
+        listQuery: {
+          page: 1,
+          limit: 20,
+          importance: undefined,
+          title: undefined,
+          type: undefined,
+          sort: '+id'
+        },
+        temp: {},
+        dialogFormVisible: false,
+        dialogStatus: '',
+        listQue: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+        textMap: {
+          update: 'Edit',
+          create: 'Create'
+        },
+        rules: {
+          questions: [
+            {validator: checkOptions, message: '选项或答案不能为空', trigger: 'blur'}
+          ]
+        },
+        options: [
+          '',
+          '',
+          '',
+          ''
+        ],
+        apps: [],
+        loadingInstance: {},
       }
     },
-    getToken() {
-      return { 'X-Token': getToken() }
+    watch: {
+      'options': {
+        handler: function (newValue, oldValue) {
+          this.temp.questions = newValue.join('&')
+        },
+        deep: true
+      }
     },
-    getQueList(text) {
-      let r = ''
-      const array = text.split('&')
-      if (!array) {
+    created() {
+      this.getList()
+      this.getApps()
+    },
+    methods: {
+      getContent(scope, short) {
+        const type = scope.row.type
+        if (type === 3) {
+          if (answer == 1) {
+            return '正确'
+          }
+          return '错误'
+        }
+        const ques = scope.row.questions
+        const answer = scope.row.answer
+        let render = ''
+        const queArray = ques.split('&')
+        const n = answer.length
+        for (let i = 0; i < n; i++) {
+          render += queArray[answer.charAt(i)] + '-'
+        }
+        if (short) {
+          return render.substring(0, render.length - 1).substring(0, 8) + '...'
+        }
+        return render.substring(0, render.length - 1)
+      },
+      valiteData() {
+        if (!this.temp.appId) {
+          this.$message({
+            message: '请先选择小程序',
+            type: 'success'
+          })
+          return false
+        }
+        this.loadingInstance = Loading.service({fullscreen: true})
+      },
+      handleDataSuccess() {
+        this.loadingInstance.close()
+      },
+      getToken() {
+        return {'X-Token': getToken()}
+      },
+      getQueList(text) {
+        let r = ''
+        const array = text.split('&')
+        if (!array) {
+          return r
+        }
+        array.map(v => {
+          r += v + '<br/>'
+        })
         return r
-      }
-      array.map(v => {
-        r += v + '<br/>'
-      })
-      return r
-    },
-    getApps() {
-      getApps({ type: 1 }).then(data => {
-        this.apps = data
-      })
-    },
-    rightKey(i) {
-      if (this.temp.type == 2) {
-        if (this.temp.answer.indexOf('' + i) != -1) {
-          this.temp.answer = this.temp.answer.replace('' + i, '')
+      },
+      getApps() {
+        getApps({type: 1}).then(data => {
+          this.apps = data
+        })
+      },
+      rightKey(i) {
+        if (this.temp.type == 2) {
+          if (this.temp.answer.indexOf('' + i) != -1) {
+            this.temp.answer = this.temp.answer.replace('' + i, '')
+            return
+          }
+          this.temp.answer += '' + i
           return
         }
-        this.temp.answer += '' + i
-        return
-      }
-      this.temp.answer = '' + i
-    },
-    minusInput(i) {
-      this.options.splice(i, 1)
-    },
-    addInput() {
-      this.options.push('')
-    },
-    getList() {
-      this.listLoading = true
-      selectByPage(this.listQuery).then(data => {
-        this.list = data.list
-        this.total = data.total
-        this.listLoading = false
-      })
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleSizeChange(val) {
-      this.listQuery.limit = val
-      this.getList()
-    },
-    handleCurrentChange(val) {
-      this.listQuery.page = val
-      this.getList()
-    },
-    handleDelete(row, status) {
-      deleteById({ id: row.id }).then(data => {
-        this.list.splice(this.list.indexOf(row), 1)
-        this.$message({
-          message: '操作成功',
-          type: 'success'
+        this.temp.answer = '' + i
+      },
+      minusInput(i) {
+        this.options.splice(i, 1)
+      },
+      addInput() {
+        this.options.push('')
+      },
+      getList() {
+        this.listLoading = true
+        selectByPage(this.listQuery).then(data => {
+          this.list = data.list
+          this.total = data.total
+          this.listLoading = false
         })
-      })
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    resetTemp() {
-      this.temp = {
-        questions: '',
-        answer: '',
-        type: 1
+      },
+      handleFilter() {
+        this.listQuery.page = 1
+        this.getList()
+      },
+      handleSizeChange(val) {
+        this.listQuery.limit = val
+        this.getList()
+      },
+      handleCurrentChange(val) {
+        this.listQuery.page = val
+        this.getList()
+      },
+      handleDelete(row, status) {
+        deleteById({id: row.id}).then(data => {
+          this.list.splice(this.list.indexOf(row), 1)
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+        })
+      },
+      handleCreate() {
+        this.resetTemp()
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
+      },
+      resetTemp() {
+        this.temp = {
+          questions: '',
+          answer: '',
+          type: 1
+        }
+      },
+      createData() {
+        console.log('add')
+        this.$refs['dataForm'].validate((valid) => {
+          console.log(222)
+          console.log(valid)
+          if (valid) {
+            console.log('yes')
+            insert(this.temp).then((id) => {
+              this.getList()
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '创建成功',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      },
+      handleUpdate(row) {
+        this.temp = Object.assign({}, row) // copy obj
+        this.options = this.temp.questions.split('&')
+        this.temp.timestamp = new Date(this.temp.timestamp)
+        this.dialogStatus = 'update'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
+      },
+      updateData() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            const tempData = Object.assign({}, this.temp)
+            tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+            updateById(tempData).then(() => {
+              this.getList()
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
       }
-    },
-    createData() {
-      console.log('add')
-      this.$refs['dataForm'].validate((valid) => {
-        console.log(222)
-        console.log(valid)
-        if (valid) {
-          console.log('yes')
-          insert(this.temp).then((id) => {
-            this.getList()
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.options = this.temp.questions.split('&')
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateById(tempData).then(() => {
-            this.getList()
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '更新成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
     }
   }
-}
 </script>
