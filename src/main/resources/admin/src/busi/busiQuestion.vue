@@ -26,7 +26,7 @@
           :data="temp.appId"
           :show-file-list="false"
           :before-upload="valiteData"
-          action="/busiQuestion/importQue">
+          action="busiQuestion/importQue">
           <el-select v-model="temp.appId" placeholder="Select">
             <el-option
               v-for="(item,v) in apps"
