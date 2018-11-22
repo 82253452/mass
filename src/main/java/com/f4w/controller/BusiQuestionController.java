@@ -152,9 +152,9 @@ public class BusiQuestionController {
                             for (int i1 = 0; i1 < answerStr.length(); i1++) {
                                 answer += String.valueOf(answerSortStr.indexOf(answerStr.charAt(i1)));
                             }
-                            if (answer.length() > 1) {
-                                answer = answer.substring(0, answer.length() - 1);
-                            }
+//                            if (answer.length() > 1) {
+////                                answer = answer.substring(0, answer.length() - 1);
+////                            }
                         }
                     }
                     if (null != m.group(10)) {
@@ -203,11 +203,11 @@ public class BusiQuestionController {
                         typeP = 2;
                     }
                     for (int i1 = 0; i1 < answerStr.length(); i1++) {
-                        answer += String.valueOf(answerSortStr.indexOf(answerStr.toLowerCase().charAt(i1))) + "&";
+                        answer += String.valueOf(answerSortStr.indexOf(answerStr.toLowerCase().charAt(i1)));
                     }
-                    if (answer.length() > 1) {
-                        answer = answer.substring(0, answer.length() - 1);
-                    }
+//                    if (answer.length() > 1) {
+//                        answer = answer.substring(0, answer.length() - 1);
+//                    }
 
                 } else if (StringUtils.indexOfAny(answerStr, "√") != -1) {
                     typeP = 3;
