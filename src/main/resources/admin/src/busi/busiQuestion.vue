@@ -23,7 +23,7 @@
         <el-upload
           ref="upload"
           :headers="getToken()"
-          :data="temp.appId"
+          :data="{appId:temp.appId}"
           :show-file-list="false"
           :before-upload="valiteData"
           :on-success="handleDataSuccess"
@@ -31,7 +31,7 @@
           <el-select v-model="temp.appId" placeholder="Select">
             <el-option
               v-for="(item,v) in apps"
-              :key="item"
+              :key="v"
               :label="item"
               :value="v"/>
           </el-select>
@@ -221,7 +221,7 @@
         listLoading: true,
         listQuery: {
           page: 1,
-          limit: 20,
+          limit: 10,
           importance: undefined,
           title: undefined,
           type: undefined,
@@ -294,7 +294,19 @@
         }
         this.loadingInstance = Loading.service({fullscreen: true})
       },
-      handleDataSuccess() {
+      handleDataSuccess(resp) {
+        if (resp && resp.code === 1000) {
+          this.getList()
+          this.$message({
+            message: '导入成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '导入失败',
+            type: 'success'
+          })
+        }
         this.loadingInstance.close()
       },
       getToken() {
