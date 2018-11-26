@@ -34,9 +34,7 @@ public class FrameApplication {
     }
 
     @RequestMapping("/")
-    public Long test() {
-        BusiApp s = busiAppMapper.findAll();
-        BusiAppDto b = busiAppMapper.findDtoAll();
-        return 1L;
+    public String test() {
+        return "123123";
     }
 }
