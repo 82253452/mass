@@ -2,6 +2,7 @@ version: "3"
 services:
   web:
     build: .
+    restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
     ports:
