@@ -35,6 +35,6 @@ public class FrameApplication {
 
     @RequestMapping("/")
     public String test() {
-        return "123123";
+        return "1111";
     }
 }
