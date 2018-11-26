@@ -1,7 +1,8 @@
 version: "3"
 services:
   web:
-    image: web:latest
+    build:
+      context: src/main/docker
     environment:
       SPRING_PROFILES_ACTIVE: prod
     ports:
