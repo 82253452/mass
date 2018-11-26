@@ -2,6 +2,7 @@ version: "3"
 services:
   web:
     image: web:latest
+    pull: false
     environment:
       SPRING_PROFILES_ACTIVE: prod
     ports:
