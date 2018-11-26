@@ -45,8 +45,11 @@ public interface BusiQuestionMapper extends BaseMapper<BusiQuestion> {
     )
     BusiQuestionDto findDtoAll();
 
-    @Select("select  * from busi_question where title like '%' #{title} '%' and app_id=#{appId}")
+    @Select("select  * from busi_question where title like '%' #{title} '%' " +
+            "<when test='appId!=null'>" +
+            "AND app_id=#{appId}" +
+            "</when>")
     @ResultMap("baseDto")
-    List<BusiQuestionDto> getOneListQuestion(@Param("title") String title, @Param("appId") String appId);
+    List<BusiQuestionDto> getOneListQuestion(@Param("title") String title, @Param("uid") Long uid, @Param("appId") String appId);
 
 }

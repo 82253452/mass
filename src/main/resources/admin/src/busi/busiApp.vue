@@ -106,6 +106,11 @@
             type="primary"
             @click="startReplay(scope.row.replay,scope.row.id)">{{ scope.row.replay?'关闭答题回复':'开启答题回复' }}
           </el-button>
+          <el-button
+            v-if="scope.row.replay===1"
+            type="primary"
+            @click="startReplay(scope.row.replay,scope.row.id)">{{ scope.row.replay===1?'开启答题共享':'关闭答题共享' }}
+          </el-button>
           <!--<el-button v-if="!status||status===0" type="primary" size="mini" @click="getAuthUrlInit">授权</el-button>-->
           <!--<el-button v-if="scope.row.status!=2" type="primary" size="mini" @click="generator(scope.row)">生成</el-button>-->
           <!--<a-->
@@ -282,9 +287,11 @@ export default {
   methods: {
     startReplay(status, id) {
       var param = { id: id }
-      if (status) {
+      if (status === 0) {
+        param.replay = 1
+      } else if (status === 1) {
         param.replay = 0
-      } else {
+      } else if (status === 2) {
         param.replay = 1
       }
       updateById(param).then(() => {

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.f4w.utils.Constant.REPLAY_REQUESTION;
+import static com.f4w.utils.Constant.REPLAY_REQUESTION_GLOABLE;
 
 @Slf4j
 @RestController
@@ -147,23 +148,26 @@ public class NotifyController {
             return out;
         }
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
+            List<BusiQuestionDto> list = null;
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
-                List<BusiQuestionDto> list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getAppId());
-                String render = "未发现相关题目，请换个关键词试试！";
-                if (CollectionUtils.isNotEmpty(list)) {
-                    render = buildQuestion(list);
-                }
-                if (render.getBytes().length >= 2048) {
-                    render = "返回内容过多，请换个关键词试试！";
-                }
-                out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
-                        WxMpXmlOutMessage.TEXT().content(render)
-                                .fromUser(inMessage.getToUser())
-                                .toUser(inMessage.getFromUser())
-                                .build()
-                                .toXml()
-                );
+                list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getUid(), busiApp.getAppId());
+            } else if (REPLAY_REQUESTION_GLOABLE == busiApp.getReplay()) {
+                list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getUid(), null);
             }
+            String render = "暂时未上传，请留言课程名称，或添加QQ171947004，私聊呦";
+            if (CollectionUtils.isNotEmpty(list)) {
+                render = buildQuestion(list);
+            }
+            if (render.getBytes().length >= 2048) {
+                render = "返回内容过多，请换个关键词试试！";
+            }
+            out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
+                    WxMpXmlOutMessage.TEXT().content(render)
+                            .fromUser(inMessage.getToUser())
+                            .toUser(inMessage.getFromUser())
+                            .build()
+                            .toXml()
+            );
         } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
             if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
                 busiApp.setStatus(6);
