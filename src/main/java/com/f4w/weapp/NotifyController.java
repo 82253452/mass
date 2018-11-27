@@ -82,7 +82,7 @@ public class NotifyController {
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-        response.sendRedirect("/web/index.html#/busi/busiApp");
+        response.sendRedirect("/index.html#/busi/busiApp");
     }
 
     @RequestMapping("message")
