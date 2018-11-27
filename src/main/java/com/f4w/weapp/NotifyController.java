@@ -149,12 +149,14 @@ public class NotifyController {
         }
         if (StringUtils.equals(inMessage.getMsgType(), "text")) {
             List<BusiQuestionDto> list = null;
+            String render = "暂时未上传，请留言课程名称，或添加QQ171947004，私聊呦";
             if (REPLAY_REQUESTION == busiApp.getReplay()) {
                 list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getUid(), busiApp.getAppId());
             } else if (REPLAY_REQUESTION_GLOABLE == busiApp.getReplay()) {
                 list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getUid(), null);
+            } else {
+                render = "没有回复，请联系管理员后台配置";
             }
-            String render = "暂时未上传，请留言课程名称，或添加QQ171947004，私聊呦";
             if (CollectionUtils.isNotEmpty(list)) {
                 render = buildQuestion(list);
             }
