@@ -95,7 +95,7 @@ public class BusiAppController {
         if (!"0".equals(resp.getString("errcode"))) {
             return R.error(resp.getString("errmsg"));
         }
-        return R.ok().put("reason", resp.getString("reason"));
+        return R.renderSuccess("reason", resp.getString("reason"));
     }
 
     /**
@@ -112,7 +112,7 @@ public class BusiAppController {
         if (!"0".equals(resp.getString("errcode"))) {
             return R.error(resp.getString("errmsg"));
         }
-        return R.ok().put("reason", resp.getString("reason"));
+        return R.renderSuccess("reason", resp.getString("reason"));
     }
 
     /**
@@ -185,7 +185,7 @@ public class BusiAppController {
     @GetMapping("/getItemList")
     public R getItemList(String appId) throws WxErrorException {
         WxOpenMaCategoryListResult wxOpenMaCategoryListResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getCategoryList();
-        return R.ok().put("list", wxOpenMaCategoryListResult.getCategoryList());
+        return R.renderSuccess("list", wxOpenMaCategoryListResult.getCategoryList());
     }
 
 
