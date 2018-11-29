@@ -168,7 +168,9 @@ public class BusiAppController {
         if (!"0".equals(resp.getErrcode())) {
             return R.error(resp.getErrmsg());
         }
-        BusiApp busiApp = busiAppMapper.selectByPrimaryKey(param.get("id"));
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(param.get("appId"));
+        busiApp = busiAppMapper.selectOne(busiApp);
         busiApp.setAuditId(resp.getAuditId());
         busiApp.setStatus(2);
         busiAppMapper.updateByPrimaryKey(busiApp);

@@ -302,7 +302,7 @@ export default {
       }
     },
     getTestQrcode(appId) {
-      this.testCodeUrl = process.env.BASE_API + 'busiApp/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
+      this.testCodeUrl = process.env.BASE_API + 'common/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
     },
     pushWeapp() {
       this.$refs['pushForm'].validate((valid) => {
