@@ -32,7 +32,8 @@ public class BusiAppPageController {
     }
 
     @PostMapping("/insert")
-    public R insert(@RequestBody BusiAppPage BusiAppPage) {
+    public R insert(@CurrentUser SysUser sysUser, @RequestBody BusiAppPage BusiAppPage) {
+        BusiAppPage.setUid(sysUser.getId());
         Integer r = busiAppPageMapper.insert(BusiAppPage);
         return R.ok().put("data", r);
     }

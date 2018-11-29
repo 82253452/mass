@@ -53,7 +53,7 @@
             effect="dark"
             placement="top">
             <el-button>{{ scope.row.signature.length<=8?scope.row.signature:scope.row.signature.substring(0,8)+'...'
-              }}
+            }}
             </el-button>
           </el-tooltip>
         </template>
@@ -127,7 +127,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <div class="pagination-container" style="text-align: center">
       <el-pagination
         :current-page="listQuery.page"
@@ -139,37 +138,6 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"/>
     </div>
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name"/>
-        </el-form-item>
-        <el-form-item label="appId" prop="appId">
-          <el-input v-model="temp.appId"/>
-        </el-form-item>
-        <el-form-item label="appSecret" prop="appSecret">
-          <el-input v-model="temp.appSecret"/>
-        </el-form-item>
-        <el-form-item label="模板" prop="pageId">
-          <el-radio-group v-model="temp.pageId">
-            <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{ p }}</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('table.confirm') }}
-        </el-button>
-        <el-button v-else type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
-      </div>
-    </el-dialog>
     <el-dialog :visible.sync="pushWeappShow" title="一键发版小程序">
       <el-form
         ref="pushForm"
@@ -177,11 +145,25 @@
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;">
-        <el-form-item label="标题" prop="title">
+        <el-form-item
+          :rules="[{ required: true, message: '标题', trigger: 'blur' }]"
+          label="标题"
+          prop="title">
           <el-input v-model="pushTemp.title"/>
         </el-form-item>
-        <el-form-item label="标签" prop="tag">
+        <el-form-item
+          :rules="[{ required: true, message: '标签', trigger: 'blur' }]"
+          label="标签"
+          prop="tag">
           <el-input v-model="pushTemp.tag"/>
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '模板', trigger: 'blur' }]"
+          label="模板"
+          prop="pageId">
+          <el-radio-group v-model="pushTemp.pageId">
+            <el-radio-button v-for="(p,v) in pages" :key="v" :label="v">{{ p }}</el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="类目">
           <el-select
@@ -205,237 +187,241 @@
 </template>
 
 <script>
-  import {
-    selectByPage,
-    insert,
-    selectById,
-    updateById,
-    deleteById,
-    Generator,
-    Download,
-    getAppPages,
-    getAuthUrl,
-    pushWeappByAppId,
-    getItemList
-  } from '@/api/busiApp'
-  import waves from '@/directive/waves' // 水波纹指令
-  import {parseTime} from '@/utils'
-  import VueQrcode from '@xkeshi/vue-qrcode'
+import {
+  selectByPage,
+  insert,
+  selectById,
+  updateById,
+  deleteById,
+  Generator,
+  Download,
+  getAppPages,
+  getAuthUrl,
+  pushWeappByAppId,
+  getItemList
+} from '@/api/busiApp'
+import waves from '@/directive/waves' // 水波纹指令
+import { parseTime } from '@/utils'
+import VueQrcode from '@xkeshi/vue-qrcode'
 
-  export default {
-    name: 'ComplexTable',
-    components: {
-      VueQrcode
-    },
-    directives: {
-      waves
-    },
-    filters: {
-      getStatus: function (status) {
-        if (status) {
-          if (status === 1) {
-            return '授权成功'
-          }
-          if (status === 2) {
-            return '发版审核中'
-          }
-          if (status === 3) {
-            return '审核通过'
-          }
-          if (status === 4) {
-            return '审核不通过'
-          }
-          return '初始状态'
+export default {
+  name: 'ComplexTable',
+  components: {
+    VueQrcode
+  },
+  directives: {
+    waves
+  },
+  filters: {
+    getStatus: function(status) {
+      if (status) {
+        if (status === 1) {
+          return '授权成功'
         }
-        return '待授权'
+        if (status === 2) {
+          return '发版审核中'
+        }
+        if (status === 3) {
+          return '审核通过'
+        }
+        if (status === 4) {
+          return '审核不通过'
+        }
+        return '初始状态'
+      }
+      return '待授权'
+    }
+  },
+  data() {
+    return {
+      tableKey: 0,
+      list: null,
+      total: null,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 20,
+        importance: undefined,
+        title: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      temp: {},
+      testCodeUrl: '',
+      dialogFormVisible: false,
+      dialogStatus: '',
+      textMap: {
+        update: 'Edit',
+        create: 'Create'
+      },
+      rules: {},
+      pages: {},
+      pushWeappShow: false,
+      itemList: [],
+      pushTemp: {},
+      itemIndex: ''
+    }
+  },
+  created() {
+    this.getList()
+    this.getPages()
+  },
+  methods: {
+    startReplay(status, id) {
+      var param = { id: id }
+      if (status === 0) {
+        param.replay = 1
+      } else if (status === 1) {
+        param.replay = 2
+      } else if (status === 2) {
+        param.replay = 0
+      }
+      updateById(param).then(() => {
+        this.getList()
+        this.$notify({
+          title: '成功',
+          message: '更新成功',
+          type: 'success',
+          duration: 2000
+        })
+      })
+    },
+    pushShow(appId) {
+      this.getItemListByAppId(appId)
+      this.pushWeappShow = true
+      this.pushTemp.appId = appId
+    },
+    pushItemChange(item) {
+      this.pushTemp = { ...this.itemList[item], ...this.pushTemp }
+    },
+    getItemListByAppId(appId) {
+      if (!this.itemList || this.itemList.length === 0) {
+        getItemList({ appId: appId }).then(data => {
+          this.itemList = data.list
+        })
       }
     },
-    data() {
-      return {
-        tableKey: 0,
-        list: null,
-        total: null,
-        listLoading: true,
-        listQuery: {
-          page: 1,
-          limit: 20,
-          importance: undefined,
-          title: undefined,
-          type: undefined,
-          sort: '+id'
-        },
-        temp: {},
-        testCodeUrl: '',
-        dialogFormVisible: false,
-        dialogStatus: '',
-        textMap: {
-          update: 'Edit',
-          create: 'Create'
-        },
-        rules: {},
-        pages: {},
-        pushWeappShow: false,
-        itemList: [],
-        pushTemp: {},
-        itemIndex: ''
-      }
+    getTestQrcode(appId) {
+      this.testCodeUrl = process.env.BASE_API + 'busiApp/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
     },
-    created() {
+    pushWeapp() {
+      this.$refs['pushForm'].validate((valid) => {
+        if (valid) {
+          pushWeappByAppId(this.pushTemp).then(resp => {
+
+          })
+        }
+      })
+    },
+    getAuthUrlInit() {
+      getAuthUrl().then(data => {
+        window.open(data.url, '微信授权')
+      })
+    },
+    radioChange(id, pageId) {
+      updateById({ id: id, pageId: pageId }).then(() => {
+
+      })
+    },
+    getPages() {
+      getAppPages().then(data => {
+        this.pages = data
+      })
+    },
+    generator(row) {
+      Generator({ id: row.id }).then(resp => {
+        this.getList()
+      })
+    },
+    download(row) {
+      // Download({id: row.id}).then(resp => {
+      //   console.log(resp)
+      // })
+      // window.open('http://localhost:8082/busiApp/downloadFile')
+    },
+    getList() {
+      this.listLoading = true
+      selectByPage(this.listQuery).then(data => {
+        this.list = data.list
+        this.total = data.total
+        this.listLoading = false
+      })
+    },
+    handleFilter() {
+      this.listQuery.page = 1
       this.getList()
-      this.getPages()
     },
-    methods: {
-      startReplay(status, id) {
-        var param = {id: id}
-        if (status === 0) {
-          param.replay = 1
-        } else if (status === 1) {
-          param.replay = 2
-        } else if (status === 2) {
-          param.replay = 0
-        }
-        updateById(param).then(() => {
-          this.getList()
-          this.$notify({
-            title: '成功',
-            message: '更新成功',
-            type: 'success',
-            duration: 2000
-          })
+    handleSizeChange(val) {
+      this.listQuery.limit = val
+      this.getList()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.page = val
+      this.getList()
+    },
+    handleDelete(row, status) {
+      deleteById({ id: row.id }).then(response => {
+        this.list.splice(this.list.indexOf(row), 1)
+        this.$message({
+          message: '操作成功',
+          type: 'success'
         })
-      },
-      pushShow(appId) {
-        this.getItemListByAppId(appId)
-        this.pushWeappShow = true
-        this.pushTemp.appId = appId
-      },
-      pushItemChange(item) {
-        this.pushTemp = {...this.itemList[item], ...this.pushTemp}
-      },
-      getItemListByAppId(appId) {
-        if (!this.itemList || this.itemList.length === 0) {
-          getItemList({appId: appId}).then(data => {
-            this.itemList = data.list
-          })
-        }
-      },
-      getTestQrcode(appId) {
-        this.testCodeUrl = process.env.BASE_API + 'busiApp/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
-      },
-      pushWeapp() {
-        pushWeappByAppId(this.pushTemp).then(resp => {
-          console.log(resp)
-        })
-      },
-      getAuthUrlInit() {
-        getAuthUrl().then(data => {
-          window.open(data.url, '微信授权')
-        })
-      },
-      radioChange(id, pageId) {
-        updateById({id: id, pageId: pageId}).then(() => {
-
-        })
-      },
-      getPages() {
-        getAppPages().then(data => {
-          this.pages = data
-        })
-      },
-      generator(row) {
-        Generator({id: row.id}).then(resp => {
-          this.getList()
-        })
-      },
-      download(row) {
-        // Download({id: row.id}).then(resp => {
-        //   console.log(resp)
-        // })
-        // window.open('http://localhost:8082/busiApp/downloadFile')
-      },
-      getList() {
-        this.listLoading = true
-        selectByPage(this.listQuery).then(data => {
-          this.list = data.list
-          this.total = data.total
-          this.listLoading = false
-        })
-      },
-      handleFilter() {
-        this.listQuery.page = 1
-        this.getList()
-      },
-      handleSizeChange(val) {
-        this.listQuery.limit = val
-        this.getList()
-      },
-      handleCurrentChange(val) {
-        this.listQuery.page = val
-        this.getList()
-      },
-      handleDelete(row, status) {
-        deleteById({id: row.id}).then(response => {
-          this.list.splice(this.list.indexOf(row), 1)
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-        })
-      },
-      handleCreate() {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      resetTemp() {
-        this.temp = {}
-      },
-      createData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            insert(this.temp).then((id) => {
-              this.getList()
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              })
+      })
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    resetTemp() {
+      this.temp = {}
+    },
+    createData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          insert(this.temp).then((id) => {
+            this.getList()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '创建成功',
+              type: 'success',
+              duration: 2000
             })
-          }
-        })
-      },
-      handleUpdate(row) {
-        this.temp = Object.assign({}, row) // copy obj
-        this.temp.timestamp = new Date(this.temp.timestamp)
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      updateData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.temp)
-            tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            updateById(tempData).then(() => {
-              this.getList()
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '更新成功',
-                type: 'success',
-                duration: 2000
-              })
+          })
+        }
+      })
+    },
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          updateById(tempData).then(() => {
+            this.getList()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
             })
-          }
-        })
-      }
+          })
+        }
+      })
     }
   }
+}
 </script>

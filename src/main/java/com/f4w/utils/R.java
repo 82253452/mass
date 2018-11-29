@@ -111,6 +111,10 @@ public class R extends HashMap {
         return R.ok();
     }
 
+    public static R renderError(String content) {
+        return ok(1000, "返回成功", false).put("data", content);
+    }
+
     public static R renderSuccess(String name, Object o) {
         Map<String, Object> map = new HashMap();
         map.put(name, o);

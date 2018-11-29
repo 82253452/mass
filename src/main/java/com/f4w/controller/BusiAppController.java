@@ -1,6 +1,7 @@
 package com.f4w.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.annotation.CurrentUser;
@@ -17,9 +18,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
-import me.chanjar.weixin.open.bean.ma.WxMaOpenWindow;
-import me.chanjar.weixin.open.bean.ma.WxOpenMaSubmitAudit;
+import me.chanjar.weixin.open.bean.ma.*;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenMaCategoryListResult;
 import me.chanjar.weixin.open.bean.result.WxOpenMaPageListResult;
@@ -39,10 +38,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -174,6 +170,8 @@ public class BusiAppController {
         }
         BusiApp busiApp = busiAppMapper.selectByPrimaryKey(param.get("id"));
         busiApp.setAuditId(resp.getAuditId());
+        busiApp.setStatus(2);
+        busiAppMapper.updateByPrimaryKey(busiApp);
         return R.ok();
     }
 
@@ -215,7 +213,15 @@ public class BusiAppController {
         if (null == busiApp) {
             return R.error("appId异常");
         }
-        busiApp.setVersion(busiApp.getVersion() + 1);
+        if (null == param.get("pageId")) {
+            return R.error("pageId 不能为空");
+        }
+        BusiAppPage busiAppPage = busiAppPageMapper.selectByPrimaryKey(param.get("pageId"));
+        if (null == busiAppPage) {
+            return R.error("pageId异常");
+        }
+        busiApp.setVersion(busiApp.getVersion() == null ? 0 : busiApp.getVersion() + 1);
+        busiApp.setPageId(MapUtils.getLong(param, "pageId"));
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(param.get("appId"));
@@ -224,24 +230,31 @@ public class BusiAppController {
         wxMaOpenWindow.setNavigationBarTitleText(busiApp.getNickName());
         wxMaOpenWindow.setNavigationBarTextStyle("black");
         extInfo.setWindow(wxMaOpenWindow);
+        String content = busiAppPage.getContent();
+        if (StringUtils.isBlank(content)) {
+            return R.error("配置页面异常");
+        }
+        JSONArray pageContent = JSON.parseArray(content);
         //set ext
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "haha");
+        jsonObject.put("appId", param.get("appId"));
         jsonArray.add(jsonObject);
-        JSONObject jsonObject2 = new JSONObject();
-        jsonObject.put("title", "haha");
-        jsonArray.add(jsonObject2);
-        JSONObject jsonObject3 = new JSONObject();
-        jsonObject.put("title", "haha");
-        jsonArray.add(jsonObject3);
-        JSONObject jsonObject4 = new JSONObject();
-        jsonObject.put("title", "haha");
-        jsonArray.add(jsonObject4);
         Map ext = new HashMap();
         ext.put("appId", param.get("appId"));
         ext.put("pages", jsonArray.toString());
         extInfo.setExtMap(ext);
+
+        if (pageContent.size() > 1) {
+            WxMaOpenTabBar wxMaOpenTabBar = new WxMaOpenTabBar();
+            List<WxMaOpenTab> tabList = new ArrayList<>();
+            for (int i = 0; i < pageContent.size(); i++) {
+                WxMaOpenTab wxMaOpenTab = new WxMaOpenTab("pages/index/index_" + i
+                        , pageContent.getJSONObject(i).getString("pageTitle"));
+                tabList.add(wxMaOpenTab);
+            }
+            wxMaOpenTabBar.setTabList(tabList);
+        }
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))

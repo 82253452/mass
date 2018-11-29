@@ -32,7 +32,7 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="页面名称" width="150">
+      <el-table-column align="center" label="模板名称" width="150">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <el-input
@@ -109,7 +109,7 @@
                   <div style="text-align: center">
                     <i class="el-icon-edit" style="width: 40px;height: 40px;padding-top:20px;"/>
                     <div style="padding-top: 10px;">
-                      <span>{{ element.name }}</span>
+                      <span>{{ element.label }}</span>
                     </div>
                   </div>
                 </el-card>
@@ -195,7 +195,8 @@ import ScrollImgEdit from './components/ScrollImgEdit'
 import Navigation from './components/Navigation'
 import NavigationEdit from './components/NavigationEdit'
 import { parseTime } from '@/utils'
-
+import Dictionary from './components/Dictionary'
+import DictionaryEdit from './components/DictionaryEdit'
 export default {
   name: 'ComplexTable',
   components: {
@@ -206,7 +207,9 @@ export default {
     ListEdit,
     PageEdit,
     Navigation,
-    NavigationEdit
+    NavigationEdit,
+    Dictionary,
+    DictionaryEdit
   },
   directives: {
     waves
@@ -243,10 +246,11 @@ export default {
       },
       rules: {},
       comList: [
-        { id: 1, name: 'ScrollImg', data: { imgs: [] }}, {
-          id: 2, name: 'List', data: {}
+        { id: 1, name: 'ScrollImg', label: '轮播', data: { imgs: [] }}, {
+          id: 2, name: 'List', label: '文章列表', data: {}
         },
-        { id: 3, name: 'Navigation', data: {}}
+        { id: 3, name: 'Navigation', label: '企业导航页', data: {}},
+        { id: 4, name: 'Dictionary', label: '字典页', data: {}}
       ],
       pageList: [
         { id: 1, name: 'Page', title: '空页面', comResult: [] }
