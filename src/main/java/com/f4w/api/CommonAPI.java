@@ -1,5 +1,8 @@
 package com.f4w.api;
 
+import com.alibaba.fastjson.JSONObject;
+import com.f4w.entity.BusiApp;
+import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
@@ -27,6 +30,9 @@ public class CommonAPI {
 
     @Resource
     private WxOpenService wxOpenService;
+
+    @Resource
+    private BusiAppMapper busiAppMapper;
 
     /**
      * 获取七牛token
@@ -59,6 +65,23 @@ public class CommonAPI {
         downloaddomainList.add(domain);
 //        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
         wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
+        return R.renderSuccess(false);
+    }
+
+    @GetMapping("undocodeaudit")
+    public R undocodeaudit(String appId) throws WxErrorException {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+        if (3 == busiApp.getStatus()) {
+            String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).undoCodeAudit();
+            JSONObject resp = JSONObject.parseObject(wxOpenResult);
+            if (!"0".equals(resp.getString("errcode"))) {
+                return R.error(1001, resp.getString("errmsg"));
+            }
+            busiApp.setStatus(1);
+            busiApp = busiAppMapper.selectOne(busiApp);
+        }
         return R.renderSuccess(false);
     }
 
