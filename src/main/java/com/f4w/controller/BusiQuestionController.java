@@ -22,6 +22,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.io.BufferedInputStream;
@@ -108,10 +109,12 @@ public class BusiQuestionController {
 
     @GetMapping("/selectByPage")
     public R selectByPage(@CurrentUser SysUser user, @RequestParam Map map) {
-        BusiQuestion busiQuestion = new BusiQuestion();
-        busiQuestion.setUid(user.getId());
+        Example example = new Example(BusiQuestion.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("uid", user.getId());
+        example.orderBy("ctime").desc();
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
-        List<BusiQuestion> list = busiQuestionMapper.select(busiQuestion);
+        List<BusiQuestion> list = busiQuestionMapper.selectByExample(example);
         PageInfo<BusiQuestion> page = new PageInfo<>(list);
         return R.ok().put("data", page);
     }
