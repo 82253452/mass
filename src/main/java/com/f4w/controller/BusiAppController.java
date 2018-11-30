@@ -107,11 +107,21 @@ public class BusiAppController {
      */
     @GetMapping("getLastAuditstatus")
     public R getLastAuditstatus(String appId) throws WxErrorException {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+
         String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getLatestAuditStatus(null);
         JSONObject resp = JSONObject.parseObject(wxOpenResult);
         if (!"0".equals(resp.getString("errcode"))) {
+            busiApp.setStatus(6);
+            busiApp.setAuditMsg(resp.getString("errmsg"));
             return R.error(resp.getString("errmsg"));
+        }else{
+            busiApp.setStatus(5);
+            busiApp.setAuditMsg("发布成功");
         }
+        busiAppMapper.updateByPrimaryKey(busiApp);
         return R.renderSuccess("reason", resp.getString("reason"));
     }
 

@@ -233,6 +233,12 @@
           if (status === 4) {
             return '审核不通过'
           }
+          if (status === 5) {
+            return '发布成功'
+          }
+          if (status === 6) {
+            return '发布失败'
+          }
           return '初始状态'
         }
         return '待授权'
