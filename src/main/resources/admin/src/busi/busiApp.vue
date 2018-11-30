@@ -89,7 +89,7 @@
       <el-table-column align="center" label="操作" fixed="right" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-popover
-            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===2||scope.row.status===3||scope.row.status===4)"
+            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===2||scope.row.status===3||scope.row.status===4||scope.row.status===5||scope.row.status===6)"
             trigger="click"
             @show="getTestQrcode(scope.row.appId)"
           >
@@ -97,7 +97,7 @@
             <el-button slot="reference" type="primary">预览</el-button>
           </el-popover>
           <el-button
-            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===1||scope.row.status===4||scope.row.status===3)"
+            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===1||scope.row.status===4||scope.row.status===3||scope.row.status===5||scope.row.status===6)"
             type="primary"
             @click="pushShow(scope.row.appId)">发版
           </el-button>
