@@ -58,7 +58,7 @@ public class CommonAPI {
         List<String> downloaddomainList = new ArrayList<>();
         downloaddomainList.add(domain);
 //        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
-        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("set", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
         return R.renderSuccess(false);
     }
 
