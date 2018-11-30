@@ -46,9 +46,9 @@ public class CommonAPI {
 
     @GetMapping("setDomain")
     public R setDomain(String appId) throws WxErrorException {
-        String domain = "https:://zhihuizhan.net";
-//        List<String> webViewDomain = new ArrayList<>();
-//        webViewDomain.add(domain);
+        String domain = "https://www.cxduo.com";
+        List<String> webViewDomain = new ArrayList<>();
+        webViewDomain.add(domain);
         List<String> requestdomainList = new ArrayList<>();
         requestdomainList.add(domain);
         List<String> wsrequestdomainList = new ArrayList<>();
@@ -57,8 +57,8 @@ public class CommonAPI {
         uploaddomainList.add(domain);
         List<String> downloaddomainList = new ArrayList<>();
         downloaddomainList.add(domain);
-//        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
-        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("set", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
         return R.renderSuccess(false);
     }
 
