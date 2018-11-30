@@ -1,9 +1,11 @@
 package com.f4w.weapp;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f4w.dto.BusiQuestionDto;
 import com.f4w.entity.BusiApp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiQuestionMapper;
+import com.f4w.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
@@ -122,7 +124,7 @@ public class NotifyController {
                            @RequestParam("nonce") String nonce,
                            @RequestParam("openid") String openid,
                            @RequestParam("encrypt_type") String encType,
-                           @RequestParam("msg_signature") String msgSignature) {
+                           @RequestParam("msg_signature") String msgSignature) throws WxErrorException {
         log.info(
                 "\n接收微信请求：[appId=[{}], openid=[{}], signature=[{}], encType=[{}], msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
@@ -172,11 +174,21 @@ public class NotifyController {
             );
         } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
             if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
-                busiApp.setStatus(6);
+                busiApp.setStatus(3);
                 busiApp.setAuditMsg("审核通过");
                 busiAppMapper.updateByPrimaryKey(busiApp);
+                String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
+                JSONObject resp = JSONObject.parseObject(wxOpenResult);
+                if (!"0".equals(resp.getString("errcode"))) {
+                    busiApp.setStatus(6);
+                    busiApp.setAuditMsg(resp.getString("errmsg"));
+                } else {
+                    busiApp.setStatus(5);
+                    busiApp.setAuditMsg("发布成功");
+                }
+                busiAppMapper.updateByPrimaryKey(busiApp);
             } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
-                busiApp.setStatus(7);
+                busiApp.setStatus(4);
                 busiApp.setAuditMsg(inMessage.getFailReason());
                 busiAppMapper.updateByPrimaryKey(busiApp);
             }

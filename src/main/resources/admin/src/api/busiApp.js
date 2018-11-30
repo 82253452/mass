@@ -87,3 +87,11 @@ export function getItemList(query) {
     params: query
   })
 }
+export function releaseApp(query) {
+  return request({
+    url: space + '/releaseWeapp',
+    method: 'get',
+    params: query
+  })
+}
+
