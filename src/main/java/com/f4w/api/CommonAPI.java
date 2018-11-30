@@ -73,7 +73,7 @@ public class CommonAPI {
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
-        if (3 == busiApp.getStatus()) {
+        if (2 == busiApp.getStatus()) {
             String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).undoCodeAudit();
             JSONObject resp = JSONObject.parseObject(wxOpenResult);
             if (!"0".equals(resp.getString("errcode"))) {
