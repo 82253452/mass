@@ -112,6 +112,9 @@ public class BusiQuestionController {
         Example example = new Example(BusiQuestion.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("uid", user.getId());
+        if (StringUtils.isNotBlank(MapUtils.getString(map, "title"))) {
+            criteria.andLike("title", "%" + MapUtils.getString(map, "title") + "%");
+        }
         example.orderBy("ctime").desc();
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
         List<BusiQuestion> list = busiQuestionMapper.selectByExample(example);

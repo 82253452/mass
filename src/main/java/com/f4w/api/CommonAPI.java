@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,24 @@ public class CommonAPI {
         String upToken = auth.uploadToken(bucket, null, 3600, new StringMap()
                 .put("returnBody", " {\"key\": $(key), \"hash\": $(etag), \"w\": $(imageInfo.width), \"h\": $(imageInfo.height)}"));
         return R.renderSuccess("uptoken", upToken);
+    }
+
+    @GetMapping("setDomain")
+    public R setDomain(String appId) throws WxErrorException {
+        String domain = "https:://zhihuizhan.net";
+        List<String> webViewDomain = new ArrayList<>();
+        webViewDomain.add(domain);
+        List<String> requestdomainList = new ArrayList<>();
+        requestdomainList.add(domain);
+        List<String> wsrequestdomainList = new ArrayList<>();
+        wsrequestdomainList.add(domain);
+        List<String> uploaddomainList = new ArrayList<>();
+        uploaddomainList.add(domain);
+        List<String> downloaddomainList = new ArrayList<>();
+        downloaddomainList.add(domain);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
+        return R.renderSuccess(false);
     }
 
     /**
