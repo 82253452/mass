@@ -85,7 +85,7 @@
       resetTemp() {
         this.temp = {}
       },
-      updateData() {
+      updateData(row) {
         addtotemplate({draftId: row.draftId}).then(() => {
           this.getList()
           this.$notify({
