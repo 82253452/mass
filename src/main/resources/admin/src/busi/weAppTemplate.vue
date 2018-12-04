@@ -10,7 +10,7 @@
       style="width: 100%;min-height:500px;">
       <el-table-column align="center" label="templateId" width="150">
         <template slot-scope="scope">
-          <span>{{ getAppName(scope.row.templateId) }}</span>
+          <span>{{ scope.row.templateId }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="版本" width="150">
@@ -39,47 +39,47 @@
 </template>
 
 <script>
-import { gettemplatelist, deleteTemplate } from '@/api/weApp'
-import { parseTime } from '@/utils'
+  import {gettemplatelist, deleteTemplate} from '@/api/weApp'
+  import {parseTime} from '@/utils'
 
-export default {
-  name: 'ComplexTable',
-  filters: {},
-  data() {
-    return {
-      tableKey: 0,
-      list: null,
+  export default {
+    name: 'ComplexTable',
+    filters: {},
+    data() {
+      return {
+        tableKey: 0,
+        list: null,
 
-      listQuery: {},
-      temp: {}
-    }
-  },
-  created() {
-    this.getList()
-  },
-  methods: {
-    getList() {
-      this.listLoading = true
-      gettemplatelist().then(data => {
-        this.list = data
-        this.listLoading = false
-      })
+        listQuery: {},
+        temp: {}
+      }
     },
-    handleDelete(row, status) {
-      deleteTemplate({ templateId: row.templateId }).then(data => {
-        this.getList()
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+    created() {
+      this.getList()
+    },
+    methods: {
+      getList() {
+        this.listLoading = true
+        gettemplatelist().then(data => {
+          this.list = data.templateList
+          this.listLoading = false
         })
-      })
-    },
+      },
+      handleDelete(row, status) {
+        deleteTemplate({templateId: row.templateId}).then(data => {
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      },
 
-    resetTemp() {
-      this.temp = {}
+      resetTemp() {
+        this.temp = {}
+      }
     }
   }
-}
 </script>

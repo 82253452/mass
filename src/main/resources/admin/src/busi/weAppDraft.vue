@@ -15,7 +15,7 @@
       </el-table-column>
       <el-table-column align="center" label="templateId" width="150">
         <template slot-scope="scope">
-          <span>{{ getAppName(scope.row.templateId) }}</span>
+          <span>{{ scope.row.templateId }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="版本" width="150">
@@ -67,7 +67,7 @@
       getList() {
         this.listLoading = true
         gettemplatedraftlist().then(data => {
-          this.list = data
+          this.list = data.templateDraftList
           this.listLoading = false
         })
       },
