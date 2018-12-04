@@ -74,7 +74,7 @@
       },
       setTemplateId(templateId) {
         setCurrentTemplateId({templateId: templateId}).then(res => {
-          this.templateId = row.templateId
+          this.templateId = templateId
           this.$notify({
             title: '成功',
             message: '设置成功',
