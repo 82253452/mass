@@ -10,21 +10,20 @@ spring:
       maxActive: 2000
       maxWait: 60000
   redis:
-    host: 47.92.76.66
+    host: 114.115.250.201
     port: 6379
-    password: fast4ward!@#$
     database: 0
   thymeleaf:
     prefix: classpath:/static/
     suffix: .html
 mybatis:
   type-aliases-package: com.f4w.entity
-#  mapper-locations: classpath:com/f4w/mapper/*.xml
+  #  mapper-locations: classpath:com/f4w/mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 mapper:
   mappers:
-  - tk.mybatis.mapper.common.Mapper
+    - tk.mybatis.mapper.common.Mapper
   not-empty: false
   identity: MYSQL
   wrapKeyword: '`{0}`'

@@ -18,6 +18,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.*;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenMaCategoryListResult;
@@ -64,6 +65,61 @@ public class BusiAppController {
     private StringRedisTemplate stringRedisTemplate;
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
+
+    /**
+     * 获取草稿箱内的所有临时代码草稿
+     *
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/gettemplatedraftlist")
+    public R gettemplatedraftlist() throws WxErrorException {
+        List<WxOpenMaCodeTemplate> templateDraftList = wxOpenService.getWxOpenComponentService().getTemplateDraftList();
+        if (templateDraftList.isEmpty()) {
+            return R.ok();
+        }
+        return R.renderSuccess("templateDraftList", templateDraftList);
+    }
+
+    /**
+     * 获取代码模版库中的所有小程序代码模版
+     *
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/gettemplatelist")
+    public R gettemplatelist() throws WxErrorException {
+        List<WxOpenMaCodeTemplate> templateList = wxOpenService.getWxOpenComponentService().getTemplateList();
+        if (templateList.isEmpty()) {
+            return R.ok();
+        }
+        return R.renderSuccess("templateList", templateList);
+    }
+
+    /**
+     * 将草稿箱的草稿选为小程序代码模版
+     *
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/addtotemplate")
+    public R addtotemplate(Long draftId) throws WxErrorException {
+        wxOpenService.getWxOpenComponentService().addToTemplate(draftId);
+        return R.ok();
+    }
+
+    /**
+     * 删除指定小程序代码模版
+     *
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/deleteTemplate")
+    public R deleteTemplate(Long templateId) throws WxErrorException {
+        wxOpenService.getWxOpenComponentService().deleteTemplate(templateId);
+        return R.ok();
+    }
+
 
     /**
      * 开启自动答题回复
@@ -117,7 +173,7 @@ public class BusiAppController {
             busiApp.setStatus(6);
             busiApp.setAuditMsg(resp.getString("errmsg"));
             return R.error(resp.getString("errmsg"));
-        }else{
+        } else {
             busiApp.setStatus(5);
             busiApp.setAuditMsg("发布成功");
         }
