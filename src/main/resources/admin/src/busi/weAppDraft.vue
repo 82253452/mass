@@ -35,8 +35,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作" fixed="right" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">添加到模板</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{ $t('table.delete') }}
+          <el-button type="primary" size="mini" @click="updateData(scope.row)">添加到模板库</el-button>
           </el-button>
         </template>
       </el-table-column>
