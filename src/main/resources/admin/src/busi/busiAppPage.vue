@@ -251,7 +251,7 @@ export default {
         },
         { id: 3, name: 'Navigation', label: '企业导航页', data: {}},
         { id: 4, name: 'Dictionary', label: '字典页', data: {}},
-        { id: 4, name: 'HuangLi', label: '黄历', data: {}}
+        { id: 5, name: 'HuangLi', label: '黄历', data: {}}
       ],
       pageList: [
         { id: 1, name: 'Page', title: '空页面', comResult: [] }
