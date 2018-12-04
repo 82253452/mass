@@ -30,7 +30,7 @@
       </el-table-column>
       <el-table-column align="center" label="设为当前模板" width="150">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.templateId===templateId"
+          <el-switch v-model="scope.row.templateId==templateId"
                      @change="setTemplateId(scope.row.templateId)">
           </el-switch>
         </template>
