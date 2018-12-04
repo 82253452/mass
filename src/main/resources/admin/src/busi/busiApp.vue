@@ -320,6 +320,7 @@
         this.$refs['pushForm'].validate((valid) => {
           if (valid) {
             pushWeappByAppId(this.pushTemp).then(resp => {
+              this.pushWeappShow = false
               this.getList()
             })
           }
