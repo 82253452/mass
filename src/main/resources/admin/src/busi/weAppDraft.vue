@@ -45,58 +45,58 @@
 </template>
 
 <script>
-import { gettemplatedraftlist, addtotemplate, deleteTemplate } from '@/api/weApp'
-import { parseTime } from '@/utils'
+  import {gettemplatedraftlist, addtotemplate, deleteTemplate} from '@/api/weApp'
+  import {parseTime} from '@/utils'
 
-export default {
-  name: 'ComplexTable',
-  filters: {},
-  data() {
-    return {
-      tableKey: 0,
-      list: null,
+  export default {
+    name: 'ComplexTable',
+    filters: {},
+    data() {
+      return {
+        tableKey: 0,
+        list: null,
 
-      listQuery: {},
-      temp: {}
-    }
-  },
-  created() {
-    this.getList()
-  },
-  methods: {
-    getList() {
-      this.listLoading = true
-      gettemplatedraftlist().then(data => {
-        this.list = data.templateDraftList
-        this.listLoading = false
-      })
+        listQuery: {},
+        temp: {}
+      }
     },
-    handleDelete(row, status) {
-      deleteTemplate({ templateId: row.templateId }).then(data => {
-        this.getList()
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+    created() {
+      this.getList()
+    },
+    methods: {
+      getList() {
+        this.listLoading = true
+        gettemplatedraftlist().then(data => {
+          this.list = data
+          this.listLoading = false
         })
-      })
-    },
-
-    resetTemp() {
-      this.temp = {}
-    },
-    updateData() {
-      addtotemplate({ draftId: row.draftId }).then(() => {
-        this.getList()
-        this.$notify({
-          title: '成功',
-          message: '添加成功',
-          type: 'success',
-          duration: 2000
+      },
+      handleDelete(row, status) {
+        deleteTemplate({templateId: row.templateId}).then(data => {
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
         })
-      })
+      },
+
+      resetTemp() {
+        this.temp = {}
+      },
+      updateData() {
+        addtotemplate({draftId: row.draftId}).then(() => {
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '添加成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      }
     }
   }
-}
 </script>

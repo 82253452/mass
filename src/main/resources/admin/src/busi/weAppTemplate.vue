@@ -61,7 +61,7 @@ export default {
     getList() {
       this.listLoading = true
       gettemplatelist().then(data => {
-        this.list = data.templateDraftList
+        this.list = data
         this.listLoading = false
       })
     },
