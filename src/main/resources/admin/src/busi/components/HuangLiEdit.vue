@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+
 export default {
   props: {
     data: {
@@ -16,6 +17,8 @@ export default {
       msg: 'hello vue'
     }
   },
-  methods: {}
+  methods: {
+
+  }
 }
 </script>
