@@ -197,6 +197,8 @@ import NavigationEdit from './components/NavigationEdit'
 import { parseTime } from '@/utils'
 import Dictionary from './components/Dictionary'
 import DictionaryEdit from './components/DictionaryEdit'
+import HuangLi from './components/HuangLi'
+import HuangLiEdit from './components/HuangLiEdit'
 export default {
   name: 'ComplexTable',
   components: {
@@ -209,7 +211,9 @@ export default {
     Navigation,
     NavigationEdit,
     Dictionary,
-    DictionaryEdit
+    DictionaryEdit,
+    HuangLi,
+    HuangLiEdit
   },
   directives: {
     waves
