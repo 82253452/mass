@@ -28,6 +28,13 @@
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="设为当前模板" width="150">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.templateId===templateId"
+                     @change="setTemplateId(scope.row.templateId)">
+          </el-switch>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="操作" fixed="right" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{ $t('table.delete') }}
@@ -39,7 +46,7 @@
 </template>
 
 <script>
-  import {gettemplatelist, deleteTemplate} from '@/api/weApp'
+  import {gettemplatelist, deleteTemplate, getCurrentTemplateId, setCurrentTemplateId} from '@/api/weApp'
   import {parseTime} from '@/utils'
 
   export default {
@@ -51,13 +58,31 @@
         list: null,
 
         listQuery: {},
-        temp: {}
+        temp: {},
+        templateId: ''
       }
     },
     created() {
       this.getList()
+      this.getTemplateId()
     },
     methods: {
+      getTemplateId() {
+        getCurrentTemplateId().then(res => {
+          this.templateId = res.templateId
+        })
+      },
+      setTemplateId(templateId) {
+        setCurrentTemplateId({templateId: templateId}).then(res => {
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '设置成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      },
       getList() {
         this.listLoading = true
         gettemplatelist().then(data => {

@@ -67,6 +67,28 @@ public class BusiAppController {
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
     /**
+     * 获取当前模板
+     *
+     * @return
+     */
+    @GetMapping("/getCurrentTemplateId")
+    public R getCurrentTemp() {
+        String templateId = stringRedisTemplate.opsForValue().get("templateId");
+        return R.renderSuccess("templateId", templateId);
+    }
+
+    /**
+     * put当前模板
+     *
+     * @return
+     */
+    @GetMapping("/setCurrentTemplateId")
+    public R setCurrentTemplateId(String templateId) {
+        stringRedisTemplate.opsForValue().set("templateId", templateId);
+        return R.ok();
+    }
+
+    /**
      * 获取草稿箱内的所有临时代码草稿
      *
      * @return

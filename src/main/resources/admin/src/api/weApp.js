@@ -28,3 +28,17 @@ export function deleteTemplate(query) {
     params: query
   })
 }
+export function getCurrentTemplateId(query) {
+  return request({
+    url: '/busiApp/getCurrentTemplateId',
+    method: 'get',
+    params: query
+  })
+}
+export function setCurrentTemplateId(query) {
+  return request({
+    url: '/busiApp/setCurrentTemplateId',
+    method: 'get',
+    params: query
+  })
+}
