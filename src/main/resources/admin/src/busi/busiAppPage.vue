@@ -101,11 +101,11 @@
               v-model="comList"
               :options="{group:{ name:'compont', pull:'clone', put:false}}"
               :clone="compClone"
-              style="width:100%;min-height: 150px;"
+              style="width:100%;min-height: 350px;"
               @start="drag=true"
               @end="onEnd">
               <div v-for="element in comList" :key="element.id" style="float: left;margin:3%;">
-                <el-card :body-style="{ padding: '0px' }" style="width:80px;height: 80px">
+                <el-card :body-style="{ padding: '0px' }" style="width:80px;min-height: 80px">
                   <div style="text-align: center">
                     <i class="el-icon-edit" style="width: 40px;height: 40px;padding-top:20px;"/>
                     <div style="padding-top: 10px;">
@@ -159,8 +159,9 @@
                   :key="index"
                   :style="{width:parseInt(100/tempPageSize)-1+'%',float:'left'}"
                   @click="pageConfig(index)">
-                  <div style="text-align: center">
-                    <img src="element.img" style="width: 40px;height: 40px;padding-top:10px;">
+                  <div style="text-align: center;min-height:50px;">
+                    <!--<img src="element.img" style="width: 40px;height: 40px;padding-top:10px;">-->
+                    <i :class="'iconfont icon-'+element.iconName" style="font-size:30px;padding-top:10px;"/>
                     <div style="padding-top:5px;font-size: 4px;">
                       {{ element.pageName||element.title }}
                     </div>
@@ -199,6 +200,11 @@ import Dictionary from './components/Dictionary'
 import DictionaryEdit from './components/DictionaryEdit'
 import HuangLi from './components/HuangLi'
 import HuangLiEdit from './components/HuangLiEdit'
+import NameMatch from './components/NameMatch'
+import NameMatchEdit from './components/NameMatchEdit'
+import NameRate from './components/NameRate'
+import NameRateEdit from './components/NameRateEdit'
+
 export default {
   name: 'ComplexTable',
   components: {
@@ -213,7 +219,11 @@ export default {
     Dictionary,
     DictionaryEdit,
     HuangLi,
-    HuangLiEdit
+    HuangLiEdit,
+    NameMatch,
+    NameMatchEdit,
+    NameRate,
+    NameRateEdit
   },
   directives: {
     waves
@@ -255,7 +265,9 @@ export default {
         },
         { id: 3, name: 'Navigation', label: '企业导航页', data: {}},
         { id: 4, name: 'Dictionary', label: '字典页', data: {}},
-        { id: 5, name: 'HuangLi', label: '黄历', data: {}}
+        { id: 5, name: 'HuangLi', label: '黄历', data: {}},
+        { id: 6, name: 'NameMatch', label: '姓名配对', data: {}},
+        { id: 7, name: 'NameRate', label: '姓名评分', data: {}}
       ],
       pageList: [
         { id: 1, name: 'Page', title: '空页面', comResult: [] }
@@ -315,6 +327,7 @@ export default {
       this.temp = {}
       this.dateTemp = {}
       this.pageListResult = []
+      this.tempPageSize = 0
       // this.comResult = []
     },
     createData() {

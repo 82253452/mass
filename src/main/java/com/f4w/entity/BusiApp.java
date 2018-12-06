@@ -20,7 +20,7 @@ public class BusiApp extends BaseEntity {
     private String appId;
     private Long pageId;
     //1 生成模板成功 2生成模板中 3 生成模板失败
-    //0 默认 1授权成功 2发版审核中 3审核通过 4审核失败 5发布成功 6发布失败
+    //0 默认 1授权成功 2发版审核中 3审核通过 4审核失败 5发布成功 6发布失败 7上传成功(发版失败)
     private Integer status;
     private String fileName;
     private Long uid;

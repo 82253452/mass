@@ -287,7 +287,6 @@ public class BusiAppController {
         return wxOpenMaPageListResult.getPageList();
     }
 
-
     /**
      * 为授权的小程序帐号上传小程序代码
      *
@@ -295,8 +294,8 @@ public class BusiAppController {
      * @return
      * @throws WxErrorException
      */
-    @GetMapping("/pushWeapp")
-    public R pushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
+    @GetMapping("/onlyPushWeapp")
+    public R onlyPushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(param.get("appId"));
         busiApp = busiAppMapper.selectOne(busiApp);
@@ -312,6 +311,7 @@ public class BusiAppController {
         }
         busiApp.setVersion(busiApp.getVersion() == null ? 0 : busiApp.getVersion() + 1);
         busiApp.setPageId(MapUtils.getLong(param, "pageId"));
+        busiApp.setStatus(7);
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
         extInfo.setExtAppid(param.get("appId"));
@@ -341,10 +341,28 @@ public class BusiAppController {
             for (int i = 0; i < pageContent.size(); i++) {
                 WxMaOpenTab wxMaOpenTab = new WxMaOpenTab("pages/index/index_" + i
                         , pageContent.getJSONObject(i).getString("pageTitle"));
+                if (StringUtils.isNotBlank(pageContent.getJSONObject(i).getString("iconPath"))) {
+                    wxMaOpenTab.setIconPath(pageContent.getJSONObject(i).getString("iconPath") + ".png");
+                    wxMaOpenTab.setSelectedIconPath(pageContent.getJSONObject(i).getString("iconPath") + "_fill.png");
+                }
+
                 tabList.add(wxMaOpenTab);
             }
             wxMaOpenTabBar.setTabList(tabList);
+            extInfo.setTabBar(wxMaOpenTabBar);
         }
+        List<String> pageList = new ArrayList<>();
+        pageList.add("pages/index/index_0");
+        pageList.add("pages/index/index_1");
+        pageList.add("pages/index/index_2");
+        pageList.add("pages/index/index_3");
+        pageList.add("pages/login/login");
+        pageList.add("pages/List/index");
+        pageList.add("pages/center/index");
+        pageList.add("pages/about/index");
+        pageList.add("pages/detail/index");
+        pageList.add("pages/NewsDetail/index");
+        extInfo.setPageList(pageList);
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
@@ -352,6 +370,22 @@ public class BusiAppController {
         JSONObject resp = JSONObject.parseObject(responseContent);
         if (!"0".equals(resp.getString("errcode"))) {
             return R.error(resp.getString("errmsg"));
+        }
+        return R.ok();
+    }
+
+    /**
+     * 为授权的小程序帐号上传小程序代码
+     *
+     * @param param
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/pushWeapp")
+    public R pushWeapp(@RequestParam Map<String, String> param) throws WxErrorException {
+        R push = onlyPushWeapp(param);
+        if (!push.isOk()) {
+            return R.error();
         }
         return submitWeapp(param);
     }

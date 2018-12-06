@@ -80,6 +80,13 @@ export function pushWeappByAppId(query) {
     params: query
   })
 }
+export function onlyPushWeapp(query) {
+  return request({
+    url: space + '/onlyPushWeapp',
+    method: 'get',
+    params: query
+  })
+}
 export function getItemList(query) {
   return request({
     url: space + '/getItemList',

@@ -18,6 +18,7 @@ import './icons' // icon
 import './errorLog' // error log
 import './permission' // permission control
 import './mock' // simulation data
+import './assets/ali-icon/iconfont.css' // simulation data
 
 import * as filters from './filters' // global filters
 
