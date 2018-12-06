@@ -190,7 +190,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="pushWeapp">确认发版</el-button>
-        <el-button v-if="isAdmin" type="primary" @click="pushWeapp">只上传</el-button>
+        <el-button v-if="isAdmin" type="primary" @click="onlyPushWeapp">只上传</el-button>
       </div>
     </el-dialog>
   </div>
