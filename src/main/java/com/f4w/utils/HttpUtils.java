@@ -5,6 +5,7 @@ import com.f4w.service.JuheService;
 import com.f4w.service.NewsService;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.converter.fastjson.FastJsonConverterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import javax.net.ssl.*;
@@ -52,6 +53,14 @@ public class HttpUtils {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://v.juhe.cn/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        return retrofit.create(JuheService.class);
+    }
+
+    public static JuheService JsonJuheService() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://v.juhe.cn/")
+                .addConverterFactory(FastJsonConverterFactory.create())
                 .build();
         return retrofit.create(JuheService.class);
     }
