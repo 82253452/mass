@@ -100,7 +100,10 @@
             <el-button slot="reference" type="primary">预览</el-button>
           </el-popover>
           <el-button
-            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===1||scope.row.status===4||scope.row.status===3||scope.row.status===5||scope.row.status===6)"
+            v-if="scope.row.miniProgramInfo===2 && (scope.row.status===1
+            ||scope.row.status===4||scope.row.status===3||scope.row.status===5
+            ||scope.row.status===6
+            ||scope.row.status===7)"
             type="primary"
             @click="pushShow(scope.row.appId)">发版
           </el-button>
