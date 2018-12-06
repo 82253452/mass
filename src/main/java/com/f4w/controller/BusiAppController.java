@@ -341,11 +341,10 @@ public class BusiAppController {
             for (int i = 0; i < pageContent.size(); i++) {
                 WxMaOpenTab wxMaOpenTab = new WxMaOpenTab("pages/index/index_" + i
                         , pageContent.getJSONObject(i).getString("pageTitle"));
-                if (StringUtils.isNotBlank(pageContent.getJSONObject(i).getString("iconPath"))) {
-                    wxMaOpenTab.setIconPath("/image/" + pageContent.getJSONObject(i).getString("iconPath") + ".png");
-                    wxMaOpenTab.setSelectedIconPath("/image/" + pageContent.getJSONObject(i).getString("iconPath") + "_fill.png");
+                if (StringUtils.isNotBlank(pageContent.getJSONObject(i).getString("iconName"))) {
+                    wxMaOpenTab.setIconPath("/image/" + pageContent.getJSONObject(i).getString("iconName") + ".png");
+                    wxMaOpenTab.setSelectedIconPath("/image/" + pageContent.getJSONObject(i).getString("iconName") + "_fill.png");
                 }
-
                 tabList.add(wxMaOpenTab);
             }
             wxMaOpenTabBar.setTabList(tabList);
