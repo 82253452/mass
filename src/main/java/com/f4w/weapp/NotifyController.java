@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.plaf.ListUI;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -185,6 +186,7 @@ public class NotifyController {
                 } else {
                     busiApp.setStatus(5);
                     busiApp.setAuditMsg("发布成功");
+                    setDomain(appId);
                 }
                 busiAppMapper.updateByPrimaryKey(busiApp);
             } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
@@ -235,4 +237,28 @@ public class NotifyController {
         }
         return out;
     }
+
+    public void setDomain(String appId) throws WxErrorException {
+        String domain = "https://www.cxduo.com";
+        String domain2 = "https://zhihuizhan.net";
+        List<String> webViewDomain = new ArrayList<>();
+        webViewDomain.add(domain2);
+        List<String> requestdomainList = new ArrayList<>();
+        requestdomainList.add(domain);
+        requestdomainList.add(domain2);
+        List<String> wsrequestdomainList = new ArrayList<>();
+        wsrequestdomainList.add(domain);
+        wsrequestdomainList.add(domain2);
+        List<String> uploaddomainList = new ArrayList<>();
+        uploaddomainList.add(domain);
+        uploaddomainList.add(domain2);
+        List<String> downloaddomainList = new ArrayList<>();
+        downloaddomainList.add(domain);
+        downloaddomainList.add(domain2);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
+        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
+    }
+
+
+
 }
