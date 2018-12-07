@@ -204,6 +204,8 @@ import NameMatch from './components/NameMatch'
 import NameMatchEdit from './components/NameMatchEdit'
 import NameRate from './components/NameRate'
 import NameRateEdit from './components/NameRateEdit'
+import CookBook from './components/CookBook'
+import CookBookEdit from './components/CookBookEdit'
 
 export default {
   name: 'ComplexTable',
@@ -223,7 +225,9 @@ export default {
     NameMatch,
     NameMatchEdit,
     NameRate,
-    NameRateEdit
+    NameRateEdit,
+    CookBook,
+    CookBookEdit
   },
   directives: {
     waves
@@ -267,7 +271,8 @@ export default {
         { id: 4, name: 'Dictionary', label: '字典页', data: {}},
         { id: 5, name: 'HuangLi', label: '黄历', data: {}},
         { id: 6, name: 'NameMatch', label: '姓名配对', data: {}},
-        { id: 7, name: 'NameRate', label: '姓名评分', data: {}}
+        { id: 7, name: 'NameRate', label: '姓名评分', data: {}},
+        { id: 7, name: 'CookBook', label: '家常菜', data: {}}
       ],
       pageList: [
         { id: 1, name: 'Page', title: '空页面', comResult: [] }

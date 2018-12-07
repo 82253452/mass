@@ -340,7 +340,7 @@ public class BusiAppController {
             List<WxMaOpenTab> tabList = new ArrayList<>();
             for (int i = 0; i < pageContent.size(); i++) {
                 WxMaOpenTab wxMaOpenTab = new WxMaOpenTab("pages/index/index_" + i
-                        , pageContent.getJSONObject(i).getString("pageTitle"));
+                        , pageContent.getJSONObject(i).getString("pageName"));
                 if (StringUtils.isNotBlank(pageContent.getJSONObject(i).getString("iconName"))) {
                     wxMaOpenTab.setIconPath("/image/" + pageContent.getJSONObject(i).getString("iconName") + ".png");
                     wxMaOpenTab.setSelectedIconPath("/image/" + pageContent.getJSONObject(i).getString("iconName") + "_fill.png");
