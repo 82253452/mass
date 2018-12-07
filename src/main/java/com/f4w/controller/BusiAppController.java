@@ -361,6 +361,10 @@ public class BusiAppController {
         pageList.add("pages/about/index");
         pageList.add("pages/detail/index");
         pageList.add("pages/NewsDetail/index");
+        pageList.add("pages/cookDetail/index");
+        pageList.add("pages/cookNews/index");
+        pageList.add("pages/cookVideo/index");
+        pageList.add("pages/cookMenu/index");
         extInfo.setPageList(pageList);
         String responseContent = wxOpenService
                 .getWxOpenComponentService()
