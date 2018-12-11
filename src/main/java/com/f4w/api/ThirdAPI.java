@@ -197,6 +197,34 @@ public class ThirdAPI {
         return R.renderSuccess("data", result);
     }
 
+    @GetMapping("/CarKouBei")
+    public R CarKouBei(String page, String l) {
+        if (StringUtils.isBlank(page)) {
+            page = "1";
+        }
+        String url = "http://koubei.bitauto.com/report/xuanche/?page=" + page + "&s=6&order=1";
+        if (StringUtils.isNotBlank(l)) {
+            url += "&l=" + l;
+        }
+        HttpRequest request = HttpRequest.get(url);
+        String s = request.body();
+        Document doc = Jsoup.parse(s);
+        Elements liE = doc.select(".container .card-kb-list li");
+        JSONArray result = new JSONArray();
+        liE.forEach(e -> {
+            JSONObject jsonObject = new JSONObject();
+            String img = e.selectFirst("img").attr("src");
+            String num = e.selectFirst(".tag .num").text();
+            String title = e.selectFirst(".cont-box h6").text();
+            jsonObject.put("img", img);
+            jsonObject.put("num", num);
+            jsonObject.put("title", title);
+            result.add(jsonObject);
+        });
+        return R.renderSuccess("data", result);
+    }
+
+
     private JSONObject nameMathing(String fName, String sName) {
         Map<String, String> data = new HashMap<>();
         data.put("xingx", fName);
@@ -271,17 +299,22 @@ public class ThirdAPI {
     }
 
     public static void main(String[] args) {
-        HttpRequest request = HttpRequest.get("https://apph5.meishi.cc/article/article_detail.php?id=57976");
+        HttpRequest request = HttpRequest.get("http://koubei.bitauto.com/report/xuanche/?page=1&s=6&order=1");
         String s = request.body();
         Document doc = Jsoup.parse(s);
-        String vSrc = doc.select(".topimgw2 video").first().attr("src");
-        JSONArray contentImg = new JSONArray();
-        String title = doc.selectFirst(".main .title").text();
-        Elements imagesE = doc.select(".main .artical_content p img");
-        imagesE.forEach(e -> {
-            contentImg.add(e.attr("src"));
+        Elements liE = doc.select(".container .card-kb-list li");
+        JSONArray jsonArray = new JSONArray();
+        liE.forEach(e -> {
+            JSONObject jsonObject = new JSONObject();
+            String img = e.selectFirst("img").attr("src");
+            String num = e.selectFirst(".tag .num").text();
+            String title = e.selectFirst(".cont-box h6").text();
+            jsonObject.put("img", img);
+            jsonObject.put("num", num);
+            jsonObject.put("title", title);
+            jsonArray.add(jsonObject);
         });
-        System.out.println(title);
+        System.out.println(jsonArray);
     }
 
 
