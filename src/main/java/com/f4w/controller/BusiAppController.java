@@ -319,6 +319,9 @@ public class BusiAppController {
         wxMaOpenWindow.setBackgroundTextStyle("light");
         wxMaOpenWindow.setNavigationBarTitleText(busiApp.getNickName());
         wxMaOpenWindow.setNavigationBarTextStyle("black");
+        if (busiAppPage.getCustom() == 1) {
+            wxMaOpenWindow.setNavigationStyle("custom");
+        }
         extInfo.setWindow(wxMaOpenWindow);
         String content = busiAppPage.getContent();
         if (StringUtils.isBlank(content)) {

@@ -10,6 +10,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -224,6 +225,90 @@ public class ThirdAPI {
         return R.renderSuccess("data", result);
     }
 
+    @GetMapping("/HomeCat")
+    public R HomeCat() {
+        HttpRequest request = HttpRequest.get("https://tuku.jia.com/tags/list_a/");
+        String s = request.body();
+        Document doc = Jsoup.parse(s);
+        Elements dlE = doc.select(".beauty_wrap .beauty_sel dl");
+        JSONArray jsonArray = new JSONArray();
+        dlE.forEach(e -> {
+            JSONObject j = new JSONObject();
+            JSONArray a = new JSONArray();
+            String head = e.selectFirst("dt").text();
+            Elements dd_span = e.select("dd a");
+            dd_span.forEach(ss -> {
+                JSONObject jj = new JSONObject();
+                String c = ss.text();
+                String url = ss.attr("href");
+                String title = ss.attr("title");
+                jj.put("text", c);
+                jj.put("url", url);
+                jj.put("title", title);
+                a.add(jj);
+            });
+            j.put("head", head);
+            j.put("list", a);
+            jsonArray.add(j);
+        });
+        return R.renderSuccess("data", jsonArray);
+    }
+
+    @GetMapping("/HomeImgs")
+    public R HomeImgs(Integer i, String paramA, String paramB, String paramC, String paramD) {
+        String u = "https://tuku.jia.com/tags/list_a/";
+        int ii = 0;
+        if (!StringUtils.isAllBlank(paramA, paramB, paramC, paramD)) {
+            String param = "";
+            if (StringUtils.isNotBlank(paramA)) {
+                ii++;
+                param += "-" + paramA;
+            }
+            if (StringUtils.isNotBlank(paramB)) {
+                ii++;
+                param += "-" + paramB;
+            }
+            if (StringUtils.isNotBlank(paramC)) {
+                ii++;
+                param += "-" + paramC;
+            }
+            if (StringUtils.isNotBlank(paramD)) {
+                ii++;
+                param += "-" + paramD;
+            }
+            u += "list" + ii + param + "/";
+        }
+        Integer page = i / 50;
+        if (page > 0) {
+            u += "/p" + i + "/";
+        }
+
+        HttpRequest request = HttpRequest.get(u);
+        String s = request.body();
+        Document doc = Jsoup.parse(s);
+        Elements liE = doc.select(".beauty_wrap .beauty_list ul li");
+        JSONArray jsonArray = new JSONArray();
+        Element e = liE.get(i % 50);
+        String url = e.selectFirst(".beauty_info a").attr("href");
+        if (StringUtils.isNotBlank(url)) {
+            HttpRequest request2 = HttpRequest.get(url);
+            String ss = request2.body();
+            Document docs = Jsoup.parse(ss);
+            Elements imgsE = docs.select(".main-content .thumbnail-box ul li a img");
+            Integer size = imgsE.size();
+            imgsE.forEach(f -> {
+                JSONObject jsonObject = new JSONObject();
+                String title = f.attr("title");
+                String src = f.attr("src");
+                jsonObject.put("title", title);
+                jsonObject.put("src", src);
+                jsonObject.put("size", size);
+                jsonArray.add(jsonObject);
+            });
+        }
+        return R.renderSuccess("data", jsonArray);
+    }
+
 
     private JSONObject nameMathing(String fName, String sName) {
         Map<String, String> data = new HashMap<>();
@@ -299,22 +384,7 @@ public class ThirdAPI {
     }
 
     public static void main(String[] args) {
-        HttpRequest request = HttpRequest.get("http://koubei.bitauto.com/report/xuanche/?page=1&s=6&order=1");
-        String s = request.body();
-        Document doc = Jsoup.parse(s);
-        Elements liE = doc.select(".container .card-kb-list li");
-        JSONArray jsonArray = new JSONArray();
-        liE.forEach(e -> {
-            JSONObject jsonObject = new JSONObject();
-            String img = e.selectFirst("img").attr("src");
-            String num = e.selectFirst(".tag .num").text();
-            String title = e.selectFirst(".cont-box h6").text();
-            jsonObject.put("img", img);
-            jsonObject.put("num", num);
-            jsonObject.put("title", title);
-            jsonArray.add(jsonObject);
-        });
-        System.out.println(jsonArray);
+        System.out.println(!StringUtils.isAllBlank("1", "", "", ""));
     }
 
 

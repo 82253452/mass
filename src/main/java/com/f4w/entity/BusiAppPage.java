@@ -20,4 +20,5 @@ public class BusiAppPage extends BaseEntity {
     private String appSecret;
     private String content;
     private Long uid;
+    private Integer custom;
 }
