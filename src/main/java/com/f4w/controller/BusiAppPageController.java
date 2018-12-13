@@ -34,7 +34,7 @@ public class BusiAppPageController {
     @PostMapping("/insert")
     public R insert(@CurrentUser SysUser sysUser, @RequestBody BusiAppPage BusiAppPage) {
         BusiAppPage.setUid(sysUser.getId());
-        Integer r = busiAppPageMapper.insert(BusiAppPage);
+        Integer r = busiAppPageMapper.insertSelective(BusiAppPage);
         return R.ok().put("data", r);
     }
 
