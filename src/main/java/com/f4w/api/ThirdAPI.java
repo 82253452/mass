@@ -309,6 +309,76 @@ public class ThirdAPI {
         return R.renderSuccess("data", jsonArray);
     }
 
+    @GetMapping("/goodsHello")
+    public R goodsHello() {
+        HttpRequest request = HttpRequest.get("http://www.siandian.com");
+        String s = request.body("gbk");
+        Document doc = Jsoup.parse(s);
+        Elements dList = doc.selectFirst(".tagList").select(" .tagBody");
+        JSONArray result = new JSONArray();
+        dList.forEach(e -> {
+            JSONObject j = new JSONObject();
+            JSONArray a = new JSONArray();
+            String title = e.select(".tagIcotxt").text();
+            e.select(".tagContent a").forEach(ee -> {
+                JSONObject jt = new JSONObject();
+                String text = ee.text();
+                String url = ee.attr("href");
+                jt.put("text", text);
+                jt.put("url", url);
+                a.add(jt);
+            });
+            j.put("title", title);
+            j.put("list", a);
+            result.add(j);
+        });
+        return R.renderSuccess("data", result);
+    }
+
+    @GetMapping("/goodsHelloList")
+    public R goodsHelloList(String next, String url) {
+        String base = "http://www.siandian.com";
+        if (StringUtils.isNotBlank(next)) {
+            if (next.split("/").length > 1) {
+                base += next;
+            } else {
+                base += url + next;
+            }
+        } else {
+            base += url;
+        }
+        HttpRequest request = HttpRequest.get(base);
+        String s = request.body("gbk");
+        Document doc = Jsoup.parse(s);
+        Elements dList = doc.select(".bodyMain .bodyMainBody .infoListUL li");
+        JSONArray result = new JSONArray();
+        dList.forEach(e -> {
+            JSONObject j = new JSONObject();
+            JSONArray a = new JSONArray();
+            String title = e.select("a").text();
+            String urls = e.select("a").attr("href");
+            String date = e.select("span").text();
+            j.put("title", title);
+            j.put("url", urls);
+            j.put("date", date);
+            result.add(j);
+        });
+        String nextPage = doc.select(".bodyMain .bodyMainBody .pagelist .thisclass").next().select("a").attr("href");
+        return R.renderSuccess("data", result).renderPut("next", nextPage);
+    }
+
+    @GetMapping("/goodsHelloContent")
+    public R goodsHelloContent() {
+        HttpRequest request = HttpRequest.get("http://www.siandian.com/qinghua/23288.html");
+        String s = request.body("gbk");
+        Document doc = Jsoup.parse(s);
+        String title = doc.select(".articleBody .shareBox h2").text();
+        String content = doc.select(".articleBody .articleContent .articleText p").outerHtml();
+        JSONObject result = new JSONObject();
+        result.put("title", title);
+        result.put("content", content);
+        return R.renderSuccess("data", result);
+    }
 
     private JSONObject nameMathing(String fName, String sName) {
         Map<String, String> data = new HashMap<>();
@@ -384,7 +454,15 @@ public class ThirdAPI {
     }
 
     public static void main(String[] args) {
-        System.out.println(!StringUtils.isAllBlank("1", "", "", ""));
+        HttpRequest request = HttpRequest.get("http://www.siandian.com/qinghua/23288.html");
+        String s = request.body("gbk");
+        Document doc = Jsoup.parse(s);
+        String title = doc.select(".articleBody .shareBox h2").text();
+        String content = doc.select(".articleBody .articleContent .articleText").outerHtml();
+        JSONObject result = new JSONObject();
+        result.put("title", title);
+        result.put("content", content);
+        System.out.println(result);
     }
 
 

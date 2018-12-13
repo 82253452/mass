@@ -123,7 +123,7 @@
                 </el-card>
               </div>
             </draggable>
-            <div style="text-align: center">
+            <div style="text-align: center;clear:both;">
               <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">保存页面</el-button>
               <el-button v-else type="primary" @click="updateData">保存页面</el-button>
             </div>
@@ -218,6 +218,8 @@ import CarKouBei from './components/CarKouBei'
 import CarKouBeiEdit from './components/CarKouBeiEdit'
 import HomeImg from './components/HomeImg'
 import HomeImgEdit from './components/HomeImgEdit'
+import GoodsHello from './components/GoodsHello'
+import GoodsHelloEdit from './components/GoodsHelloEdit'
 
 export default {
   name: 'ComplexTable',
@@ -243,7 +245,9 @@ export default {
     CarKouBei,
     CarKouBeiEdit,
     HomeImg,
-    HomeImgEdit
+    HomeImgEdit,
+    GoodsHello,
+    GoodsHelloEdit,
   },
   directives: {
     waves
@@ -290,7 +294,9 @@ export default {
         { id: 7, name: 'NameRate', label: '姓名评分', data: {}},
         { id: 8, name: 'CookBook', label: '家常菜', data: {}},
         { id: 9, name: 'CarKouBei', label: '汽车口碑', data: {}},
-        { id: 10, name: 'HomeImg', label: '装修效果图', data: {}}
+        { id: 10, name: 'HomeImg', label: '装修效果图', data: {}},
+        { id: 10, name: 'GoodsHello', label: '祝福语大全', data: {}}
+
       ],
       pageList: [
         { id: 1, name: 'Page', title: '空页面', comResult: [] }
@@ -476,7 +482,7 @@ export default {
   }
 
   .diaClass {
-    height: 80vh;
+    min-height: 80vh;
   }
 
   .appMain {
