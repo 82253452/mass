@@ -163,9 +163,9 @@ public class BusiQuestionController {
             if (StringUtils.isBlank(answer8)) {
                 continue;
             }
-            answer8 = answer8.toLowerCase();
+            answer8 = answer8.trim().toLowerCase();
             //判断题
-            if (StringUtils.containsAny(answer8, "对", "y", "正", "v")) {
+            if (StringUtils.containsAny(answer8, "对", "y", "正", "v","√","错","是","否","×","x")) {
                 dealPD(uid, appId, answer8, m);
             }
             //选择题
@@ -234,10 +234,10 @@ public class BusiQuestionController {
     }
 
     private String getAnswer(String answer) {
-        if (StringUtils.containsAny(answer, "对", "y", "正", "v")) {
+        if (StringUtils.containsAny(answer, "对", "y", "正", "v","√")) {
             return "1";
         }
-        if (StringUtils.containsAny(answer, "错", "x")) {
+        if (StringUtils.containsAny(answer, "错", "x","×")) {
             return "0";
         }
         //选择题
