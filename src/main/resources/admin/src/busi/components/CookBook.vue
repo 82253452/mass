@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;width:100%;background: #fff;text-align: center">
+  <div class="main">
     <h1 style="margin-top:40%;">家常菜</h1>
   </div>
 </template>
@@ -22,3 +22,12 @@ export default {
   }
 }
 </script>
+<style>
+  .main {
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    text-align: center;
+    border: 1px dashed #bfcbd9
+  }
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%;text-align: center;padding-left:5%;">
+  <div class="main">
     <div v-for="element in 8" :key="element" style="float: left;width: 32%">
       <el-card style="height: 80px;margin:3%;" :body-style="{ padding: '0px' }">
         <div style="text-align: center">
@@ -28,3 +28,11 @@
     }
   }
 </script>
+<style>
+  .main {
+    width: 100%;
+    text-align: center;
+    padding-left: 5%;;
+    border: 1px dashed #bfcbd9
+  }
+</style>

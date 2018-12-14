@@ -8,18 +8,22 @@ import com.f4w.utils.HttpUtils;
 import com.f4w.utils.R;
 import com.github.kevinsawicki.http.HttpRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import retrofit2.Call;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/third")
@@ -199,24 +203,28 @@ public class ThirdAPI {
     }
 
     @GetMapping("/CarKouBei")
-    public R CarKouBei(String page, String l) {
-        if (StringUtils.isBlank(page)) {
-            page = "1";
-        }
-        String url = "http://koubei.bitauto.com/report/xuanche/?page=" + page + "&s=6&order=1";
-        if (StringUtils.isNotBlank(l)) {
-            url += "&l=" + l;
-        }
-        HttpRequest request = HttpRequest.get(url);
+    public R CarKouBei(@RequestParam Map<String, String> map) {
+        final String[] url = {"http://koubei.bitauto.com/tree/xuanche/?"};
+//        if (StringUtils.isNotBlank(l)) {
+//            url += "&l=" + l;
+//        }
+        map.keySet().forEach(k -> {
+            if (StringUtils.isNotBlank(map.get(k))) {
+                url[0] += "&" + k + "=" + map.get(k);
+            }
+        });
+        HttpRequest request = HttpRequest.get(url[0]);
         String s = request.body();
         Document doc = Jsoup.parse(s);
-        Elements liE = doc.select(".container .card-kb-list li");
+        Elements liE = doc.select(".container .img-layout");
         JSONArray result = new JSONArray();
         liE.forEach(e -> {
             JSONObject jsonObject = new JSONObject();
-            String img = e.selectFirst("img").attr("src");
-            String num = e.selectFirst(".tag .num").text();
-            String title = e.selectFirst(".cont-box h6").text();
+            String img = e.select("img").attr("src");
+            String num = e.select(".p-list .sm_txt").text();
+            String title = e.select(".p-list a").text();
+            String money = e.select(".p-list .info").text();
+            jsonObject.put("money", money);
             jsonObject.put("img", img);
             jsonObject.put("num", num);
             jsonObject.put("title", title);
@@ -380,6 +388,46 @@ public class ThirdAPI {
         return R.renderSuccess("data", result);
     }
 
+    @GetMapping("/XSList")
+    public R XSList() {
+        HttpRequest request = HttpRequest.get("http://www.6pingm.cc/zuixin/");
+        String s = request.body("gbk");
+        Document doc = Jsoup.parse(s);
+        Elements select = doc.select(".box .index_middle .index_middle_c li");
+        JSONArray jsonArray = new JSONArray();
+        select.forEach(e -> {
+            JSONObject jsonObject = new JSONObject();
+            String href = e.select("span a").attr("href");
+            String text = e.select("span a").text();
+            String source = e.select("p").text();
+            String img = e.select("a img").attr("src");
+            jsonObject.put("text", text);
+            jsonObject.put("href", href);
+            jsonObject.put("source", source);
+            jsonObject.put("img", img);
+            jsonArray.add(jsonObject);
+        });
+        return R.renderSuccess("data", jsonArray);
+    }
+
+    @GetMapping("/XSContent")
+    public R XSContent(String url) {
+        HttpRequest request = HttpRequest.get("http://www.6pingm.cc/v/144863.html");
+        String s = request.body("gbk");
+        Document doc = Jsoup.parse(s);
+        JSONObject jsonObject = new JSONObject();
+        String text = doc.select(".cnav h3 span").text();
+        jsonObject.put("text", text);
+        String urd = doc.select("#showpagephoto").html();
+        String pattern = "'youku','(.*?)'";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(urd);
+        if (m.find()) {
+            jsonObject.put("src", m.group(1));
+        }
+        return R.renderSuccess("data", jsonObject);
+    }
+
     private JSONObject nameMathing(String fName, String sName) {
         Map<String, String> data = new HashMap<>();
         data.put("xingx", fName);
@@ -454,15 +502,19 @@ public class ThirdAPI {
     }
 
     public static void main(String[] args) {
-        HttpRequest request = HttpRequest.get("http://www.siandian.com/qinghua/23288.html");
+        HttpRequest request = HttpRequest.get("http://www.6pingm.cc/v/144863.html");
         String s = request.body("gbk");
         Document doc = Jsoup.parse(s);
-        String title = doc.select(".articleBody .shareBox h2").text();
-        String content = doc.select(".articleBody .articleContent .articleText").outerHtml();
-        JSONObject result = new JSONObject();
-        result.put("title", title);
-        result.put("content", content);
-        System.out.println(result);
+        JSONObject jsonObject = new JSONObject();
+        String text = doc.select(".cnav h3 span").text();
+        jsonObject.put("text", text);
+        String url = doc.select("#showpagephoto").html();
+        String pattern = "'youku','(.*?)'";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(url);
+        if (m.find()) {
+            jsonObject.put("src", m.group(1));
+        }
     }
 
 
