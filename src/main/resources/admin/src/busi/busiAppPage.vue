@@ -402,17 +402,8 @@
         this.dialogFormVisible = true
       },
       resetTemp() {
-        this.temp = {
-          id: 1,
-          name: 'Page',
-          title: '空页面',
-          iconName: 'homepage',
-          pageName: '首页',
-          shareTitle: '分享',
-          pageTitle: '标题',
-          comResult: []
-        }
-        this.dateTemp = this.temp
+
+        this.dateTemp = {}
         this.pageListResult = [{
           id: 1,
           name: 'Page',
@@ -423,6 +414,7 @@
           pageTitle: '标题',
           comResult: []
         }]
+        this.temp = this.pageListResult[0]
         this.tempPageSize = 1
         // this.comResult = []
       },
