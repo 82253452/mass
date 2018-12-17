@@ -53,6 +53,7 @@ public class BusiQuestionController {
             return R.ok("导入完成");
         } catch (Exception e) {
             log.error("导入异常");
+            log.error(e.getMessage());
         }
         return R.error("导入异常");
     }
