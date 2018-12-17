@@ -154,23 +154,32 @@ public class BusiQuestionController {
     }
 
     private boolean saveContentNew(Long uid, String appId, String s) {
-        String pattern = "\\d+\\.?\\r?\\n?【(.*?)】(.*?(?:（?(?:([A-Fa-f√×YXyx ]{1,4})|(（[对错是否]）))）?).*?)([对错])?\\r?\\n(?:.*?[A-Fa-f](.*?)\\r?\\n)?(?:.*?[A-Fa-f](.*?)\\r?\\n)?(?:.*?[A-Fa-f](.*?)\\r?\\n)?(?:.*?[A-Fa-f](.*?)\\r?\\n)?(?:[答案：](.*?)\\r?\\n)?";
+        String pattern = "\\d+\\.*．*\\s*【(.*?)】(.*?(?:(?:(?:\\(|（)\\s*?)([A-Fa-f√×YXyx对错是否]{1,4})(?:\\s*?(?:）|\\)))).*?)(?:\\s*[A-Fa-f](.*?)\\r?\\n)?(?:\\s*[A-Fa-f](.*?)\\r?\\n)?(?:\\s*[A-Fa-f](.*?)\\r?\\n)?(?:\\s*[A-Fa-f](.*?)\\r?\\n)?(?:\\s*[答案：](.*?)\\r?\\n)?";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(s);
         while (m.find()) {
-            //第10 3位答案
-            String answer8 = getAnswer(m, 10, 3, 4, 5);
+            //获取题目类型
+            String type = m.group(1);
+            //第3 8位答案
+            String answer8 = getAnswer(m, 10, 8);
             if (StringUtils.isBlank(answer8)) {
                 continue;
             }
-            answer8 = answer8.toLowerCase();
-            //判断题
-            if (StringUtils.containsAny(answer8, "对", "y", "正", "v","√","错","是","否","×","x")) {
-                dealPD(uid, appId, answer8, m);
-            }
-            //选择题
-            else if (StringUtils.containsAny(answer8, "a", "b", "c", "d")) {
-                dealXZ(uid, appId, answer8, m);
+            if (StringUtils.isNotBlank(type)) {
+                if ("判断题".equals(type)) {
+                    dealPD(uid, appId, answer8, m);
+                } else {
+                    dealXZ(uid, appId, answer8, m);
+                }
+            } else {
+                //判断题
+                if (StringUtils.containsAny(answer8, "对", "y", "正", "v", "√", "错", "是", "否", "×", "x")) {
+                    dealPD(uid, appId, answer8, m);
+                }
+                //选择题
+                else if (StringUtils.containsAny(answer8, "a", "b", "c", "d")) {
+                    dealXZ(uid, appId, answer8, m);
+                }
             }
         }
         return true;
@@ -180,7 +189,7 @@ public class BusiQuestionController {
         for (int i1 : i) {
             String s = StringUtils.deleteWhitespace(m.group(i1));
             if (StringUtils.isNotBlank(s)) {
-                return s;
+                return s.toLowerCase();
             }
         }
         return "";
@@ -191,7 +200,7 @@ public class BusiQuestionController {
         if (StringUtils.isBlank(title)) {
             return false;
         }
-        String options = getOption(m, 6, 7, 8, 9);
+        String options = getOption(m, 4, 5, 6, 7);
         if (StringUtils.isBlank(options)) {
             return false;
         }
@@ -234,10 +243,10 @@ public class BusiQuestionController {
     }
 
     private String getAnswer(String answer) {
-        if (StringUtils.containsAny(answer, "对", "y", "正", "v","√")) {
+        if (StringUtils.containsAny(answer, "对", "y", "正", "v", "√")) {
             return "1";
         }
-        if (StringUtils.containsAny(answer, "错", "x","×")) {
+        if (StringUtils.containsAny(answer, "错", "x", "×")) {
             return "0";
         }
         //选择题
