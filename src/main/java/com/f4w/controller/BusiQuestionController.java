@@ -161,7 +161,7 @@ public class BusiQuestionController {
             //获取题目类型
             String type = m.group(1);
             //第3 8位答案
-            String answer8 = getAnswer(m, 10, 8);
+            String answer8 = getAnswer(m, 3, 8);
             if (StringUtils.isBlank(answer8)) {
                 continue;
             }
