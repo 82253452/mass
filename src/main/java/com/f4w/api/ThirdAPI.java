@@ -502,19 +502,24 @@ public class ThirdAPI {
     }
 
     public static void main(String[] args) {
-        HttpRequest request = HttpRequest.get("http://www.6pingm.cc/v/144863.html");
-        String s = request.body("gbk");
-        Document doc = Jsoup.parse(s);
-        JSONObject jsonObject = new JSONObject();
-        String text = doc.select(".cnav h3 span").text();
-        jsonObject.put("text", text);
-        String url = doc.select("#showpagephoto").html();
-        String pattern = "'youku','(.*?)'";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(url);
-        if (m.find()) {
-            jsonObject.put("src", m.group(1));
-        }
+        Map<String, Object> data = new HashMap<>();
+        String date[] = {"1993", "02", "12"};
+        data.put("date", date);
+        data.put("ldType", "0");
+        HttpRequest request = HttpRequest.get("https://www.xzw.com/cquery/post.php");
+        String s = request.body("GBK");
+        System.out.println(s);
+//        Document doc = Jsoup.parse(s);
+//        JSONObject jsonObject = new JSONObject();
+//        String text = doc.select(".cnav h3 span").text();
+//        jsonObject.put("text", text);
+//        String url = doc.select("#showpagephoto").html();
+//        String pattern = "'youku','(.*?)'";
+//        Pattern r = Pattern.compile(pattern);
+//        Matcher m = r.matcher(url);
+//        if (m.find()) {
+//            jsonObject.put("src", m.group(1));
+//        }
     }
 
 

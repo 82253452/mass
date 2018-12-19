@@ -222,6 +222,8 @@ import GoodsHello from './components/GoodsHello'
 import GoodsHelloEdit from './components/GoodsHelloEdit'
 import Anquanqi from './components/Anquanqi'
 import AnquanqiEdit from './components/AnquanqiEdit'
+import KuaiDi from './components/KuaiDi'
+import KuaiDiEdit from './components/KuaiDiEdit'
 
 export default {
   name: 'ComplexTable',
@@ -251,7 +253,9 @@ export default {
     GoodsHello,
     GoodsHelloEdit,
     Anquanqi,
-    AnquanqiEdit
+    AnquanqiEdit,
+    KuaiDi,
+    KuaiDiEdit,
   },
   directives: {
     waves
@@ -316,7 +320,8 @@ export default {
         },
         { id: 10, name: 'HomeImg', label: '装修效果图', data: {}},
         { id: 11, name: 'GoodsHello', label: '祝福语大全', data: {}},
-        { id: 12, name: 'Anquanqi', label: '安全期', data: {}}
+        { id: 12, name: 'Anquanqi', label: '安全期', data: {}},
+        { id: 13, name: 'KuaiDi', label: '快递速查', data: {}}
       ],
       pageList: [
         {
