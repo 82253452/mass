@@ -1,5 +1,5 @@
 <template>
-  <div class="main"/>
+  <div class="main anquanqi"/>
 </template>
 <script>
 export default {
@@ -25,6 +25,8 @@ export default {
     background: #fff;
     text-align: center;
     border: 1px dashed #bfcbd9;
+  }
+  .anquanqi{
     background: url("../../assets/images/anquanqi.jpg")  no-repeat !important;
     background-size:100% !important;
   }
