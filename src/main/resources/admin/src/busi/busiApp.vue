@@ -324,11 +324,9 @@
         this.pushTemp = {...this.itemList[item], ...this.pushTemp}
       },
       getItemListByAppId(appId) {
-        if (!this.itemList || this.itemList.length === 0) {
-          getItemList({appId: appId}).then(data => {
-            this.itemList = data.list
-          })
-        }
+        getItemList({appId: appId}).then(data => {
+          this.itemList = data.list
+        })
       },
       getTestQrcode(appId) {
         this.testCodeUrl = process.env.BASE_API + 'common/getTestQrcode?appId=' + appId + '&uuid=' + Math.random()
