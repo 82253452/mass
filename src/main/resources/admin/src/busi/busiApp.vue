@@ -133,7 +133,7 @@
           <!--</el-button>-->
           <!--</a>-->
           <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{ $t('table.edit') }}</el-button>-->
-          <el-button v-if="isAdmin" size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row,'deleted')">{{
             $t('table.delete') }}
           </el-button>
         </template>
