@@ -1,15 +1,26 @@
 package com.f4w.api;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.entity.BusiApp;
+import com.f4w.entity.BusiWCitys;
+import com.f4w.entity.BusiWProvience;
 import com.f4w.mapper.BusiAppMapper;
+import com.f4w.mapper.BusiWCitysMapper;
+import com.f4w.mapper.BusiWProvienceMapper;
 import com.f4w.mapper.SysUserMapper;
+import com.f4w.utils.Pinyin4j;
 import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
+import com.google.gson.JsonObject;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.result.WxOpenMaPageListResult;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +44,101 @@ public class CommonAPI {
 
     @Resource
     private BusiAppMapper busiAppMapper;
+    @Resource
+    private BusiWCitysMapper busiWCitysMapper;
+    @Resource
+    private BusiWProvienceMapper busiWProvienceMapper;
 
     /**
      * 获取七牛token
      *
+     * @return
+     */
+    @GetMapping("/testC")
+    public R testC() {
+//        List<BusiWCitys> list = busiWCitysMapper.selectAll();
+//        List<BusiWProvience> list = busiWProvienceMapper.selectAll();
+//        Pinyin4j p = new Pinyin4j();
+//        JSONArray jsonArray = new JSONArray();
+//        JSONObject r = new JSONObject();
+//        list.forEach(e -> {
+//            String name = e.getName();
+//            if (name.split("\\.").length > 1) {
+//                name = name.split("\\.")[1];
+//            }
+//            try {
+//                String s1 = p.toPinYinUppercaseInitials(name);
+//                JSONObject j = new JSONObject();
+//                j.put("name", name);
+//                j.put("id", e.getId());
+////                j.put("num", e.getCityNum());
+////                j.put("pid", e.getProvinceId());
+//                if (jsonArray.size() == 0) {
+//                    JSONObject o = new JSONObject();
+//                    o.put("title", s1);
+//                    o.put("k", s1);
+//                    JSONArray item = new JSONArray();
+//                    item.add(j);
+//                    o.put("items", item);
+//                    jsonArray.add(o);
+//                }
+//                for (int i = 0; i < jsonArray.size(); i++) {
+//                    if (s1.equals(jsonArray.getJSONObject(i).get("k"))) {
+//                        jsonArray.getJSONObject(i).getJSONArray("items").add(j);
+//                        break;
+//                    }
+//                    if (i == jsonArray.size() - 1) {
+//                        JSONObject o = new JSONObject();
+//                        o.put("title", s1);
+//                        o.put("k", s1);
+//                        JSONArray item = new JSONArray();
+//                        item.add(j);
+//                        o.put("items", item);
+//                        jsonArray.add(o);
+//                        break;
+//                    }
+//                }
+//            } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
+//                badHanyuPinyinOutputFormatCombination.printStackTrace();
+//            }
+//        });
+//        jsonArray.sort((o1, o2) -> {
+//            return JSONObject.parseObject(o1.toString()).getString("k").compareTo(JSONObject.parseObject(o2.toString()).getString("k"));
+//        });
+//        System.out.println(jsonArray);
+        List<BusiWCitys> list = busiWCitysMapper.selectAll();
+        JSONObject r = new JSONObject();
+        list.forEach(e -> {
+            JSONObject j = new JSONObject();
+            String name = e.getName();
+            if (name.split("\\.").length > 1) {
+                name = name.split("\\.")[1];
+            }
+            j.put("name", name);
+            j.put("num", e.getCityNum());
+
+            if (r.get(e.getProvinceId().toString()) == null) {
+                JSONArray a = new JSONArray();
+                a.add(j);
+                JSONObject t = new JSONObject();
+                t.put("items", a);
+                r.put(e.getProvinceId().toString(), t);
+            } else {
+                JSONArray a = r.getJSONObject(e.getProvinceId().toString()).getJSONArray("items");
+                a.add(j);
+            }
+        });
+        System.out.println(r);
+        return null;
+    }
+
+    public static void main(String[] args) throws BadHanyuPinyinOutputFormatCombination {
+
+    }
+
+    /**
+     * 获取七牛token
+     *laohuangli
      * @return
      */
     @GetMapping("qiniuToken")

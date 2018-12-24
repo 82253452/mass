@@ -3,6 +3,7 @@ package com.f4w.api;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.entity.juhe.DictionaryResult;
+import com.f4w.entity.juhe.HuangLiResult;
 import com.f4w.entity.news.NewsResult;
 import com.f4w.utils.HttpUtils;
 import com.f4w.utils.R;
@@ -59,8 +60,18 @@ public class ThirdAPI {
         return R.renderSuccess("data", render);
     }
 
+    @GetMapping("/laohuangli")
+    public R laohuangli(String date) throws IOException {
+        Call<HuangLiResult> result = HttpUtils.JuheService().laohuangli(date);
+        HuangLiResult render = result.execute().body();
+        if (null == render) {
+            return R.renderError("无查询结果");
+        }
+        return R.renderSuccess("data", render);
+    }
+
     @GetMapping("/nameRate")
-    public R laohuangli(String fName, String name) {
+    public R nameRates(String fName, String name) {
         JSONObject s = nameRate(fName, name);
         return R.renderSuccess("data", s);
     }
