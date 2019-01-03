@@ -8,12 +8,15 @@ import com.f4w.entity.news.NewsResult;
 import com.f4w.utils.HttpUtils;
 import com.f4w.utils.R;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import retrofit2.Call;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,15 +34,39 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/third")
 public class ThirdAPI {
+    private static ReadContext xiehouyuContext;
+    private static ReadContext ciContext;
+    private static ReadContext wordContext;
+    private static ReadContext idiomContext;
+
+    static {
+        try {
+            xiehouyuContext = JsonPath.parse(Configuration.defaultConfiguration().jsonProvider().parse(new ClassPathResource("data/xiehouyu.json").getInputStream(), "utf-8"));
+            ciContext = JsonPath.parse(Configuration.defaultConfiguration().jsonProvider().parse(new ClassPathResource("data/ci.json").getInputStream(), "utf-8"));
+            wordContext = JsonPath.parse(Configuration.defaultConfiguration().jsonProvider().parse(new ClassPathResource("data/word.json").getInputStream(), "utf-8"));
+            idiomContext = JsonPath.parse(Configuration.defaultConfiguration().jsonProvider().parse(new ClassPathResource("data/idiom.json").getInputStream(), "utf-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @GetMapping("/xhzd/query")
-    public R getArticleList(String word, String type, String riddle) throws IOException {
-        Call<List<DictionaryResult>> result = HttpUtils.DictionaryService().dictionary(type, word, riddle);
-        List<DictionaryResult> render = result.execute().body();
-        if (render.isEmpty()) {
-            return R.renderError("无查询结果");
+    public R getArticleList(String word, String type) throws IOException {
+        if (StringUtils.isNoneBlank(type, word)) {
+            List<Map> r = null;
+            if ("xiehouyu".equalsIgnoreCase(type)) {
+                r = xiehouyuContext.read("$..[?(@.riddle =~ /.*?" + word + ".*?/i)]");
+            } else if ("idiom".equalsIgnoreCase(type)) {
+                r = idiomContext.read("$..[?(@.word == '" + word + "')]");
+            } else if ("word".equalsIgnoreCase(type)) {
+                if (word.length() == 1) {
+                    r = wordContext.read("$..[?(@.word == '" + word + "')]");
+                } else
+                    r = ciContext.read("$..[?(@.ci == '" + word + "')]");
+            }
+            return R.renderSuccess("data", r);
         }
-        return R.renderSuccess("data", render);
+        return R.renderError("无查询结果");
     }
 
     @GetMapping("/news/topHeadlines")
@@ -513,24 +542,10 @@ public class ThirdAPI {
     }
 
     public static void main(String[] args) {
-        Map<String, Object> data = new HashMap<>();
-        String date[] = {"1993", "02", "12"};
-        data.put("date", date);
-        data.put("ldType", "0");
-        HttpRequest request = HttpRequest.get("https://www.xzw.com/cquery/post.php");
-        String s = request.body("GBK");
-        System.out.println(s);
-//        Document doc = Jsoup.parse(s);
-//        JSONObject jsonObject = new JSONObject();
-//        String text = doc.select(".cnav h3 span").text();
-//        jsonObject.put("text", text);
-//        String url = doc.select("#showpagephoto").html();
-//        String pattern = "'youku','(.*?)'";
-//        Pattern r = Pattern.compile(pattern);
-//        Matcher m = r.matcher(url);
-//        if (m.find()) {
-//            jsonObject.put("src", m.group(1));
-//        }
+        List<Map> result = xiehouyuContext.read("$..[?(@.riddle =~ /.*?刀.*?/i)]");
+        result.forEach(e -> {
+            System.out.println(e);
+        });
     }
 
 
