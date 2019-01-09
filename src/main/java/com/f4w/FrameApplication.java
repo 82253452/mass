@@ -33,3 +33,4 @@ public class FrameApplication {
         response.sendRedirect("index.html");
     }
 }
+

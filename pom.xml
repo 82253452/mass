@@ -221,7 +221,11 @@
             <artifactId>json-path</artifactId>
             <version>2.4.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-mp</artifactId>
+            <version>3.3.0</version>
+        </dependency>
 
 
     </dependencies>
@@ -273,24 +277,6 @@
                         <version>2.3.23</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <serverId>my</serverId>
-                    <fromFile>target/api.jar</fromFile>
-                    <url>sftp://root@122.114.170.132/opt/app/</url>
-                    <commands>
-                        <!-- 杀死原来的进程 -->
-                        <!--<command>pkill -f api.jar</command>-->
-                        <!-- 重新启动test.jar，程序的输出结果写到nohup.out文件中 -->
-                        <command>nohup java -jar /opt/app/api.jar > /opt/log/nohup.out 2>&amp;1 &amp;</command>
-                    </commands>
-                    <!-- 显示运行命令的输出结果 -->
-                    <displayCommandOutputs>true</displayCommandOutputs>
-                </configuration>
             </plugin>
         </plugins>
     </build>

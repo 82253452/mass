@@ -81,9 +81,9 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://122.114.170.132:3306/xxx?useSSL=false"
+                        connectionURL="jdbc:mysql://114.115.250.201:3306/xxx?useSSL=false"
                         userId="root"
-                        password="123">
+                        password="root123">
         </jdbcConnection>
 
         <javaModelGenerator targetPackage="com.f4w.entity" targetProject="src/main/java"/>
@@ -95,6 +95,6 @@
         <!--<javaClientGenerator targetPackage="com.f4w.mapper"-->
         <!--targetProject="src/main/java"-->
         <!--type="XMLMAPPER"/>-->
-        <table tableName="busi_question" schema="xxx"></table>
+        <table tableName="wxmp" schema="xxx"></table>
     </context>
 </generatorConfiguration>

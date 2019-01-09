@@ -102,3 +102,11 @@ export function releaseApp(query) {
   })
 }
 
+export function autoMessageApi(query) {
+  return request({
+    url: space + '/autoMessageApi',
+    method: 'get',
+    params: query
+  })
+}
+

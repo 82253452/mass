@@ -9,15 +9,18 @@ import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
 import com.f4w.entity.SysUser;
+import com.f4w.entity.Wxmp;
 import com.f4w.freemarker.GeneratorZipFile;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiAppPageMapper;
+import com.f4w.mapper.WxmpMapper;
 import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.*;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
@@ -37,8 +40,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -61,10 +68,49 @@ public class BusiAppController {
 
     @Resource
     private WxOpenService wxOpenService;
+    @Resource
+    private WxmpMapper wxmpMapper;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
+
+    /**
+     * 定时发布文章
+     *
+     * @return
+     */
+    @GetMapping("/autoMessageApi")
+    public R autoMessageApi(String appId, Integer type) {
+        Wxmp wxmp = new Wxmp();
+        wxmp.setType(type);
+        PageHelper.startPage(1, 5);
+        List<Wxmp> list = wxmpMapper.select(wxmp);
+        list.forEach(e -> {
+            File file = new File(UUID.randomUUID().toString());
+            String thumbnail = e.getThumbnail();
+            if (StringUtils.isNotBlank(thumbnail)) {
+                try {
+                    URL url = new URL(thumbnail);
+                    BufferedImage img = ImageIO.read(url);
+                    ImageIO.write(img, "jpg", file);
+                    WxMediaImgUploadResult result = wxOpenService
+                            .getWxOpenComponentService()
+                            .getWxMpServiceByAppid(appId)
+                            .getMaterialService().mediaImgUpload(file);
+                    System.out.println(result.toString());
+                } catch (WxErrorException | IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+//        wxOpenService
+//        .getWxOpenComponentService()
+//        .getWxMpServiceByAppid("")
+//        .getMaterialService()
+        String templateId = stringRedisTemplate.opsForValue().get("templateId");
+        return R.renderSuccess("templateId", templateId);
+    }
 
     /**
      * 获取当前模板

@@ -24,6 +24,12 @@ const busiRouter = {
       component: () => import('@/busi/busiQuestion'),
       name: 'busiQuestion',
       meta: { title: '答题管理' }
+    },
+    {
+      path: 'wxmp',
+      component: () => import('@/busi/wxmp'),
+      name: 'wxmp',
+      meta: { title: '采集数据' }
     }
   ]
 }
