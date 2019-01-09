@@ -87,7 +87,7 @@ public class BusiAppController {
         PageHelper.startPage(1, 5);
         List<Wxmp> list = wxmpMapper.select(wxmp);
         list.forEach(e -> {
-            File file = new File(UUID.randomUUID().toString());
+            File file = new File(UUID.randomUUID().toString() + ".png");
             String thumbnail = e.getThumbnail();
             if (StringUtils.isNotBlank(thumbnail)) {
                 try {
