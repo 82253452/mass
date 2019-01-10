@@ -13,6 +13,7 @@ spring:
     host: 114.115.250.201
     port: 6379
     database: 0
+    password: Yuping82253452
   thymeleaf:
     prefix: classpath:/static/
     suffix: .html
