@@ -47,4 +47,6 @@ public class Wxmp extends BaseEntity {
      */
     private Integer status;
 
+    private String content;
+
 }

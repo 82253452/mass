@@ -19,8 +19,12 @@ import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.*;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
@@ -86,30 +90,49 @@ public class BusiAppController {
         wxmp.setType(type);
         PageHelper.startPage(1, 5);
         List<Wxmp> list = wxmpMapper.select(wxmp);
-        list.forEach(e -> {
-            File file = new File(UUID.randomUUID().toString() + ".png");
-            String thumbnail = e.getThumbnail();
-            if (StringUtils.isNotBlank(thumbnail)) {
+        List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
+        try {
+
+            list.forEach(e -> {
                 try {
-                    URL url = new URL(thumbnail);
-                    BufferedImage img = ImageIO.read(url);
-                    ImageIO.write(img, "jpg", file);
-                    WxMediaImgUploadResult result = wxOpenService
-                            .getWxOpenComponentService()
-                            .getWxMpServiceByAppid(appId)
-                            .getMaterialService().mediaImgUpload(file);
-                    System.out.println(result.toString());
-                } catch (WxErrorException | IOException e1) {
-                    e1.printStackTrace();
+                    WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
+                    news.setTitle(e.getTitle());
+                    File file = new File(UUID.randomUUID().toString() + ".png");
+                    String thumbnail = e.getThumbnail();
+                    if (StringUtils.isNotBlank(thumbnail)) {
+                        URL url = new URL(thumbnail);
+                        BufferedImage img = ImageIO.read(url);
+                        ImageIO.write(img, UUID.randomUUID().toString() + ".png", file);
+                        WxMpMaterial wxMpMaterial = new WxMpMaterial();
+                        wxMpMaterial.setFile(file);
+                        WxMpMaterialUploadResult result = null;
+                        result = wxOpenService
+                                .getWxOpenComponentService()
+                                .getWxMpServiceByAppid(appId)
+                                .getMaterialService()
+                                .materialFileUpload("image", wxMpMaterial);
+
+                        String mediaId = result.getMediaId();
+                        news.setThumbMediaId(mediaId);
+                        news.setAuthor(e.getAuther());
+                        news.setContent(e.getContent());
+                        newsList.add(news);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            }
-        });
-//        wxOpenService
-//        .getWxOpenComponentService()
-//        .getWxMpServiceByAppid("")
-//        .getMaterialService()
-        String templateId = stringRedisTemplate.opsForValue().get("templateId");
-        return R.renderSuccess("templateId", templateId);
+            });
+            WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
+            wxMpMaterialNews.setArticles(newsList);
+            WxMpMaterialUploadResult re = wxOpenService
+                    .getWxOpenComponentService()
+                    .getWxMpServiceByAppid(appId)
+                    .getMaterialService().materialNewsUpload(wxMpMaterialNews);
+            System.out.println(re.getMediaId());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return R.renderSuccess(true);
     }
 
     /**
