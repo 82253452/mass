@@ -111,12 +111,14 @@ public class BusiAppController {
                                 .getWxMpServiceByAppid(appId)
                                 .getMaterialService()
                                 .materialFileUpload("image", wxMpMaterial);
-
-                        String mediaId = result.getMediaId();
-                        news.setThumbMediaId(mediaId);
-                        news.setAuthor(e.getAuther());
-                        news.setContent(e.getContent());
-                        newsList.add(news);
+                        System.out.println(result);
+                        if (result.getErrCode().equals(0)) {
+                            String mediaId = result.getMediaId();
+                            news.setThumbMediaId(mediaId);
+                            news.setAuthor(e.getAuther());
+                            news.setContent(e.getContent());
+                            newsList.add(news);
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
