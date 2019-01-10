@@ -52,7 +52,7 @@ public class WxOpenService extends WxOpenServiceImpl {
 
     private JedisPool getJedisPool() {
         if (pool == null) {
-            pool = new JedisPool(new GenericObjectPoolConfig(), redisProperies.getHost(), redisProperies.getPort(), 2000);
+            pool = new JedisPool(new GenericObjectPoolConfig(), redisProperies.getHost(), redisProperies.getPort(), 2000,redisProperies.getPassword());
         }
         return pool;
     }
