@@ -97,7 +97,7 @@ public class BusiAppController {
                 try {
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
-                    File file = File.createTempFile(UUID.randomUUID().toString(),".png");
+                    File file = File.createTempFile(UUID.randomUUID().toString(), ".png", new File(filetemp));
                     System.out.println(file.getPath());
 //                    File file = new File(UUID.randomUUID().toString() + ".png");
                     String thumbnail = e.getThumbnail();
@@ -122,6 +122,7 @@ public class BusiAppController {
                             newsList.add(news);
                         }
                     }
+                    file.deleteOnExit();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
