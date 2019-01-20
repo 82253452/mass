@@ -34,7 +34,7 @@
     "url": "https://github.com/PanJiaChen/vue-element-admin/issues"
   },
   "dependencies": {
-    "@xkeshi/vue-qrcode": "^1.0.0",
+    "@chenfengyuan/vue-qrcode": "^1.0.0",
     "axios": "0.18.0",
     "clipboard": "1.7.1",
     "codemirror": "5.39.2",
@@ -55,7 +55,7 @@
     "showdown": "1.8.6",
     "simplemde": "1.11.2",
     "sortablejs": "1.7.0",
-    "vue": "2.5.17",
+    "vue": "^2.5.17",
     "vue-count-to": "1.0.13",
     "vue-i18n": "7.3.2",
     "vue-router": "3.0.1",
