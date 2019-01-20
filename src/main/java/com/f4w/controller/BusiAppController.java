@@ -95,6 +95,7 @@ public class BusiAppController {
 
             list.forEach(e -> {
                 try {
+                    System.out.println(1);
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
                     File file = File.createTempFile(UUID.randomUUID().toString(), ".png", new File(filetemp));
