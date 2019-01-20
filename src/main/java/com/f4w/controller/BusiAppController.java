@@ -97,7 +97,7 @@ public class BusiAppController {
                 try {
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
-                    File file = File.createTempFile(null,"png");
+                    File file = File.createTempFile(UUID.randomUUID().toString(),"png");
 //                    File file = new File(UUID.randomUUID().toString() + ".png");
                     String thumbnail = e.getThumbnail();
                     if (StringUtils.isNotBlank(thumbnail)) {
