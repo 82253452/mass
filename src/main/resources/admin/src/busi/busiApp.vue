@@ -258,7 +258,7 @@ import {
 } from '@/api/busiApp'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
-import VueQrcode from '@xkeshi/vue-qrcode'
+import VueQrcode from '@chenfengyuan/vue-qrcode'
 import checkPermission from '@/utils/permission'
 
 export default {
