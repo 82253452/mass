@@ -98,7 +98,7 @@ public class BusiAppController {
                     System.out.println(2);
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
-                    File file = File.createTempFile(UUID.randomUUID().toString(), ".png", new File(filetemp));
+                    File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
                     System.out.println(file.getPath());
 //                    File file = new File(UUID.randomUUID().toString() + ".png");
                     String thumbnail = e.getThumbnail();
