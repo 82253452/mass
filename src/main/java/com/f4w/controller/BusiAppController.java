@@ -107,7 +107,9 @@ public class BusiAppController {
                         BufferedImage img = ImageIO.read(url);
                         ImageIO.write(img, UUID.randomUUID().toString() + ".png", file);
                         WxMpMaterial wxMpMaterial = new WxMpMaterial();
+                        System.out.println(file.getTotalSpace());
                         wxMpMaterial.setFile(file);
+                        wxMpMaterial.setName("test");
                         WxMpMaterialUploadResult result = null;
                         result = wxOpenService
                                 .getWxOpenComponentService()
