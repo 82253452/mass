@@ -16,6 +16,7 @@ import com.f4w.mapper.BusiAppPageMapper;
 import com.f4w.mapper.WxmpMapper;
 import com.f4w.utils.R;
 import com.f4w.weapp.WxOpenService;
+import com.github.kevinsawicki.http.HttpRequest;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -95,20 +96,15 @@ public class BusiAppController {
 
             list.forEach(e -> {
                 try {
-                    System.out.println(2);
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
                     File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
-                    System.out.println(file.getPath());
-//                    File file = new File(UUID.randomUUID().toString() + ".png");
                     String thumbnail = e.getThumbnail();
                     if (StringUtils.isNotBlank(thumbnail)) {
                         URL url = new URL(thumbnail);
                         BufferedImage img = ImageIO.read(url);
                         ImageIO.write(img, "png", file);
                         WxMpMaterial wxMpMaterial = new WxMpMaterial();
-                        System.out.println(file.getName());
-                        System.out.println(file.getTotalSpace());
                         wxMpMaterial.setFile(file);
                         wxMpMaterial.setName("media");
                         WxMpMaterialUploadResult result = wxOpenService
@@ -119,7 +115,10 @@ public class BusiAppController {
                         String mediaId = result.getMediaId();
                         news.setThumbMediaId(mediaId);
                         news.setAuthor(e.getAuther());
-                        news.setContent(e.getContent());
+                        String contentUrl = e.getContent();
+                        HttpRequest request = HttpRequest.get(contentUrl);
+                        String s = request.body();
+                        news.setContent(s);
                         newsList.add(news);
                     }
                     file.deleteOnExit();
