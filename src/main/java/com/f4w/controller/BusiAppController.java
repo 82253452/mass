@@ -111,20 +111,16 @@ public class BusiAppController {
                         System.out.println(file.getTotalSpace());
                         wxMpMaterial.setFile(file);
                         wxMpMaterial.setName("media");
-                        WxMpMaterialUploadResult result = null;
-                        result = wxOpenService
+                        WxMpMaterialUploadResult result = wxOpenService
                                 .getWxOpenComponentService()
                                 .getWxMpServiceByAppid(appId)
                                 .getMaterialService()
                                 .materialFileUpload("image", wxMpMaterial);
-                        System.out.println(result);
-                        if (result.getErrCode().equals(0)) {
-                            String mediaId = result.getMediaId();
-                            news.setThumbMediaId(mediaId);
-                            news.setAuthor(e.getAuther());
-                            news.setContent(e.getContent());
-                            newsList.add(news);
-                        }
+                        String mediaId = result.getMediaId();
+                        news.setThumbMediaId(mediaId);
+                        news.setAuthor(e.getAuther());
+                        news.setContent(e.getContent());
+                        newsList.add(news);
                     }
                     file.deleteOnExit();
                 } catch (Exception ex) {
