@@ -115,10 +115,10 @@ public class BusiAppController {
                         String mediaId = result.getMediaId();
                         news.setThumbMediaId(mediaId);
                         news.setAuthor(e.getAuther());
-                        String contentUrl = e.getContent();
-                        HttpRequest request = HttpRequest.get(contentUrl);
-                        String s = request.body();
-                        news.setContent(s.replaceAll("\"","\\\\\""));
+//                        String contentUrl = e.getContent();
+//                        HttpRequest request = HttpRequest.get(contentUrl);
+//                        String s = request.body();
+                        news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
                         newsList.add(news);
                     }
                     file.deleteOnExit();
@@ -588,10 +588,9 @@ public class BusiAppController {
     }
 
     public static void main(String[] args) {
-//        HttpRequest request = HttpRequest.get("https://v.qq.com/x/cover/d6h5xo35kg0qswb.html");
-//        String s = request.body();
-        String s = "\"";
-        System.out.println(s.replaceAll("\"","\\\\\""));
+        HttpRequest request = HttpRequest.get("https://v.qq.com/x/cover/d6h5xo35kg0qswb.html");
+        String s = request.body();
+        System.out.println(s);
     }
 }
 
