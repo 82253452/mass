@@ -119,6 +119,7 @@ public class BusiAppController {
 //                        HttpRequest request = HttpRequest.get(contentUrl);
 //                        String s = request.body();
                         news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
+                        news.setDigest(e.getSummary());
                         newsList.add(news);
                     }
                     file.deleteOnExit();
@@ -132,7 +133,6 @@ public class BusiAppController {
                     .getWxOpenComponentService()
                     .getWxMpServiceByAppid(appId)
                     .getMaterialService().materialNewsUpload(wxMpMaterialNews);
-            System.out.println(re.getMediaId());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
