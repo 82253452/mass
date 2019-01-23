@@ -105,7 +105,7 @@ public class BusiAppController {
                     if (StringUtils.isNotBlank(thumbnail)) {
                         URL url = new URL(thumbnail);
                         BufferedImage img = ImageIO.read(url);
-                        ImageIO.write(img, UUID.randomUUID().toString() + ".png", file);
+                        ImageIO.write(img, "png", file);
                         WxMpMaterial wxMpMaterial = new WxMpMaterial();
                         System.out.println(file.getName());
                         System.out.println(file.getTotalSpace());
