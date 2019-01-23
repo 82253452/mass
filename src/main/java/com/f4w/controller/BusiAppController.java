@@ -588,6 +588,9 @@ public class BusiAppController {
     }
 
     public static void main(String[] args) {
+        HttpRequest request = HttpRequest.get("https://v.qq.com/x/cover/d6h5xo35kg0qswb.html");
+        String s = request.body();
+        System.out.println(s);
     }
 }
 
