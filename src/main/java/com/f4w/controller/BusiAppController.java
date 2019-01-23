@@ -118,7 +118,7 @@ public class BusiAppController {
                         String contentUrl = e.getContent();
                         HttpRequest request = HttpRequest.get(contentUrl);
                         String s = request.body();
-                        news.setContent(s);
+                        news.setContent(s.replaceAll("\"","\\\""));
                         newsList.add(news);
                     }
                     file.deleteOnExit();
@@ -590,7 +590,7 @@ public class BusiAppController {
     public static void main(String[] args) {
         HttpRequest request = HttpRequest.get("https://v.qq.com/x/cover/d6h5xo35kg0qswb.html");
         String s = request.body();
-        System.out.println(s);
+        System.out.println(s.replaceAll("\"","\\\""));
     }
 }
 
