@@ -5,6 +5,8 @@ import com.f4w.entity.Wxmp;
 import com.f4w.utils.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 public interface WxmpMapper extends BaseMapper<Wxmp> {
 
     @Select("select * from wxmp")
@@ -25,6 +27,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
             }
     )
     Wxmp findAll();
+
     @Select("select * from wxmp")
     @Results(
             id = "baseDto",
@@ -43,5 +46,8 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
             }
     )
     WxmpDto findDtoAll();
+
+    @Select("select column_id from wxmp group by column_id")
+    List<String> findColumns();
 
 }

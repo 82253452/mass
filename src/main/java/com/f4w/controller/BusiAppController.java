@@ -77,25 +77,28 @@ public class BusiAppController {
 
     private static final String ROOT_PATH = BusiAppController.class.getResource("/").getPath();
 
+    @GetMapping("/getColumns")
+    public R getColumns() {
+        List<String> columns = wxmpMapper.findColumns();
+        return R.renderSuccess("list", columns);
+    }
+
     /**
      * 定时发布文章
      *
      * @return
      */
     @GetMapping("/autoMessageApi")
-    public R autoMessageApi(String appId, Integer type, Integer num, String time) {
+    public R autoMessageApi(@RequestParam Map<String, String> paramRequest) {
         BusiApp busiApp = new BusiApp();
-        busiApp.setAppId(appId);
+        busiApp.setAppId(paramRequest.get("appId"));
         busiApp = busiAppMapper.selectOne(busiApp);
+        String time = paramRequest.get("time");
         if (!busiApp.getAutoMessage().equals(1)) {
-            JSONObject paramJson = new JSONObject();
-            paramJson.put("type", type);
-            paramJson.put("num", num);
-            paramJson.put("appId", appId);
             Map param = new HashMap();
             param.put("executorHandler", "weArticleJobHandler");
             param.put("jobCron", "0 0 " + time.split(":")[0] + " * * ?");
-            param.put("executorParam", paramJson);
+            param.put("executorParam", paramRequest);
             param.put("jobGroup", "1");
             param.put("jobDesc", "weArticle");
             param.put("executorRouteStrategy", "FIRST");
