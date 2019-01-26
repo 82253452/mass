@@ -61,4 +61,6 @@ xxl:
       appname: xxl-job-executor-sample
       ip:
       port: 0
+      logpath: /var/log/xxl-job/jobhandler/
+      logretentiondays: -1
     accessToken:
