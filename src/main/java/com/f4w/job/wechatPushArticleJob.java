@@ -43,11 +43,12 @@ public class wechatPushArticleJob extends IJobHandler {
         JSONObject o = JSON.parseObject(s);
         String appId = o.getString("appId");
         Integer num = o.getInteger("num");
+        Integer type = o.getInteger("type");
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
         Wxmp wxmp = new Wxmp();
-        wxmp.setType(busiApp.getMessageType());
+        wxmp.setType(type);
         PageHelper.startPage(1, num);
         List<Wxmp> list = wxmpMapper.select(wxmp);
         List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
