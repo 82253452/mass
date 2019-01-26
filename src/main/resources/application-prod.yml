@@ -56,7 +56,7 @@ weapp:
 xxl:
   job:
     admin:
-      addresses: https://zhihuizhan.net/xxl-job-admin
+      addresses: http://172.16.0.97:7001/xxl-job-admin
     executor:
       appname: xxl-job-executor-sample
       ip:
