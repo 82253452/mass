@@ -60,5 +60,5 @@ xxl:
     executor:
       appname: xxl-job-executor-sample
       ip:
-      port:
+      port: 0
     accessToken:
