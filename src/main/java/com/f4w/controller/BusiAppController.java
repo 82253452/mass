@@ -83,14 +83,18 @@ public class BusiAppController {
      * @return
      */
     @GetMapping("/autoMessageApi")
-    public R autoMessageApi(String appId, Integer type, Integer num) {
+    public R autoMessageApi(String appId, Integer type, Integer num, String time) {
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
         if (!busiApp.getAutoMessage().equals(1)) {
+            JSONObject paramJson = new JSONObject();
+            paramJson.put("type", type);
+            paramJson.put("num", num);
+            paramJson.put("appId", appId);
             Map param = new HashMap();
             param.put("executorHandler", "test");
-            param.put("jobCron", "0 0 10 * * ?");
+            param.put("jobCron", "0 0 " + time.split(":")[0] + " * * ?");
             param.put("executorParam", "111");
             param.put("jobGroup", "1");
             param.put("jobDesc", "weArticle");
@@ -103,7 +107,7 @@ public class BusiAppController {
             Integer id = rr.getInteger("content");
             busiApp.setAutoMessage(1);//自动推送
             busiApp.setMessageId(id);//类型
-        }else{
+        } else {
             busiApp.setAutoMessage(0);//关闭自动推送
         }
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
