@@ -45,8 +45,10 @@ public class wechatPushArticleJob extends IJobHandler {
         String appId = o.getString("appId");
         Integer num = o.getInteger("num");
         Integer type = o.getInteger("type");
+        Integer column = o.getInteger("column");
         Wxmp wxmp = new Wxmp();
         wxmp.setType(type);
+        wxmp.setColumnId(column);
         PageHelper.startPage(1, num);
         List<Wxmp> list = wxmpMapper.select(wxmp);
         List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
