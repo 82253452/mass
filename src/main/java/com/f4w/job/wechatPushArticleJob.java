@@ -78,6 +78,7 @@ public class wechatPushArticleJob extends IJobHandler {
                         news.setAuthor(e.getAuther());
                         news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
                         news.setDigest(e.getSummary());
+                        news.setNeedOpenComment(true);
                         newsList.add(news);
                     }
                     file.deleteOnExit();
