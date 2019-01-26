@@ -45,9 +45,6 @@ public class wechatPushArticleJob extends IJobHandler {
         String appId = o.getString("appId");
         Integer num = o.getInteger("num");
         Integer type = o.getInteger("type");
-        BusiApp busiApp = new BusiApp();
-        busiApp.setAppId(appId);
-        busiApp = busiAppMapper.selectOne(busiApp);
         Wxmp wxmp = new Wxmp();
         wxmp.setType(type);
         PageHelper.startPage(1, num);
