@@ -93,9 +93,9 @@ public class BusiAppController {
             paramJson.put("num", num);
             paramJson.put("appId", appId);
             Map param = new HashMap();
-            param.put("executorHandler", "test");
+            param.put("executorHandler", "weArticleJobHandler");
             param.put("jobCron", "0 0 " + time.split(":")[0] + " * * ?");
-            param.put("executorParam", "111");
+            param.put("executorParam", paramJson);
             param.put("jobGroup", "1");
             param.put("jobDesc", "weArticle");
             param.put("executorRouteStrategy", "FIRST");

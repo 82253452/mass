@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@JobHandler(value = "testJobHandler")
+@JobHandler(value = "weArticleJobHandler")
 @Service
 public class wechatPushArticleJob extends IJobHandler {
     @Resource
