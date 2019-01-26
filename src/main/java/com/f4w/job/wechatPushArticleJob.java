@@ -55,6 +55,7 @@ public class wechatPushArticleJob extends IJobHandler {
         try {
             list.forEach(e -> {
                 try {
+                    wxmpMapper.delete(e);
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
                     File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
