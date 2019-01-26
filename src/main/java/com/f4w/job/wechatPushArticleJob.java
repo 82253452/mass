@@ -12,6 +12,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
@@ -90,6 +91,15 @@ public class wechatPushArticleJob extends IJobHandler {
                     .getWxOpenComponentService()
                     .getWxMpServiceByAppid(appId)
                     .getMaterialService().materialNewsUpload(wxMpMaterialNews);
+            WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
+            wxMpMassTagMessage.setSendAll(true);
+            wxMpMassTagMessage.setMediaId(re.getMediaId());
+            wxMpMassTagMessage.setMsgType("mpnews");
+            wxMpMassTagMessage.setSendIgnoreReprint(true);
+            wxOpenService.getWxOpenComponentService()
+                    .getWxMpServiceByAppid(appId)
+                    .getMassMessageService()
+                    .massGroupMessageSend(wxMpMassTagMessage);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
