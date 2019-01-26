@@ -115,7 +115,8 @@
           <el-button
             v-if="scope.row.miniProgramInfo===1"
             type="primary"
-            @click="autoMessageClick(scope.row.appId)">自动推送文章
+            @click="autoMessageClick(scope.row.appId)">
+            {{ scope.row.autoMessage===1?'开启自动推送文章':'关闭自动推送文章' }}
           </el-button>
           <el-button
             v-if="scope.row.miniProgramInfo===1&&!scope.row.replay"

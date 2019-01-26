@@ -38,5 +38,5 @@ public class BusiApp extends BaseEntity {
     private String signature;
     private Integer miniProgramInfo;
     private Integer autoMessage;
-    private Integer messageType;
+    private Integer messageId;
 }

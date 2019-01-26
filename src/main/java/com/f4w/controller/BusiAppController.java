@@ -88,22 +88,25 @@ public class BusiAppController {
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
         if (!busiApp.getAutoMessage().equals(1)) {
+            Map param = new HashMap();
+            param.put("executorHandler", "test");
+            param.put("jobCron", "0 0 10 * * ?");
+            param.put("executorParam", "111");
+            param.put("jobGroup", "1");
+            param.put("jobDesc", "weArticle");
+            param.put("executorRouteStrategy", "FIRST");
+            param.put("glueType", "BEAN");
+            param.put("executorBlockStrategy", "SERIAL_EXECUTION");
+            param.put("author", "yp");
+            String r = HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/add").form(param).body();
+            JSONObject rr = JSON.parseObject(r);
+            Integer id = rr.getInteger("content");
             busiApp.setAutoMessage(1);//自动推送
-            busiApp.setMessageType(type);//类型
-            busiAppMapper.updateByPrimaryKeySelective(busiApp);
+            busiApp.setMessageId(id);//类型
+        }else{
+            busiApp.setAutoMessage(0);//关闭自动推送
         }
-        Map param = new HashMap();
-        param.put("executorHandler", "test");
-        param.put("jobCron", "0 0 10 * * ?");
-        param.put("executorParam", "111");
-        param.put("jobGroup", "weArticle");
-        param.put("jobDesc", "weArticle");
-        param.put("executorRouteStrategy", "FIRST");
-        param.put("glueType", "BEAN");
-        param.put("executorBlockStrategy", "SERIAL_EXECUTION");
-        param.put("author", "yp");
-        String r = HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/add").form(param).body();
-        log.info(r);
+        busiAppMapper.updateByPrimaryKeySelective(busiApp);
         return R.renderSuccess(true);
     }
 
