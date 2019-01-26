@@ -20,9 +20,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
@@ -49,7 +47,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -86,14 +83,19 @@ public class BusiAppController {
      * @return
      */
     @GetMapping("/autoMessageApi")
-    public R autoMessageApi(String appId, Integer type) {
+    public R autoMessageApi(String appId, Integer type, Integer num) {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(appId);
+        busiApp = busiAppMapper.selectOne(busiApp);
+        busiApp.setAutoMessage(1);//自动推送
+        busiApp.setMessageType(type);//类型
+        busiAppMapper.updateByPrimaryKeySelective(busiApp);
         Wxmp wxmp = new Wxmp();
         wxmp.setType(type);
-        PageHelper.startPage(1, 5);
+        PageHelper.startPage(1, num);
         List<Wxmp> list = wxmpMapper.select(wxmp);
         List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
         try {
-
             list.forEach(e -> {
                 try {
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
@@ -540,6 +542,7 @@ public class BusiAppController {
     public R selectByPage(@CurrentUser SysUser user, @RequestParam Map map) {
         BusiApp busiApp = new BusiApp();
         busiApp.setUid(user.getId());
+        busiApp.setMiniProgramInfo(MapUtils.getInteger(map, "miniType"));
         PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
         PageInfo<BusiApp> page = new PageInfo<>(busiAppMapper.select(busiApp));
         return R.ok().put("data", page);

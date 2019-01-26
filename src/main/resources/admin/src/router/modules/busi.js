@@ -17,7 +17,13 @@ const busiRouter = {
       path: 'busiApp',
       component: () => import('@/busi/busiApp'),
       name: 'busiApp',
-      meta: { title: '应用管理' }
+      meta: { title: '公账号管理' }
+    },
+    {
+      path: 'busiWeApp',
+      component: () => import('@/busi/busiWeApp'),
+      name: 'busiWeApp',
+      meta: { title: '小程序管理' }
     },
     {
       path: 'busiAppPage',

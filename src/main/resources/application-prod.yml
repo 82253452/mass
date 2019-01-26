@@ -1,3 +1,7 @@
+server:
+  port: 8082
+  tomcat:
+    max-http-header-size: 10240000
 spring:
   datasource:
     druid:
@@ -24,7 +28,7 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 mapper:
   mappers:
-  - tk.mybatis.mapper.common.Mapper
+    - tk.mybatis.mapper.common.Mapper
   not-empty: false
   identity: MYSQL
   wrapKeyword: '`{0}`'
@@ -42,14 +46,19 @@ path:
   filetemp: /data/temp/
 weapp:
   open:
-#    componentAppId: wxcfd4c6237161d1e7
+    #    componentAppId: wxcfd4c6237161d1e7
     componentAppId: wx45a4a88f12821319
-#    componentSecret: 96c0b9554390e49d5bc0825314a5249a
+    #    componentSecret: 96c0b9554390e49d5bc0825314a5249a
     componentSecret: d39bc9471c30be91f7818df6ada3c259
     componentToken: token
     componentAesKey: r82FieYYZZ2tTG3Gklh9LBCh3k4Gxtwgsai4n2juvk1
   comkey:
-server:
-  port: 8082
-  tomcat:
-    max-http-header-size: 10240000
+xxl:
+  job:
+    admin:
+      addresses: https://zhihuizhan.net/xxl-job-admin
+    executor:
+      appname: xxl-job-executor-sample
+      ip:
+      port:
+    accessToken:
