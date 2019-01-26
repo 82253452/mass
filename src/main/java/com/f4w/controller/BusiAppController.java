@@ -109,6 +109,7 @@ public class BusiAppController {
             busiApp.setMessageId(id);//类型
         } else {
             busiApp.setAutoMessage(0);//关闭自动推送
+            String r = HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).body();
         }
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         return R.renderSuccess(true);
