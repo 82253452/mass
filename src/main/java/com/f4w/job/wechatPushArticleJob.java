@@ -18,6 +18,7 @@ import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -46,11 +47,17 @@ public class wechatPushArticleJob extends IJobHandler {
         Integer num = o.getInteger("num");
         Integer type = o.getInteger("type");
         Integer column = o.getInteger("column");
-        Wxmp wxmp = new Wxmp();
-        wxmp.setType(type);
-        wxmp.setColumnId(column);
+//        Wxmp wxmp = new Wxmp();
+        //        wxmp.setType(type);
+//        wxmp.setColumnId(column);
+        Example example = new Example(Wxmp.class);
+        example.setOrderByClause("id DESC");
+        example.createCriteria()
+                .andEqualTo("type", type)
+                .andEqualTo("column_id", column);
+
         PageHelper.startPage(1, num);
-        List<Wxmp> list = wxmpMapper.select(wxmp);
+        List<Wxmp> list = wxmpMapper.selectByExample(example);
         List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
         try {
             list.forEach(e -> {
