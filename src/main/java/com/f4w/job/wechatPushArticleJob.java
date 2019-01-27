@@ -54,7 +54,7 @@ public class wechatPushArticleJob extends IJobHandler {
         example.setOrderByClause("id DESC");
         example.createCriteria()
                 .andEqualTo("type", type)
-                .andEqualTo("column_id", column);
+                .andEqualTo("columnId", column);
 
         PageHelper.startPage(1, num);
         List<Wxmp> list = wxmpMapper.selectByExample(example);
