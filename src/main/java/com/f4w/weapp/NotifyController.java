@@ -75,6 +75,7 @@ public class NotifyController {
                 busiApp.setStatus(1);
                 busiApp.setReplay(0);
                 busiApp.setUid(uid);
+                busiApp.setAutoMessage(0);
                 if (null == wxOpenAuthorizerInfo.getMiniProgramInfo()) {
                     busiApp.setMiniProgramInfo(1);
                 } else {
@@ -258,7 +259,6 @@ public class NotifyController {
         wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
         wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
     }
-
 
 
 }
