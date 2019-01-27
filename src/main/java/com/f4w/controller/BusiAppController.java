@@ -98,7 +98,7 @@ public class BusiAppController {
             Map param = new HashMap();
             param.put("executorHandler", "weArticleJobHandler");
             param.put("jobCron", "0 0 " + time.split(":")[0] + " * * ?");
-            param.put("executorParam", paramRequest);
+            param.put("executorParam", JSON.toJSONString(paramRequest));
             param.put("jobGroup", "1");
             param.put("jobDesc", "weArticle");
             param.put("executorRouteStrategy", "FIRST");
@@ -568,9 +568,9 @@ public class BusiAppController {
     }
 
     public static void main(String[] args) {
-        HttpRequest request = HttpRequest.get("https://v.qq.com/x/cover/d6h5xo35kg0qswb.html");
-        String s = request.body();
-        System.out.println(s);
+        Map p = new HashMap();
+        p.put("time", "21:00");
+        System.out.println(JSON.toJSONString(p));
     }
 }
 
