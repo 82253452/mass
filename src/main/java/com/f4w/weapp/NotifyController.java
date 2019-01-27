@@ -81,7 +81,7 @@ public class NotifyController {
                 } else {
                     busiApp.setMiniProgramInfo(2);
                 }
-                busiAppMapper.insert(busiApp);
+                busiAppMapper.insertSelective(busiApp);
             }
         } catch (WxErrorException e) {
             e.printStackTrace();
