@@ -120,7 +120,7 @@
           <el-button
             v-if="checkPer(['weArticle','admin'])&&scope.row.miniProgramInfo===1"
             type="primary"
-            @click="autoMessageClick(scope.row.messageParam)">
+            @click="autoMessageClick(scope.row.messageParam,scope.row.appId)">
             {{ scope.row.autoMessage===0?'开启自动推送文章':'关闭自动推送文章' }}
           </el-button>
           <el-button
@@ -438,8 +438,14 @@
           }
         })
       },
-      autoMessageClick(param) {
-        this.messageTemp = JSON.parse(param)
+      autoMessageClick(param, appId) {
+        if (param) {
+          this.messageTemp = JSON.parse(param)
+        } else {
+          this.messageTemp = {
+            appId: appId
+          }
+        }
         this.autoMessageShow = true
       },
       checkPer(role) {
