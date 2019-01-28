@@ -34,6 +34,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -49,6 +51,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -90,15 +94,14 @@ public class BusiAppController {
      * @return
      */
     @GetMapping("/autoMessageApi")
-    public R autoMessageApi(@RequestParam Map<String, String> paramRequest) {
+    public R autoMessageApi(@RequestParam Map<String, String> paramRequest) throws ParseException {
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(paramRequest.get("appId"));
         busiApp = busiAppMapper.selectOne(busiApp);
         String time = paramRequest.get("time");
         if (!busiApp.getAutoMessage().equals(1)) {
             Map param = new HashMap();
-            DateTime dt = new DateTime(time);
-            System.out.println(dt.toString("ss mm HH"));
+            DateTime dt = new DateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time));
             param.put("executorHandler", "weArticleJobHandler");
             param.put("jobCron", dt.toString("ss mm HH") + " * * ?");
             param.put("executorParam", JSON.toJSONString(paramRequest));
