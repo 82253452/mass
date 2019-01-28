@@ -210,6 +210,7 @@
                       :rules="[{ required: true, message: '时间不能为空', trigger: 'blur' }]">
           <el-time-picker
             v-model="messageTemp.time"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :picker-options="{
             selectableRange: '00:00:00 - 23:59:59'
           }"
@@ -441,6 +442,9 @@
       autoMessageClick(param, appId) {
         if (param) {
           this.messageTemp = JSON.parse(param)
+          if (this.messageTemp.comment && this.messageTemp.comment == 'true') {
+            this.messageTemp.comment = true
+          }
         } else {
           this.messageTemp = {
             appId: appId
