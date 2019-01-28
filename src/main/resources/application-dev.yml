@@ -48,3 +48,14 @@ weapp:
     componentAesKey: r82FieYYZZ2tTG3Gklh9LBCh3k4Gxtwgsai4n2juvk1
 server:
   port: 8082
+xxl:
+  job:
+    admin:
+      addresses: https://zhihuizhan.net/xxl-job-admin
+    executor:
+      appname: xxl-job-executor-sample
+      ip:
+      port: 0
+      logpath: /var/log/xxl-job/jobhandler/
+      logretentiondays: -1
+    accessToken:

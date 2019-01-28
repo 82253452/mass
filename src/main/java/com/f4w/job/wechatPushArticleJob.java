@@ -47,6 +47,7 @@ public class wechatPushArticleJob extends IJobHandler {
         Integer num = o.getInteger("num");
         Integer type = o.getInteger("type");
         Integer column = o.getInteger("column");
+        Boolean comment = o.getBoolean("comment");
 //        Wxmp wxmp = new Wxmp();
         //        wxmp.setType(type);
 //        wxmp.setColumnId(column);
@@ -84,7 +85,9 @@ public class wechatPushArticleJob extends IJobHandler {
                         news.setAuthor(e.getAuther());
                         news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
                         news.setDigest(e.getSummary());
-                        news.setNeedOpenComment(true);
+                        if (comment != null && comment) {
+                            news.setNeedOpenComment(true);
+                        }
                         newsList.add(news);
                     }
                     file.deleteOnExit();

@@ -33,6 +33,7 @@ import me.chanjar.weixin.open.bean.result.WxOpenMaSubmitAuditResult;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -96,8 +97,10 @@ public class BusiAppController {
         String time = paramRequest.get("time");
         if (!busiApp.getAutoMessage().equals(1)) {
             Map param = new HashMap();
+            DateTime dt = new DateTime(time);
+            System.out.println(dt.toString("ss mm HH"));
             param.put("executorHandler", "weArticleJobHandler");
-            param.put("jobCron", "0 0 " + time.split(":")[0] + " * * ?");
+            param.put("jobCron", dt.toString("ss mm HH") + " * * ?");
             param.put("executorParam", JSON.toJSONString(paramRequest));
             param.put("jobGroup", "1");
             param.put("jobDesc", "weArticle");
@@ -108,11 +111,16 @@ public class BusiAppController {
             String r = HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/add").form(param).body();
             JSONObject rr = JSON.parseObject(r);
             Integer id = rr.getInteger("content");
+            if (id == null) {
+                return R.error(1001, "添加启动器失败");
+            }
+            HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/start?id=" + id).body();
             busiApp.setAutoMessage(1);//自动推送
             busiApp.setMessageId(id);//类型
+            busiApp.setMessageParam(JSON.toJSONString(paramRequest));
         } else {
             busiApp.setAutoMessage(0);//关闭自动推送
-            String r = HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).body();
+            HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).body();
         }
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         return R.renderSuccess(true);

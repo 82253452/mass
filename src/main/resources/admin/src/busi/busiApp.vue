@@ -63,6 +63,11 @@
           <img :src="scope.row.headImg" width="50px" height="50px">
         </template>
       </el-table-column>
+      <el-table-column v-if="checkPer(['weArticle'])" align="center" label="推送文章状态" width="150">
+        <template slot-scope="scope">
+          <span>{{ scope.row.messageParam|getArticleStatus }}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="类型" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.miniProgramInfo===1?'公众号':'小程序' }}</span>
@@ -113,18 +118,18 @@
             @click="releaseWeapp(scope.row.appId)">发布
           </el-button>
           <el-button
-            v-if="scope.row.miniProgramInfo===1"
+            v-if="checkPer(['weArticle','admin'])&&scope.row.miniProgramInfo===1"
             type="primary"
-            @click="autoMessageClick(scope.row.appId)">
+            @click="autoMessageClick(scope.row.messageParam)">
             {{ scope.row.autoMessage===0?'开启自动推送文章':'关闭自动推送文章' }}
           </el-button>
           <el-button
-            v-if="scope.row.miniProgramInfo===1&&!scope.row.replay"
+            v-if="checkPer(['question'])&&(scope.row.miniProgramInfo===1&&!scope.row.replay)"
             type="primary"
             @click="startReplay(scope.row.replay,scope.row.id)">开启答题回复
           </el-button>
           <el-button
-            v-if="scope.row.replay===1||scope.row.replay===2"
+            v-if="checkPer(['question'])&&(scope.row.replay===1||scope.row.replay===2)"
             type="primary"
             @click="startReplay(scope.row.replay,scope.row.id)">{{ scope.row.replay===1?'开启答题共享':'关闭答题' }}
           </el-button>
@@ -163,7 +168,9 @@
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;">
-        <el-form-item label="类型">
+        <el-form-item label="类型"
+                      prop="type"
+                      :rules="[{ required: true, message: '类型不能为空', trigger: 'blur' }]">
           <el-select
             v-model="messageTemp.type"
             placeholder="请选择类型"
@@ -176,7 +183,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="栏目">
+        <el-form-item label="栏目"
+                      prop="column"
+                      :rules="[{ required: true, message: '栏目不能为空', trigger: 'blur' }]">
           <el-select
             v-model="messageTemp.column"
             placeholder="请选择栏目"
@@ -185,21 +194,30 @@
               v-for="(item,index) in columns"
               :key="index"
               :value="item"
-              :label="item"
+              :label="getColumnsLabel(item)"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="时间">
-          <el-time-select
+        <el-form-item label="是否开启留言">
+          <el-switch
+            v-model="messageTemp.comment"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="时间"
+                      prop="time"
+                      :rules="[{ required: true, message: '时间不能为空', trigger: 'blur' }]">
+          <el-time-picker
             v-model="messageTemp.time"
             :picker-options="{
-              start: '00:00',
-              step: '01:00',
-              end: '24:00'
-            }"
+            selectableRange: '00:00:00 - 23:59:59'
+          }"
             placeholder="请选择时间"/>
         </el-form-item>
-        <el-form-item label="数量">
+        <el-form-item label="数量"
+                      prop="num"
+                      :rules="[{ required: true, message: '数量不能为空', trigger: 'blur' }]">
           <el-input-number v-model="messageTemp.num" :min="1" :max="8" label="描述文字"/>
         </el-form-item>
       </el-form>
@@ -314,6 +332,19 @@
           return '初始状态'
         }
         return '待授权'
+      },
+      getArticleStatus: function (param) {
+        let text = '';
+        if (param) {
+          let jsonP = JSON.parse(param)
+          if (jsonP.time) {
+            text += '时间：' + parseTime(new Date(time), ' {h}:{i}:{s}');
+          }
+          if (jsonP.num) {
+            text += '数量：' + jsonP.num;
+          }
+        }
+        return '无'
       }
     },
     data() {
@@ -358,6 +389,39 @@
       this.getColumn()
     },
     methods: {
+      getColumnsLabel(v) {
+        if (v) {
+          if (v == 1) {
+            return '1电竞游戏中心';
+          } else if (v == 2) {
+            return '2生活健康小常识';
+          } else if (v == 3) {
+            return '3石雕奇石';
+          } else if (v == 4) {
+            return '4周易国学家';
+          } else if (v == 5) {
+            return '5电动汽车报价大全';
+          } else if (v == 6) {
+            return '6SUV汽车大全';
+          } else if (v == 7) {
+            return '7古玩收藏交易古董鉴定';
+          } else if (v == 8) {
+            return '8佛心慧语精选';
+          } else if (v == 9) {
+            return '9传奇故事会';
+          } else if (v == 10) {
+            return '10广场舞教学合集';
+          } else if (v == 11) {
+            return '11搞笑相声小品大全';
+          } else if (v == 12) {
+            return '12健身视频集锦';
+          } else if (v == 13) {
+            return '13古筝名曲欣赏';
+          }
+          return v;
+        }
+        return '';
+      },
       getColumn() {
         getColumns().then(resp => {
           this.columns = resp.list
@@ -373,8 +437,8 @@
           }
         })
       },
-      autoMessageClick(appId) {
-        this.messageTemp.appId = appId
+      autoMessageClick(param) {
+        this.messageTemp = JSON.parse(param)
         this.autoMessageShow = true
       },
       checkPer(role) {

@@ -47,7 +47,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     )
     WxmpDto findDtoAll();
 
-    @Select("select column_id from wxmp group by column_id")
+    @Select("select column_id from wxmp group by column_id order by  column_id")
     List<String> findColumns();
 
 }
