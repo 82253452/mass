@@ -63,7 +63,7 @@
           <img :src="scope.row.headImg" width="50px" height="50px">
         </template>
       </el-table-column>
-      <el-table-column v-if="checkPer(['weArticle'])" align="center" label="推送文章状态" width="150">
+      <el-table-column v-if="checkPer(['weArticle','admin'])" align="center" label="推送文章状态" width="130">
         <template slot-scope="scope">
           <span>{{ scope.row.messageParam|getArticleStatus }}</span>
         </template>
@@ -338,11 +338,12 @@
         if (param) {
           let jsonP = JSON.parse(param)
           if (jsonP.time) {
-            text += '时间：' + parseTime(new Date(time), ' {h}:{i}:{s}');
+            text += '时间：' + parseTime(new Date(jsonP.time), ' {h}:{i}:{s}');
           }
           if (jsonP.num) {
             text += '数量：' + jsonP.num;
           }
+          return text;
         }
         return '无'
       }
