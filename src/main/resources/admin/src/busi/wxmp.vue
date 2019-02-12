@@ -69,7 +69,7 @@
       </el-table-column>
       <el-table-column align="center" label="ctime" width="150">
         <template slot-scope="scope">
-          <span>{{ scope.row.ctime }}</span>
+          <span>{{ scope.row.ctime| parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="状态0 默认 1已采 2已发" width="150">
@@ -79,7 +79,7 @@
       </el-table-column>
       <el-table-column align="center" label="更新时间" width="150">
         <template slot-scope="scope">
-          <span>{{ scope.row.mtime }}</span>
+          <span>{{ scope.row.mtime| parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="是否删除" width="150">
