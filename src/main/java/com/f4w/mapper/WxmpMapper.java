@@ -51,7 +51,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     List<String> findColumns();
 
     @Delete("DELETE wx " +
-            "FROM wxmp " +
+            "FROM wxmp wx " +
             "WHERE wx.id IN (SELECT max(w.id) FROM wxmp w GROUP BY w.title HAVING count(*) > 1)")
     void deleteDuplicates();
 
