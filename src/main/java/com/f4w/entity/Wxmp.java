@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * createBy:2019-01-07 17:05:51
+ *
  * @author yp
  */
 @Table(name = "`wxmp`")
@@ -48,5 +49,7 @@ public class Wxmp extends BaseEntity {
     private Integer status;
 
     private String content;
+
+    private Integer del;
 
 }
