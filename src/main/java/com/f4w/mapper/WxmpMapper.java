@@ -50,7 +50,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     @Select("select column_id from wxmp group by column_id order by  column_id")
     List<String> findColumns();
 
-    @Delete("update wxmp wx set del ='1'  WHERE wx.id IN (select t.id from (SELECT max(id) as id FROM wxmp  GROUP BY title HAVING count(*) > 1) t)")
+    @Delete("update wxmp wx set del ='1'  WHERE wx.id IN (select t.id from (SELECT max(id) as id FROM wxmp where del =0  GROUP BY title HAVING count(*) > 1) t)")
     void deleteDuplicates();
 
     @Delete("update wxmp wx set del ='1'  WHERE wx.id = #{id}")
