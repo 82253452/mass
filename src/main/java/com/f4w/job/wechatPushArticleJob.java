@@ -55,6 +55,7 @@ public class wechatPushArticleJob extends IJobHandler {
         example.setOrderByClause("id DESC");
         example.createCriteria()
                 .andEqualTo("type", type)
+                .andEqualTo("del", "0")
                 .andEqualTo("columnId", column);
 
         PageHelper.startPage(1, num);
@@ -63,7 +64,7 @@ public class wechatPushArticleJob extends IJobHandler {
         try {
             list.forEach(e -> {
                 try {
-                    wxmpMapper.delete(e);
+                    wxmpMapper.deleteById(e.getId());
                     WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                     news.setTitle(e.getTitle());
                     File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
