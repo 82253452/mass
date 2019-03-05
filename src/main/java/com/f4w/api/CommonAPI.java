@@ -17,6 +17,7 @@ import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.result.WxOpenMaPageListResult;
+import me.chanjar.weixin.open.bean.result.WxOpenResult;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -181,10 +182,9 @@ public class CommonAPI {
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
         if (2 == busiApp.getStatus()) {
-            String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).undoCodeAudit();
-            JSONObject resp = JSONObject.parseObject(wxOpenResult);
-            if (!"0".equals(resp.getString("errcode"))) {
-                return R.error(1001, resp.getString("errmsg"));
+            WxOpenResult wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).undoCodeAudit();
+            if (!wxOpenResult.isSuccess()) {
+                return R.error(1001,wxOpenResult.getErrmsg());
             }
             busiApp.setStatus(1);
             busiApp = busiAppMapper.selectOne(busiApp);

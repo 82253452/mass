@@ -27,9 +27,7 @@ import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.*;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
-import me.chanjar.weixin.open.bean.result.WxOpenMaCategoryListResult;
-import me.chanjar.weixin.open.bean.result.WxOpenMaPageListResult;
-import me.chanjar.weixin.open.bean.result.WxOpenMaSubmitAuditResult;
+import me.chanjar.weixin.open.bean.result.*;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -231,12 +229,11 @@ public class BusiAppController {
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
-        String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getAuditStatus(busiApp.getAuditId());
-        JSONObject resp = JSONObject.parseObject(wxOpenResult);
-        if (!"0".equals(resp.getString("errcode"))) {
-            return R.error(resp.getString("errmsg"));
+        WxOpenMaQueryAuditResult auditStatus = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getAuditStatus(busiApp.getAuditId());
+        if (!auditStatus.isSuccess()) {
+            return R.error(auditStatus.getErrmsg());
         }
-        return R.renderSuccess("reason", resp.getString("reason"));
+        return R.renderSuccess("reason", auditStatus.getErrmsg());
     }
 
     /**
@@ -252,18 +249,17 @@ public class BusiAppController {
         busiApp.setAppId(appId);
         busiApp = busiAppMapper.selectOne(busiApp);
 
-        String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getLatestAuditStatus(null);
-        JSONObject resp = JSONObject.parseObject(wxOpenResult);
-        if (!"0".equals(resp.getString("errcode"))) {
+        WxOpenMaQueryAuditResult latestAuditStatus = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).getLatestAuditStatus();
+        if (!latestAuditStatus.isSuccess()) {
             busiApp.setStatus(6);
-            busiApp.setAuditMsg(resp.getString("errmsg"));
-            return R.error(resp.getString("errmsg"));
+            busiApp.setAuditMsg(latestAuditStatus.getErrmsg());
+            return R.error(latestAuditStatus.getErrmsg());
         } else {
             busiApp.setStatus(5);
             busiApp.setAuditMsg("发布成功");
         }
         busiAppMapper.updateByPrimaryKey(busiApp);
-        return R.renderSuccess("reason", resp.getString("reason"));
+        return R.renderSuccess("reason", latestAuditStatus.getErrmsg());
     }
 
     /**
@@ -275,10 +271,9 @@ public class BusiAppController {
      */
     @GetMapping("/releaseWeapp")
     public R releaseWeapp(String appId) throws WxErrorException {
-        String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
-        JSONObject resp = JSONObject.parseObject(wxOpenResult);
-        if (!"0".equals(resp.getString("errcode"))) {
-            return R.error(resp.getString("errmsg"));
+        WxOpenResult wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
+        if (!wxOpenResult.isSuccess()) {
+            return R.error(wxOpenResult.getErrmsg());
         }
         //todo 更新状态
         return R.ok();
@@ -433,13 +428,12 @@ public class BusiAppController {
         pageList.add("pages/cookMenu/index");
         pageList.add("pages/goodsHelloDetail/index");
         extInfo.setPageList(pageList);
-        String responseContent = wxOpenService
+        WxOpenResult wxOpenResult = wxOpenService
                 .getWxOpenComponentService()
                 .getWxMaServiceByAppid(param.get("appId"))
                 .codeCommit(Long.valueOf(stringRedisTemplate.opsForValue().get("templateId")), busiApp.getVersion().toString(), "提交审核", extInfo);
-        JSONObject resp = JSONObject.parseObject(responseContent);
-        if (!"0".equals(resp.getString("errcode"))) {
-            return R.error(resp.getString("errmsg"));
+        if (!wxOpenResult.isSuccess()) {
+            return R.error(wxOpenResult.getErrmsg());
         }
         return R.ok();
     }

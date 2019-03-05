@@ -15,6 +15,7 @@ import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenAuthorizerInfoResult;
 import me.chanjar.weixin.open.bean.result.WxOpenQueryAuthResult;
+import me.chanjar.weixin.open.bean.result.WxOpenResult;
 import me.chanjar.weixin.open.util.WxOpenCryptUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -179,11 +180,10 @@ public class NotifyController {
                 busiApp.setStatus(3);
                 busiApp.setAuditMsg("审核通过");
                 busiAppMapper.updateByPrimaryKey(busiApp);
-                String wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
-                JSONObject resp = JSONObject.parseObject(wxOpenResult);
-                if (!"0".equals(resp.getString("errcode"))) {
+                WxOpenResult wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
+                if (!wxOpenResult.isSuccess()) {
                     busiApp.setStatus(6);
-                    busiApp.setAuditMsg(resp.getString("errmsg"));
+                    busiApp.setAuditMsg(wxOpenResult.getErrmsg());
                 } else {
                     busiApp.setStatus(5);
                     busiApp.setAuditMsg("发布成功");
