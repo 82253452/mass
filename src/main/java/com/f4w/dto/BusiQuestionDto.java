@@ -20,21 +20,14 @@ public class BusiQuestionDto extends BusiQuestion {
         if (null == this.getType()) {
             return "";
         }
-//        if (3 == this.getType()) {
-//            if (StringUtils.equals("1", this.getAnswer())) {
-//                return "正确";
-//            }
-//            return "错误";
-//        }
-
-
-        String out = "题目：" + this.getTitle() + "\n";
-        out += "答案： \n";
-        if (3 == this.getType()) {
+        StringBuilder out = new StringBuilder("题目：" + getTitle() + "\n");
+        out.append("答案： \n");
+        if (getType().equals(3)) {
             if (StringUtils.equals("1", getAnswer())) {
-                return "正确\n";
+                out.append("正确\n");
+            } else {
+                out.append("错误\n");
             }
-            return "错误\n";
         } else {
             String[] queArray = getQuestions().split("&");
             if (ArrayUtils.isEmpty(queArray)) {
@@ -44,13 +37,13 @@ public class BusiQuestionDto extends BusiQuestion {
             for (Integer i = 0; i < l; i++) {
                 char a = getAnswer().charAt(i);
                 try {
-                    out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
+                    out.append(queArray[Integer.valueOf(String.valueOf(a))]).append("\n");
                 } catch (Exception e) {
-                    out += "无效答案\n";
+                    out.append("无效答案\n");
                     log.error("匹配答案失败:" + getId());
                 }
             }
         }
-        return out;
+        return out.toString();
     }
 }
