@@ -1,7 +1,7 @@
 package com.f4w.dto;
 
-import lombok.Data;
 import com.f4w.entity.BusiQuestion;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,29 +20,35 @@ public class BusiQuestionDto extends BusiQuestion {
         if (null == this.getType()) {
             return "";
         }
-        if (3 == this.getType()) {
-            if (StringUtils.equals("1", this.getAnswer())) {
-                return "正确";
-            }
-            return "错误";
-        }
-        Integer l = getAnswer().length();
-        if (null == l) {
-            return "";
-        }
-        String[] queArray = getQuestions().split("&");
-        if (ArrayUtils.isEmpty(queArray)) {
-            return "";
-        }
+//        if (3 == this.getType()) {
+//            if (StringUtils.equals("1", this.getAnswer())) {
+//                return "正确";
+//            }
+//            return "错误";
+//        }
+
+
         String out = "题目：" + this.getTitle() + "\n";
         out += "答案： \n";
-        for (Integer i = 0; i < l; i++) {
-            char a = getAnswer().charAt(i);
-            try {
-                out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
-            } catch (Exception e) {
-                out += "无效答案\n";
-                log.error("匹配答案失败:" + getId());
+        if (3 == this.getType()) {
+            if (StringUtils.equals("1", getAnswer())) {
+                return "正确\n";
+            }
+            return "错误\n";
+        } else {
+            String[] queArray = getQuestions().split("&");
+            if (ArrayUtils.isEmpty(queArray)) {
+                return "";
+            }
+            Integer l = getAnswer().length();
+            for (Integer i = 0; i < l; i++) {
+                char a = getAnswer().charAt(i);
+                try {
+                    out += queArray[Integer.valueOf(String.valueOf(a))] + "\n";
+                } catch (Exception e) {
+                    out += "无效答案\n";
+                    log.error("匹配答案失败:" + getId());
+                }
             }
         }
         return out;
