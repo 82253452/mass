@@ -165,7 +165,9 @@ public class BusiQuestionController {
     }
 
     private boolean saveContentNew(Long uid, String appId, String s) {
-        String pattern = "\\d+\\.*．*\\s*【(.*)】\\s*(.*(?:(?:\\(|（)\\s*)([A-Fa-f√×YXyx对错是否]{1,4})(?:\\s*(?:）|\\))).*)(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[答案：](.*)\\s*)?";
+        String pattern = "\\d+\\.*．*\\s*【(.*)】\\s*(.*(?:(?:\\(|（)\\s*)([A-Fa-f√×YXyx对错是否]{0,4})(?:\\s*(?:）|\\))).*)" +
+                "(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[A-Fa-f](.*)\\s*)?(?:\\s*[A-Fa-f](.*)\\s*)?" +
+                "(?:\\s*.*[答案：](.*)\\s*)?";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(s);
         while (m.find()) {
