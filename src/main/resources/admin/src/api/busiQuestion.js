@@ -41,3 +41,12 @@ export function deleteById(data) {
     data
   })
 }
+export function deleteAll(data) {
+  return request({
+    url: space + '/deleteAll',
+    method: 'post',
+    data
+  })
+}
+
+

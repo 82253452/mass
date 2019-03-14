@@ -17,6 +17,13 @@
         icon="el-icon-edit"
         @click="handleCreate">{{ $t('table.add') }}
       </el-button>
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleDeleteAll">全部删除
+      </el-button>
       <div
         class="filter-item"
         style="margin-left: 10px;">
@@ -189,7 +196,7 @@
 </template>
 
 <script>
-import { selectByPage, insert, selectById, updateById, deleteById } from '@/api/busiQuestion'
+import { selectByPage, insert, selectById, updateById, deleteById ,deleteAll } from '@/api/busiQuestion'
 import { getApps } from '@/api/busiArticle'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
@@ -374,6 +381,16 @@ export default {
         })
       })
     },
+    handleDeleteAll() {
+      deleteAll().then(data => {
+        this.list=[]
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
+      })
+    },
+
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'

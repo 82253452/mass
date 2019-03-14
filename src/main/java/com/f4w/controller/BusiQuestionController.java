@@ -2,6 +2,7 @@ package com.f4w.controller;
 
 
 import com.f4w.annotation.CurrentUser;
+import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.BusiQuestion;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.BusiQuestionMapper;
@@ -34,6 +35,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @RestController
 @RequestMapping("/busiQuestion")
+@TokenIntecerpt
 public class BusiQuestionController {
     @Resource
     public BusiQuestionMapper busiQuestionMapper;
@@ -150,6 +152,15 @@ public class BusiQuestionController {
     @PostMapping("/deleteById")
     public R deleteById(@RequestBody Map param) {
         int r = busiQuestionMapper.deleteByPrimaryKey(MapUtils.getInteger(param, "id"));
+        return R.ok().put("data", r);
+    }
+
+    @PostMapping("/deleteAll")
+    public R deleteAll(@CurrentUser SysUser sysUser) {
+        Example example = new Example(BusiQuestion.class);
+        example.createCriteria()
+                .andEqualTo("uid", sysUser.getId());
+        int r = busiQuestionMapper.deleteByExample(example);
         return R.ok().put("data", r);
     }
 
