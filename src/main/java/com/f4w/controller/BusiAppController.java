@@ -127,6 +127,17 @@ public class BusiAppController {
         return R.renderSuccess(true);
     }
 
+    @GetMapping("/closeMessageApi")
+    public R closeMessageApi(@RequestParam Map<String, String> paramRequest) throws ParseException {
+        BusiApp busiApp = new BusiApp();
+        busiApp.setAppId(paramRequest.get("appId"));
+        busiApp = busiAppMapper.selectOne(busiApp);
+        busiApp.setAutoMessage(0);//关闭自动推送
+        HttpRequest.post("https://zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).body();
+        busiAppMapper.updateByPrimaryKeySelective(busiApp);
+        return R.renderSuccess(true);
+    }
+
     /**
      * 获取当前模板
      *

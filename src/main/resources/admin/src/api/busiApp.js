@@ -110,6 +110,14 @@ export function autoMessageApi(query) {
   })
 }
 
+export function closeMessageApi(query) {
+  return request({
+    url: space + '/closeMessageApi',
+    method: 'get',
+    params: query
+  })
+}
+
 export function getColumns(query) {
   return request({
     url: space + '/getColumns',
