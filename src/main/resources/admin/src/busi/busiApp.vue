@@ -474,7 +474,7 @@ export default {
       const param = row.messageParam
       const appId = row.appId
       if (row.autoMessage === 1) {
-        closeMessageApi(this.messageTemp).then(resp => {
+        closeMessageApi(row).then(resp => {
           this.autoMessageShow = false
           this.getList()
           this.$message({
