@@ -1,0 +1,18 @@
+version: "3"
+networks:
+  default:
+    external:
+      name: default-network
+services:
+  comff42web:
+    container_name: comff42web
+    image: swr.cn-north-1.myhuaweicloud.com/a82253452/comff42web
+    labels:
+      - traefik.http.routers.comff42web.rule=Host(`zhihuizhan.net`) && PathPrefix(`/web`)
+      - traefik.http.routers.comff42web.tls.certresolver=mytlschallenge
+      - traefik.http.middlewares.strip-prefix.stripprefix.prefixes=/web
+      - traefik.http.routers.comff42web.middlewares=strip-prefix@docker
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    volumes:
+      - /etc/localtime:/etc/localtime
