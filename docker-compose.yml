@@ -10,8 +10,8 @@ services:
     labels:
       - traefik.http.routers.comff42web.rule=Host(`zhihuizhan.net`) && PathPrefix(`/web`)
       - traefik.http.routers.comff42web.tls.certresolver=mytlschallenge
-      - traefik.http.middlewares.strip-prefix.stripprefix.prefixes=/web
-      - traefik.http.routers.comff42web.middlewares=strip-prefix@docker
+      - traefik.http.middlewares.strip-prefix-web.stripprefix.prefixes=/web
+      - traefik.http.routers.comff42web.middlewares=strip-prefix-web@docker
     environment:
       SPRING_PROFILES_ACTIVE: prod
     volumes:
