@@ -1,0 +1,47 @@
+kind: pipeline
+name: drone
+
+steps:
+
+  - name: maven-install
+    image: maven:3-jdk-10
+    commands:
+      - mvn install -DskipTests=true -Dmaven.javadoc.skip=true
+    volumes:
+      - name: maven-cache
+        path: /root/.m2
+
+  - name: build
+    image: plugins/docker
+    settings:
+      username: cn-north-1@8BKNSGZGCNYMTOUZR9YS
+      password: e119c7e6f7a4572454fa96f7b8b6fa34d37a00e7e16caa3274b69c0c6eeded7b
+      registry: swr.cn-north-1.myhuaweicloud.com
+      repo: swr.cn-north-1.myhuaweicloud.com/a82253452/comff42web
+      auto_tag: true
+
+  - name: code-scp
+    image: appleboy/drone-scp
+    settings:
+      host: 114.115.250.201
+      username: root
+      password: Sdfasiwek2#@8123
+      port: 222
+      target: /projects/comff42web
+      source: docker-compose.yml
+
+  - name: code-deploy
+    image: appleboy/drone-ssh
+    settings:
+      host: 114.115.250.201
+      username: root
+      password: Sdfasiwek2#@8123
+      port: 222
+      script:
+        - cd /projects/comff42web
+        - docker-compose pull
+        - docker-compose up -d --force-recreate
+volumes:
+  - name: maven-cache
+    host:
+      path: /tmp/maven/cache

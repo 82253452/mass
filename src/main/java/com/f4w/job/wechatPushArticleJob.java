@@ -63,6 +63,7 @@ public class wechatPushArticleJob extends IJobHandler {
             log.error("没有要发送的图文");
             return new ReturnT<>("ok");
         }
+        List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
         for (String type : typesArray) {
             Example example = new Example(Wxmp.class);
             example.setOrderByClause("id DESC");
@@ -73,7 +74,6 @@ public class wechatPushArticleJob extends IJobHandler {
 
             PageHelper.startPage(1, 1);
             List<Wxmp> list = wxmpMapper.selectByExample(example);
-            List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
             try {
                 list.forEach(e -> {
                     try {
@@ -115,25 +115,26 @@ public class wechatPushArticleJob extends IJobHandler {
                         ex.printStackTrace();
                     }
                 });
-                WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
-                wxMpMaterialNews.setArticles(newsList);
-                WxMpMaterialUploadResult re = wxOpenService
-                        .getWxOpenComponentService()
-                        .getWxMpServiceByAppid(appId)
-                        .getMaterialService().materialNewsUpload(wxMpMaterialNews);
-                WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
-                wxMpMassTagMessage.setSendAll(true);
-                wxMpMassTagMessage.setMediaId(re.getMediaId());
-                wxMpMassTagMessage.setMsgType("mpnews");
-                wxMpMassTagMessage.setSendIgnoreReprint(true);
-                wxOpenService.getWxOpenComponentService()
-                        .getWxMpServiceByAppid(appId)
-                        .getMassMessageService()
-                        .massGroupMessageSend(wxMpMassTagMessage);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
+
+        WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
+        wxMpMaterialNews.setArticles(newsList);
+        WxMpMaterialUploadResult re = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMpServiceByAppid(appId)
+                .getMaterialService().materialNewsUpload(wxMpMaterialNews);
+        WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
+        wxMpMassTagMessage.setSendAll(true);
+        wxMpMassTagMessage.setMediaId(re.getMediaId());
+        wxMpMassTagMessage.setMsgType("mpnews");
+        wxMpMassTagMessage.setSendIgnoreReprint(true);
+        wxOpenService.getWxOpenComponentService()
+                .getWxMpServiceByAppid(appId)
+                .getMassMessageService()
+                .massGroupMessageSend(wxMpMassTagMessage);
 
         return new ReturnT<>("ok");
     }
