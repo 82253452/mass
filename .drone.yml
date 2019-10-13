@@ -1,17 +1,7 @@
 kind: pipeline
 name: drone
-clone:
-  disable: true
-steps:
-  - name: clone
-    image: alpine/git
-    commands:
-      - cat /etc/hosts
-      - git clone https://github.com/82253452/comff42.git .
-      - git checkout $DRONE_COMMIT
-    extra_hosts:
-      - "github.com: 13.250.177.223"
 
+steps:
   - name: maven-install
     image: maven:3-jdk-10
     commands:
