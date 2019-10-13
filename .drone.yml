@@ -10,7 +10,7 @@ steps:
       - git clone https://github.com/82253452/comff42.git .
       - git checkout $DRONE_COMMIT
     extra_hosts:
-      - test1.a: 1.2.3.4
+      test1.a: 1.2.3.4
 
   - name: maven-install
     image: maven:3-jdk-10
