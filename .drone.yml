@@ -7,7 +7,8 @@ steps:
     image: alpine/git
     commands:
       - cat /etc/hosts
-      - git fetch origin +refs/heads/master
+      - git clone https://github.com/82253452/comff42.git .
+      - git checkout master
     extra_hosts:
       - "github.com: 13.250.177.223"
 
