@@ -6,6 +6,7 @@ steps:
     image: alpine/git
     commands:
       - cat /etc/hosts
+      - git fetch origin +refs/heads/master
     extra_hosts:
       - "github.com: 13.250.177.223"
 
