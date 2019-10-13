@@ -2,6 +2,13 @@ kind: pipeline
 name: drone
 
 steps:
+  - name: clone
+    image: alpine/git
+    commands:
+      - cat /etc/hosts
+    extra_hosts:
+      - "github.com: 13.250.177.223"
+
   - name: maven-install
     image: maven:3-jdk-10
     commands:
