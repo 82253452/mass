@@ -47,7 +47,7 @@ weapp:
     componentToken: token
     componentAesKey: r82FieYYZZ2tTG3Gklh9LBCh3k4Gxtwgsai4n2juvk1
 server:
-  port: 8082
+  port: 8080
 xxl:
   job:
     admin:
