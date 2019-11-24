@@ -35,4 +35,4 @@ steps:
 volumes:
   - name: maven-cache
     host:
-      path: /tmp/maven/cache
+      path: /opt/cache/maven
