@@ -3,15 +3,6 @@ name: drone
 clone:
   disable: true
 steps:
-  - name: clone
-    image: alpine/git
-    commands:
-      - cat /etc/hosts
-      - git clone https://github.com/82253452/comff42.git .
-      - git checkout master
-    extra_hosts:
-      - "github.com: 13.250.177.223"
-
   - name: maven-install
     image: maven:3-jdk-10
     commands:
@@ -20,34 +11,25 @@ steps:
       - name: maven-cache
         path: /root/.m2
 
-  - name: build
-    image: plugins/docker
-    settings:
-      username: cn-north-1@8BKNSGZGCNYMTOUZR9YS
-      password: e119c7e6f7a4572454fa96f7b8b6fa34d37a00e7e16caa3274b69c0c6eeded7b
-      registry: swr.cn-north-1.myhuaweicloud.com
-      repo: swr.cn-north-1.myhuaweicloud.com/a82253452/comff42web
-      auto_tag: true
-
   - name: code-scp
     image: appleboy/drone-scp
     settings:
-      host: 114.115.250.201
+      host: 121.36.56.213
       username: root
-      password: Sdfasiwek2#@8123
-      port: 222
-      target: /projects/comff42web
+      password: Yp82253452
+      port: 22
+      target: /opt/projects/mass
       source: docker-compose.yml
 
   - name: code-deploy
     image: appleboy/drone-ssh
     settings:
-      host: 114.115.250.201
+      host: 121.36.56.213
       username: root
-      password: Sdfasiwek2#@8123
-      port: 222
+      password: Yp82253452
+      port: 22
       script:
-        - cd /projects/comff42web
+        - cd /opt/projects/mass
         - docker-compose pull
         - docker-compose up -d --force-recreate
 volumes:

@@ -4,14 +4,12 @@ networks:
     external:
       name: default-network
 services:
-  comff42web:
-    container_name: comff42web
-    image: swr.cn-north-1.myhuaweicloud.com/a82253452/comff42web
+  mass:
+    container_name: mass
+    image: swr.cn-north-1.myhuaweicloud.com/a82253452/mass
     labels:
-      - traefik.http.routers.comff42web.rule=Host(`zhihuizhan.net`) && PathPrefix(`/web`)
-      - traefik.http.routers.comff42web.tls.certresolver=mytlschallenge
-      - traefik.http.middlewares.strip-prefix-web.stripprefix.prefixes=/web
-      - traefik.http.routers.comff42web.middlewares=strip-prefix-web@docker
+      - traefik.http.routers.mass.rule=Host(`mass.zhihuizhan.net`)
+      - traefik.http.routers.mass.tls.certresolver=mytlschallenge
     environment:
       SPRING_PROFILES_ACTIVE: prod
     volumes:
