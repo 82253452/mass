@@ -1,7 +1,6 @@
 kind: pipeline
 name: drone
-clone:
-  disable: true
+
 steps:
 
   - name: maven-install
