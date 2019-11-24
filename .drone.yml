@@ -3,6 +3,7 @@ name: drone
 clone:
   disable: true
 steps:
+
   - name: maven-install
     image: maven:3-jdk-10
     commands:
