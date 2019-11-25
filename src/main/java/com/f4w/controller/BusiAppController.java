@@ -93,6 +93,7 @@ public class BusiAppController {
      */
     @GetMapping("/autoMessageApi")
     public R autoMessageApi(@RequestParam Map<String, String> paramRequest) throws ParseException {
+        log.info("gengxin");
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(paramRequest.get("appId"));
         busiApp = busiAppMapper.selectOne(busiApp);
