@@ -52,7 +52,7 @@ server:
 xxl:
   job:
     admin:
-      addresses: https://zhihuizhan.net/xxl-job-admin
+      addresses: https://xxl.zhihuizhan.net/xxl-job-admin
     executor:
       appname: xxl-job-executor-sample
       ip:
