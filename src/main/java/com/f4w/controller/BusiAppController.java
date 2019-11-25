@@ -109,19 +109,19 @@ public class BusiAppController {
             param.put("glueType", "BEAN");
             param.put("executorBlockStrategy", "SERIAL_EXECUTION");
             param.put("author", "yp");
-            String r = HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/add").form(param).body();
+            String r = HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/add").form(param).trustAllHosts().trustAllCerts().body();
             JSONObject rr = JSON.parseObject(r);
             Integer id = rr.getInteger("content");
             if (id == null) {
                 return R.error(1001, "添加启动器失败");
             }
-            HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/start?id=" + id).body();
+            HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/start?id=" + id).trustAllHosts().trustAllCerts().body();
             busiApp.setAutoMessage(1);//自动推送
             busiApp.setMessageId(id);//类型
             busiApp.setMessageParam(JSON.toJSONString(paramRequest));
         } else {
             busiApp.setAutoMessage(0);//关闭自动推送
-            HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).body();
+            HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).trustAllHosts().trustAllCerts().body();
         }
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         return R.renderSuccess(true);
@@ -133,7 +133,7 @@ public class BusiAppController {
         busiApp.setAppId(paramRequest.get("appId"));
         busiApp = busiAppMapper.selectOne(busiApp);
         busiApp.setAutoMessage(0);//关闭自动推送
-        HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).body();
+        HttpRequest.post("https://xxl.zhihuizhan.net/xxl-job-admin/jobinfo/remove?id=" + busiApp.getMessageId()).trustAllHosts().trustAllCerts().body();
         busiAppMapper.updateByPrimaryKeySelective(busiApp);
         return R.renderSuccess(true);
     }

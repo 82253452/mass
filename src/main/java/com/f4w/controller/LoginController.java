@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("userLogin")
 public class LoginController {
     @Resource
-    private SysUserMapper sysUserMapper;
+//    private SysUserMapper sysUserMapper;
     @Resource
     private JWTUtils jwtUtils;
 
