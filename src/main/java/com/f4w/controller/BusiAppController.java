@@ -64,7 +64,7 @@ public class BusiAppController {
     @Resource
     private BusiAppPageMapper busiAppPageMapper;
     @Resource
-    private ExecutorService threadPoolExecutor;/
+    private ExecutorService threadPoolExecutor;
 
     @Value("${path.filesave}")
     private String filesave;
