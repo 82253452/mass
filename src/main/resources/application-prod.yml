@@ -58,7 +58,7 @@ xxl:
     admin:
       addresses: http://mass:8080/xxl-job-admin
     executor:
-      appname: xxl-job-executor-sample
+      appname: xxl-job-executor-sample-prod
       ip:
       port: 0
       logpath: /var/log/xxl-job/jobhandler/

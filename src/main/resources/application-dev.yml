@@ -54,7 +54,7 @@ xxl:
     admin:
       addresses: https://xxl.zhihuizhan.net/xxl-job-admin
     executor:
-      appname: xxl-job-executor-sample
+      appname: xxl-job-executor-sample-dev
       ip:
       port: 0
       logpath: /var/log/xxl-job/jobhandler/
