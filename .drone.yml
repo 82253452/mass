@@ -40,7 +40,7 @@ steps:
       script:
         - cd /opt/projects/mass
         - docker-compose pull
-        - docker-compose up -d --force-recreate
+        - docker-compose up --force-recreate --build -d
 volumes:
   - name: maven-cache
     host:
