@@ -19,7 +19,6 @@ import java.io.IOException;
  */
 @SpringBootApplication
 @MapperScan(basePackages = "com.f4w.mapper")
-@EnableWebMvc
 @RestController
 @EnableAspectJAutoProxy
 public class FrameApplication {

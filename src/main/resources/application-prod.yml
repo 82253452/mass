@@ -18,9 +18,6 @@ spring:
     port: 6379
     database: 0
     password: Yuping82253452
-  thymeleaf:
-    prefix: classpath:/static/
-    suffix: .html
 mybatis:
   type-aliases-package: com.f4w.entity
   #  mapper-locations: classpath:com/f4w/mapper/*.xml
