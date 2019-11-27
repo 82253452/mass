@@ -56,9 +56,9 @@ weapp:
 xxl:
   job:
     admin:
-      addresses: https://xxl.zhihuizhan.net/xxl-job-admin
+      addresses: http://mass:8080/xxl-job-admin
     executor:
-      appname: xxl-job-executor-sample-prod
+      appname: xxl-job-executor-sample
       ip:
       port: 0
       logpath: /var/log/xxl-job/jobhandler/
