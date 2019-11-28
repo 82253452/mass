@@ -156,7 +156,7 @@ public class CommonAPI {
     @GetMapping("setDomain")
     public R setDomain(String appId) throws WxErrorException {
         String domain = "https://www.cxduo.com";
-        String domain2 = "https://zhihuizhan.net";
+        String domain2 = "https://mass.zhihuizhan.net";
         List<String> webViewDomain = new ArrayList<>();
         webViewDomain.add(domain2);
         List<String> requestdomainList = new ArrayList<>();

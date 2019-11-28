@@ -488,7 +488,7 @@ public class BusiAppController {
 
     @GetMapping("/getAuthUrl")
     public R getAuthUrl(@CurrentUser SysUser sysUser) throws WxErrorException {
-        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://xxl.zhihuizhan.net/web/notify/authorizerRefreshToken?uid=" + sysUser.getId());
+        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://mass.zhihuizhan.net/api/notify/authorizerRefreshToken?uid=" + sysUser.getId());
         return R.renderSuccess("url", url);
     }
 
