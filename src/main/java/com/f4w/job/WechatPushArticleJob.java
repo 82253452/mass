@@ -34,7 +34,7 @@ import java.util.UUID;
 @Slf4j
 @JobHandler(value = "weArticleJobHandler")
 @Service
-public class wechatPushArticleJob extends IJobHandler {
+public class WechatPushArticleJob extends IJobHandler {
     @Resource
     private BusiAppMapper busiAppMapper;
     @Resource
