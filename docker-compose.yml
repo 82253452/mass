@@ -1,6 +1,6 @@
 version: "3"
 networks:
-  default:
+  swarm:
     external:
       name: swarm-net
   back:
@@ -12,6 +12,7 @@ services:
     image: swr.cn-north-1.myhuaweicloud.com/a82253452/mass
     networks:
       - back
+      - swarm
     deploy:
       labels:
         - traefik.http.routers.mass-http.rule=Host(`mass.zhihuizhan.net`)&& PathPrefix(`/api`)
