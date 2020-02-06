@@ -7,6 +7,8 @@ services:
   mass:
     container_name: mass
     image: swr.cn-north-1.myhuaweicloud.com/a82253452/mass
+    networks:
+      - default-network
     labels:
       - traefik.http.routers.mass-http.rule=Host(`mass.zhihuizhan.net`)&& PathPrefix(`/api`)
       - traefik.http.middlewares.mass-http.redirectscheme.scheme=https_redirect
