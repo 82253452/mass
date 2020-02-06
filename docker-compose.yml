@@ -2,7 +2,7 @@ version: "3"
 networks:
   default:
     external:
-      name: default-network
+      name: swarm-net
 services:
   mass:
     container_name: mass
