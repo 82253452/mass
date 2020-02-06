@@ -1,22 +1,17 @@
 version: "3"
 networks:
-  swarm:
+  default:
     external:
       name: swarm-net
-  back:
-    external:
-      name: default-network
 services:
   mass:
     container_name: mass
     image: swr.cn-north-1.myhuaweicloud.com/a82253452/mass
-    networks:
-      - back
-      - swarm
     deploy:
       labels:
         - traefik.http.routers.mass-http.rule=Host(`mass.zhihuizhan.net`)&& PathPrefix(`/api`)
         - traefik.http.middlewares.mass-http.redirectscheme.scheme=https_redirect
+
         - traefik.http.routers.mass.rule=Host(`mass.zhihuizhan.net`)&& PathPrefix(`/api`)
         - traefik.http.routers.mass.tls.certresolver=mytlschallenge
         - traefik.http.middlewares.strip-prefix-api.stripprefix.prefixes=/api
