@@ -40,8 +40,7 @@ steps:
       port: 22
       script:
         - cd /opt/projects/mass
-        - docker-compose pull
-        - docker-compose up --force-recreate --build -d
+        - docker stack deploy -c docker-compose.yml mass
 volumes:
   - name: maven-cache
     host:
