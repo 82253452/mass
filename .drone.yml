@@ -14,6 +14,7 @@ steps:
   - name: build
     image: plugins/docker
     settings:
+      mirror: https://hccwwfjl.mirror.aliyuncs.com/
       username: cn-north-1@8BKNSGZGCNYMTOUZR9YS
       password: e119c7e6f7a4572454fa96f7b8b6fa34d37a00e7e16caa3274b69c0c6eeded7b
       registry: swr.cn-north-1.myhuaweicloud.com
