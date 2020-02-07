@@ -1,7 +1,9 @@
 package com.f4w;
 
+import com.f4w.job.WechatPushArticleJob;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.SysUserMapper;
+import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -23,13 +25,16 @@ import java.io.IOException;
 @EnableAspectJAutoProxy
 public class FrameApplication {
 
+    @Resource
+    private WechatPushArticleJob wechatPushArticleJob;
+
     public static void main(String[] args) {
         SpringApplication.run(FrameApplication.class, args);
     }
 
-    @RequestMapping("/")
-    public void test(HttpServletResponse response) throws IOException {
-        response.sendRedirect("index.html");
+    @RequestMapping("/test")
+    public void test(String param) throws Exception {
+        ReturnT<String> execute = wechatPushArticleJob.execute(param);
     }
 }
 
