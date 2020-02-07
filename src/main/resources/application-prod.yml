@@ -14,7 +14,7 @@ spring:
       maxActive: 2000
       maxWait: 60000
   redis:
-    host: redis
+    host: 121.36.56.213
     port: 6379
     database: 0
     password: zlsxsdfike.#@!
