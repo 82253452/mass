@@ -39,8 +39,10 @@ steps:
       password: Yp82253452
       port: 22
       script:
-        - cd /opt/projects/mass
-        - docker stack deploy -c docker-compose.yml mass
+        - cd /opt/projects/mass --with-registry-auth
+#        - docker stack deploy -c docker-compose.yml mass --with-registry-auth
+        - docker service update --image swr.cn-north-1.myhuaweicloud.com/a82253452/mass mass_mass --with-registry-auth
+
 volumes:
   - name: maven-cache
     host:
