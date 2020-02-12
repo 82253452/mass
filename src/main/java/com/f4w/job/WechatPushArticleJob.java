@@ -12,6 +12,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
@@ -43,7 +44,7 @@ public class WechatPushArticleJob extends IJobHandler {
     private WxmpMapper wxmpMapper;
 
     @Override
-    public ReturnT<String> execute(String s) throws Exception {
+    public ReturnT<String> execute(String s) {
         JSONObject o = JSON.parseObject(s);
         String appId = o.getString("appId");
 //        Integer num = o.getInteger("num");
@@ -122,19 +123,30 @@ public class WechatPushArticleJob extends IJobHandler {
 
         WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
         wxMpMaterialNews.setArticles(newsList);
-        WxMpMaterialUploadResult re = wxOpenService
-                .getWxOpenComponentService()
-                .getWxMpServiceByAppid(appId)
-                .getMaterialService().materialNewsUpload(wxMpMaterialNews);
+        WxMpMaterialUploadResult re = null;
+        try {
+            re = wxOpenService
+                    .getWxOpenComponentService()
+                    .getWxMpServiceByAppid(appId)
+                    .getMaterialService().materialNewsUpload(wxMpMaterialNews);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+            return new ReturnT<>("上传图片失败");
+        }
         WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
         wxMpMassTagMessage.setSendAll(true);
         wxMpMassTagMessage.setMediaId(re.getMediaId());
         wxMpMassTagMessage.setMsgType("mpnews");
         wxMpMassTagMessage.setSendIgnoreReprint(true);
-        wxOpenService.getWxOpenComponentService()
-                .getWxMpServiceByAppid(appId)
-                .getMassMessageService()
-                .massGroupMessageSend(wxMpMassTagMessage);
+        try {
+            wxOpenService.getWxOpenComponentService()
+                    .getWxMpServiceByAppid(appId)
+                    .getMassMessageService()
+                    .massGroupMessageSend(wxMpMassTagMessage);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+            return new ReturnT<>("上传文章失败");
+        }
 
         return new ReturnT<>("ok");
     }
