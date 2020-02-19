@@ -65,6 +65,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
             "<when test='column!=null'>",
             "AND column_id = #{column}",
             "</when>",
+            "order by ctime desc",
             "</script>"
     })
     List<Wxmp> selectAllByPage(Map map);
