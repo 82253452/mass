@@ -57,13 +57,15 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     @Delete("update wxmp wx set del ='1'  WHERE wx.id = #{id}")
     void deleteById(Long id);
 
-    @Select({"select * from wxmp where 1=1",
+    @Select({"<script>",
+            "select * from wxmp where 1=1",
             "<when test='title!=null'>",
             "AND title = #{title}",
             "</when>",
             "<when test='column!=null'>",
             "AND column_id = #{column}",
             "</when>",
+            "</script>"
     })
     List<Wxmp> selectAllByPage(Map map);
 }
