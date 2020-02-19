@@ -68,5 +68,6 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
             "order by ctime desc",
             "</script>"
     })
+    @ResultMap(value="base")
     List<Wxmp> selectAllByPage(Map map);
 }
