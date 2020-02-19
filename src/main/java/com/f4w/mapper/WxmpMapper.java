@@ -6,6 +6,7 @@ import com.f4w.utils.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface WxmpMapper extends BaseMapper<Wxmp> {
 
@@ -55,4 +56,14 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
 
     @Delete("update wxmp wx set del ='1'  WHERE wx.id = #{id}")
     void deleteById(Long id);
+
+    @Select({"select * from wxmp where 1=1",
+            "<when test='title!=null'>",
+            "AND title = #{title}",
+            "</when>",
+            "<when test='column!=null'>",
+            "AND column_id = #{column}",
+            "</when>",
+    })
+    List<Wxmp> selectAllByPage(Map map);
 }
