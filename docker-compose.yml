@@ -4,26 +4,29 @@ networks:
     external:
       name: swarm-net
 services:
-  mass:
-    container_name: mass
-    image: swr.cn-north-1.myhuaweicloud.com/a82253452/mass
+  service:
+    image: ${IMAGE}
     deploy:
       resources:
         limits:
-          cpus: '0.25'
           memory: 500M
         reservations:
-          cpus: '0.25'
           memory: 500M
       labels:
-        - traefik.http.routers.mass-http.rule=Host(`mass.zhihuizhan.net`)&& PathPrefix(`/api`)
-        - traefik.http.middlewares.mass-http.redirectscheme.scheme=https_redirect
-        - traefik.http.services.mass.loadbalancer.server.port=8080
-        - traefik.http.routers.mass.rule=Host(`mass.zhihuizhan.net`)&& PathPrefix(`/api`)
-        - traefik.http.routers.mass.tls.certresolver=mytlschallenge
-        - traefik.http.middlewares.strip-prefix-api.stripprefix.prefixes=/api
-        - traefik.http.routers.mass.middlewares=strip-prefix-api@docker
+        - traefik.http.finder=true
+
+        - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.rule=Host(`${DOMAIN}`)&& PathPrefix(`/${PATHPREFIX}`)
+        - traefik.http.services.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.loadbalancer.server.port=${PORT}
+        - traefik.http.middlewares.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.redirectscheme.scheme=https_redirect
+
+        - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.rule=Host(`${DOMAIN}`)&& PathPrefix(`/${PATHPREFIX}`)
+        - traefik.http.services.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.loadbalancer.server.port=${PORT}
+        - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.tls.certresolver=mytlschallenge
+
+        - traefik.http.middlewares.strip-prefix-${PATHPREFIX}.stripprefix.prefixes=/${PATHPREFIX}
+        - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.middlewares=strip-prefix-${PATHPREFIX}@docker
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: ${PROFILE}
+      PORT: ${PORT}
     volumes:
       - /etc/localtime:/etc/localtime
