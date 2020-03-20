@@ -24,6 +24,7 @@ services:
 
         - traefik.http.middlewares.strip-prefix-${PATHPREFIX}.stripprefix.prefixes=/${PATHPREFIX}
         - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.middlewares=strip-prefix-${PATHPREFIX}@docker
+        - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.middlewares=strip-prefix-${PATHPREFIX}@docker
     environment:
       SPRING_PROFILES_ACTIVE: ${PROFILE}
       PORT: ${PORT}
