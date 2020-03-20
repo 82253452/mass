@@ -4,7 +4,7 @@ name: mass-api
 environment:
   DOMAIN: mass.zhihuizhan.net
   PATHPREFIX: api
-  PROFILE: master
+  PROFILE: prod
   APPDIR: ./target/app.jar
   PORT: 8080
 
