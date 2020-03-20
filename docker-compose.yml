@@ -20,7 +20,6 @@ services:
         - traefik.http.middlewares.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.redirectscheme.scheme=https_redirect
 
         - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.rule=Host(`${DOMAIN}`)&& PathPrefix(`/${PATHPREFIX}`)
-        - traefik.http.services.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.loadbalancer.server.port=${PORT}
         - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-https.tls.certresolver=mytlschallenge
 
         - traefik.http.middlewares.strip-prefix-${PATHPREFIX}.stripprefix.prefixes=/${PATHPREFIX}
