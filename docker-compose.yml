@@ -13,7 +13,7 @@ services:
         reservations:
           memory: 500M
       labels:
-        - traefik.http.finder=true
+        - finder.traefik.http=true
 
         - traefik.http.routers.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.rule=Host(`${DOMAIN}`)&& PathPrefix(`/${PATHPREFIX}`)
         - traefik.http.services.${DRONE_STAGE_NAME}-${DRONE_BRANCH}-http.loadbalancer.server.port=${PORT}
