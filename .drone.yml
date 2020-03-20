@@ -35,9 +35,6 @@ steps:
     image: docker:dind
     environment:
       IMAGE: swr.cn-north-1.myhuaweicloud.com/a82253452/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
-      DOMAIN: ware.zhihuizhan.net
-      PROFILE: prod
-      PORT: 8080
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -50,9 +47,6 @@ steps:
     image: docker:dind
     environment:
       IMAGE: swr.cn-north-1.myhuaweicloud.com/a82253452/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
-      DOMAIN: ware.zhihuizhan.net
-      PROFILE: prod
-      PORT: 8080
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
