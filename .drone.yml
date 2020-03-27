@@ -12,12 +12,12 @@ environment:
 steps:
 
   - name: maven-install
-      image: maven:3-jdk-8
-      commands:
-        - mvn install -DskipTests=true -Dmaven.javadoc.skip=true
-      volumes:
-        - name: maven-cache
-          path: /root/.m2
+    image: maven:3-jdk-8
+    commands:
+      - mvn install -DskipTests=true -Dmaven.javadoc.skip=true
+    volumes:
+      - name: maven-cache
+        path: /root/.m2
 
   - name: release
     image: docker:dind
