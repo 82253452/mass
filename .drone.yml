@@ -11,34 +11,13 @@ environment:
 
 steps:
 
-  - name: restore-cache
-    image: drillster/drone-volume-cache
-    settings:
-      restore: true
-      mount:
-        - ./.npm-cache
-        - ./node_modules
-    volumes:
-      - name: cache
-        path: /cache
-
-  - name: npm-install
-    image: node:10
-    commands:
-      - npm config set cache ./.npm-cache --global
-      - npm config set registry http://registry.npm.taobao.org/
-      - npm install && npm run build:$PROFILE
-
-  - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    settings:
-      rebuild: true
-      mount:
-        - ./.npm-cache
-        - ./node_modules
-    volumes:
-      - name: cache
-        path: /cache
+  - name: maven-install
+      image: maven:3-jdk-8
+      commands:
+        - mvn install -DskipTests=true -Dmaven.javadoc.skip=true
+      volumes:
+        - name: maven-cache
+          path: /root/.m2
 
   - name: release
     image: docker:dind
@@ -68,9 +47,9 @@ steps:
       - docker stack deploy -c docker-compose.yml ${DRONE_STAGE_NAME}-${DRONE_BRANCH} --with-registry-auth
 
 volumes:
-  - name: cache
+  - name: maven-cache
     host:
-      path: /tmp/cache
+      path: /opt/cache/maven
   - name: dockersock
     host:
       path: /var/run/docker.sock
