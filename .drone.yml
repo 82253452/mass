@@ -3,6 +3,7 @@ name: mass-api
 
 environment:
   DOMAIN: mass.zhihuizhan.net
+  REGISTRY: 192.168.0.2:5000
   PATHPREFIX: api
   PROFILE: prod
   APPDIR: ./target/app.jar
@@ -10,43 +11,51 @@ environment:
 
 steps:
 
-  - name: maven-install
-    image: maven:3-jdk-8
-    commands:
-      - mvn install -DskipTests=true -Dmaven.javadoc.skip=true
-    volumes:
-      - name: maven-cache
-        path: /root/.m2
-
-  - name: build
-    image: plugins/docker
+  - name: restore-cache
+    image: drillster/drone-volume-cache
     settings:
-      mirror: https://hccwwfjl.mirror.aliyuncs.com/
-      registry: swr.cn-north-1.myhuaweicloud.com
-      username: cn-north-1@8BKNSGZGCNYMTOUZR9YS
-      password: e119c7e6f7a4572454fa96f7b8b6fa34d37a00e7e16caa3274b69c0c6eeded7b
-      repo: swr.cn-north-1.myhuaweicloud.com/a82253452/${DRONE_STAGE_NAME}/${DRONE_BRANCH}
-      tags: ${DRONE_BUILD_NUMBER}
-      build_args:
-        - APPDIR
-        - PORT
+      restore: true
+      mount:
+        - ./.npm-cache
+        - ./node_modules
+    volumes:
+      - name: cache
+        path: /cache
+
+  - name: npm-install
+    image: node:10
+    commands:
+      - npm config set cache ./.npm-cache --global
+      - npm config set registry http://registry.npm.taobao.org/
+      - npm install && npm run build:$PROFILE
+
+  - name: rebuild-cache
+    image: drillster/drone-volume-cache
+    settings:
+      rebuild: true
+      mount:
+        - ./.npm-cache
+        - ./node_modules
+    volumes:
+      - name: cache
+        path: /cache
 
   - name: release
     image: docker:dind
-    environment:
-      IMAGE: swr.cn-north-1.myhuaweicloud.com/a82253452/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
       - name: registry-auth
         path: /root/.docker
     commands:
-      - docker service update --image swr.cn-north-1.myhuaweicloud.com/a82253452/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER} ${DRONE_STAGE_NAME}-${DRONE_BRANCH}_service --with-registry-auth
+      - docker build --rm=true -f Dockerfile -t $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER} . --pull=true --build-arg APPDIR=$APPDIR --build-arg PORT=$PORT
+      - docker push $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
+      - docker service update --image $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER} ${DRONE_STAGE_NAME}-${DRONE_BRANCH}_service --with-registry-auth
 
   - name: release-failed
     image: docker:dind
     environment:
-      IMAGE: swr.cn-north-1.myhuaweicloud.com/a82253452/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
+      IMAGE: $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -59,13 +68,14 @@ steps:
       - docker stack deploy -c docker-compose.yml ${DRONE_STAGE_NAME}-${DRONE_BRANCH} --with-registry-auth
 
 volumes:
-  - name: maven-cache
+  - name: cache
     host:
-      path: /opt/cache/maven
+      path: /tmp/cache
   - name: dockersock
     host:
       path: /var/run/docker.sock
   - name: registry-auth
     host:
       path: /root/.docker
+
 
