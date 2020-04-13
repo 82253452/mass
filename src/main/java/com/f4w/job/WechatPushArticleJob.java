@@ -165,18 +165,8 @@ public class WechatPushArticleJob extends IJobHandler {
         }
         //按照比例进行缩小
         Thumbnails.of(file).scale(0.9).toFile(file);//按比例缩小
-        System.out.println("按照比例进行缩放");
         imgScale(file);
     }
 
-    public static void main(String[] args) throws IOException {
-        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
-        URL url = new URL("https://kan-jian.oss-cn-beijing.aliyuncs.com/topic/20200214/20200214181318_y3td.png");
-        ImageIO.write(ImageIO.read(url),"png",file);
-        System.out.println(file.length());
-        imgScale(file);
-        System.out.println(file.length());
-
-    }
 
 }
