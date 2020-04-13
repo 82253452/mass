@@ -17,6 +17,7 @@ import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,22 +84,9 @@ public class WechatPushArticleJob extends IJobHandler {
                         wxmpMapper.deleteById(e.getId());
                         WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
                         news.setTitle(e.getTitle());
-                        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
                         String thumbnail = e.getThumbnail();
                         if (StringUtils.isNotBlank(thumbnail)) {
-                            URL url = new URL(thumbnail);
-                            BufferedImage img = ImageIO.read(url);
-                            ImageIO.write(img, "png", file);
-                            WxMpMaterial wxMpMaterial = new WxMpMaterial();
-                            wxMpMaterial.setFile(file);
-                            wxMpMaterial.setName("media");
-                            WxMpMaterialUploadResult result = wxOpenService
-                                    .getWxOpenComponentService()
-                                    .getWxMpServiceByAppid(appId)
-                                    .getMaterialService()
-                                    .materialFileUpload("image", wxMpMaterial);
-                            String mediaId = result.getMediaId();
-                            news.setThumbMediaId(mediaId);
+                            news.setThumbMediaId(uploadFile(appId,  thumbnail));
                             news.setAuthor(e.getAuther());
                             if (StringUtils.equals(type, "0")) {
                                 news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
@@ -111,7 +101,6 @@ public class WechatPushArticleJob extends IJobHandler {
                             }
                             newsList.add(news);
                         }
-                        file.deleteOnExit();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -150,4 +139,44 @@ public class WechatPushArticleJob extends IJobHandler {
 
         return new ReturnT<>("ok");
     }
+
+    private String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
+        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+        URL url = new URL("https://kan-jian.oss-cn-beijing.aliyuncs.com/topic/20200214/20200214181318_y3td.png");
+        ImageIO.write(ImageIO.read(url),"png",file);
+        imgScale(file);
+        WxMpMaterial wxMpMaterial = new WxMpMaterial();
+        wxMpMaterial.setFile(file);
+        wxMpMaterial.setName("media");
+        WxMpMaterialUploadResult result = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMpServiceByAppid(appId)
+                .getMaterialService()
+                .materialFileUpload("image", wxMpMaterial);
+        file.deleteOnExit();
+        return  result.getMediaId();
+
+    }
+
+    private static void imgScale(File file) throws IOException{
+        //判断大小，如果小于指定大小，不压缩；如果大于等于指定大小，压缩
+        if(file.length()<=2.8*1024*1024){
+            return;
+        }
+        //按照比例进行缩小
+        Thumbnails.of(file).scale(0.9).toFile(file);//按比例缩小
+        System.out.println("按照比例进行缩放");
+        imgScale(file);
+    }
+
+    public static void main(String[] args) throws IOException {
+        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+        URL url = new URL("https://kan-jian.oss-cn-beijing.aliyuncs.com/topic/20200214/20200214181318_y3td.png");
+        ImageIO.write(ImageIO.read(url),"png",file);
+        System.out.println(file.length());
+        imgScale(file);
+        System.out.println(file.length());
+
+    }
+
 }
