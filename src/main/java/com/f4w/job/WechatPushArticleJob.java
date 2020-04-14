@@ -10,15 +10,21 @@ import com.github.pagehelper.PageHelper;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
+import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -90,7 +96,7 @@ public class WechatPushArticleJob extends IJobHandler {
                     return;
                 }
                 news.setAuthor(e.getAuther());
-                setContent(type, e, news);
+                news.setContent(getContent(appId, type, e));
                 news.setDigest(e.getSummary());
                 if (comment != null && comment) {
                     news.setNeedOpenComment(true);
@@ -130,19 +136,32 @@ public class WechatPushArticleJob extends IJobHandler {
         return new ReturnT<>("ok");
     }
 
-    private void setContent(String type, Wxmp e, WxMpMaterialNews.WxMpMaterialNewsArticle news) {
+    private String getContent(String appId, String type, Wxmp e) {
         if (StringUtils.equals(type, "0")) {
-            news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
+            return "<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>";
         } else if (StringUtils.equals(type, "1")) {
-            news.setContent(e.getContent());
+            return dealContent(appId, e.getContent());
         }
+        return e.getContent();
     }
+
+    private String dealContent(String appId, String content) {
+        Document doc = Jsoup.parse(content);
+        Element body = doc.body();
+        //处理 image
+        Elements src = body.getElementsByAttribute("src");
+        src.forEach(s -> {
+            s.attr("src", imageUpload(appId, s.attr("src")));
+        });
+        return content;
+    }
+
 
     private String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
         URL url = new URL(thumbnail);
         ImageIO.write(ImageIO.read(url), "png", file);
-        imgScale(file);
+        imgScale(file, 1.8);
         WxMpMaterial wxMpMaterial = new WxMpMaterial();
         wxMpMaterial.setFile(file);
         wxMpMaterial.setName("media");
@@ -156,23 +175,47 @@ public class WechatPushArticleJob extends IJobHandler {
 
     }
 
-    private static void imgScale(File file) throws IOException {
+    private static void imgScale(File file, double size) throws IOException {
         //判断大小，如果小于指定大小，不压缩；如果大于等于指定大小，压缩
-        if (file.length() <= 2 * 1024 * 1024) {
+        if (file.length() <= size * 1024 * 1024) {
             return;
         }
         //按照比例进行缩小
         Thumbnails.of(file).scale(0.9).toFile(file);//按比例缩小
-        imgScale(file);
+        imgScale(file, size);
     }
 
     public static void main(String[] args) throws IOException {
-        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
-        URL url = new URL("https://kan-jian.oss-cn-beijing.aliyuncs.com/topic/20200214/20200214181318_y3td.png");
+        Document doc = Jsoup.parse("<span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/32da4a7897af7e515fe78e2f1333f885.png\" /></p></span></span><span><p>首先毋庸置疑的是，war3重置版虽然褒贬不一，甚至很多玩家不买账，但的的确确为war3提供了一波人气，如果暴雪后面能真的推出让人信服的正式版，没准会有真香，但这种事现在都不好说。不过，war3到底还能走多久？</p></span><span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/6c6d675dd1bbc94f00fae38212cf7192.png\" /></p></span></span><span><p>就看比赛而言，几乎全都是老一辈的人，moon，happy，infi，三蛋等等，我在想，如果这一批人真的老去了，真的就提不动刀了，留给他们还有多长时间？我约莫着是五年，最长十年，首先五年左右，80后的一线选手率先提不起刀，十年左右，90后的一批人会提不起刀。</p><p>这不一定是好事，也不一定是坏事，或许如果moon某一天宣布彻底退役会让我们的青春结束，那么happy，infi，TH000，lyn、fly等人如果逐渐也都退役，是不是我们的青春是一次又一次的结束？等老的一批真的都退役了，首先，war3选手的水平并不会有断崖式的下降。</p><p>因为网易已经提暴雪，把魔兽争霸3玩起来了，rpg地图的售卖让网易赚了不少钱，然后反哺war3，搞比赛，奖金说实话不低，这肯定能吸引不少俱乐部的注意，因为war3项目对于一个俱乐部而言，是单人项目，不是5v5，6v6的，只需要养一个或者两个就够了。</p></span><span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/0052776cfccea6715d25fa9daf733214.png\" /></p></span></span><span><p>其实从13年左右，就一直有一种声音就是war3已死，war3已死，实际上七年过去了，war3依然活得好好的，比赛依然有，观看人数依然不输大部分游戏。要知道rpg是零门槛的，跟如今的新游戏一样，上手很快，玩法又独特，总能吸引新鲜血液，只要这批新鲜血液能记住魔兽争霸，就会去看比赛，就会对war3本身感兴趣。</p><p>所以，我认为war3如今保持这种良性循环，就一定可以继续走下去，长久不衰。</p></span>,,");
+        Element body = doc.body();
+        //处理 image
+        Elements src = body.getElementsByAttribute("src");
+        src.forEach(s -> {
+            System.out.println(s.toString());
+        });
+    }
+
+
+    @SneakyThrows
+    private String imageUpload(String appId, String thumbnail) {
+        File file = null;
+        try {
+            file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        URL url = new URL(thumbnail);
         ImageIO.write(ImageIO.read(url), "png", file);
-        System.out.println(file.length());
-        imgScale(file);
-        System.out.println(file.length());
+        imgScale(file, 0.8);
+        WxMpMaterial wxMpMaterial = new WxMpMaterial();
+        wxMpMaterial.setFile(file);
+        wxMpMaterial.setName("media");
+        WxMediaImgUploadResult result = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMpServiceByAppid(appId)
+                .getMaterialService()
+                .mediaImgUpload(file);
+        return result.getUrl();
     }
 
 
