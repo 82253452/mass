@@ -153,7 +153,7 @@ public class WechatPushArticleJob extends IJobHandler {
         src.forEach(s -> {
             s.attr("src", imageUpload(appId, s.attr("src")));
         });
-        return content;
+        return body.html();
     }
 
 
