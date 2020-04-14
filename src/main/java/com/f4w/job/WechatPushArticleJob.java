@@ -2,7 +2,6 @@ package com.f4w.job;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.f4w.entity.BusiApp;
 import com.f4w.entity.Wxmp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.WxmpMapper;
@@ -21,12 +20,10 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -78,36 +75,29 @@ public class WechatPushArticleJob extends IJobHandler {
 
             PageHelper.startPage(1, 1);
             List<Wxmp> list = wxmpMapper.selectByExample(example);
-            try {
-                list.forEach(e -> {
-                    try {
-                        wxmpMapper.deleteById(e.getId());
-                        WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
-                        news.setTitle(e.getTitle());
-                        String thumbnail = e.getThumbnail();
-                        if (StringUtils.isNotBlank(thumbnail)) {
-                            news.setThumbMediaId(uploadFile(appId,  thumbnail));
-                            news.setAuthor(e.getAuther());
-                            if (StringUtils.equals(type, "0")) {
-                                news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
-                            } else if (StringUtils.equals(type, "1")) {
-                                news.setContent(e.getContent());
-                            } else {
-                                return;
-                            }
-                            news.setDigest(e.getSummary());
-                            if (comment != null && comment) {
-                                news.setNeedOpenComment(true);
-                            }
-                            newsList.add(news);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            list.forEach(e -> {
+                wxmpMapper.deleteById(e.getId());
+                if (StringUtils.isBlank(e.getThumbnail())) {
+                    log.error("图片为空---", e.getId());
+                    return;
+                }
+                WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
+                news.setTitle(e.getTitle());
+                try {
+                    news.setThumbMediaId(uploadFile(appId, e.getThumbnail()));
+                } catch (IOException | WxErrorException ex) {
+                    log.error("图片上传失败---", e.getThumbnail(), "---", ex.getMessage());
+                    return;
+                }
+                news.setAuthor(e.getAuther());
+                setContent(type, e, news);
+                news.setDigest(e.getSummary());
+                if (comment != null && comment) {
+                    news.setNeedOpenComment(true);
+                }
+                newsList.add(news);
+            });
+
         }
 
         WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
@@ -140,10 +130,18 @@ public class WechatPushArticleJob extends IJobHandler {
         return new ReturnT<>("ok");
     }
 
+    private void setContent(String type, Wxmp e, WxMpMaterialNews.WxMpMaterialNewsArticle news) {
+        if (StringUtils.equals(type, "0")) {
+            news.setContent("<iframe frameborder=\"0\" width=\"640\" height=\"498\" src=\"https://v.qq.com/iframe/player.html?vid=" + e.getVideoId() + "&tiny=0&auto=0\" allowfullscreen></iframe>");
+        } else if (StringUtils.equals(type, "1")) {
+            news.setContent(e.getContent());
+        }
+    }
+
     private String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
-        URL url = new URL("https://kan-jian.oss-cn-beijing.aliyuncs.com/topic/20200214/20200214181318_y3td.png");
-        ImageIO.write(ImageIO.read(url),"png",file);
+        URL url = new URL(thumbnail);
+        ImageIO.write(ImageIO.read(url), "png", file);
         imgScale(file);
         WxMpMaterial wxMpMaterial = new WxMpMaterial();
         wxMpMaterial.setFile(file);
@@ -154,18 +152,27 @@ public class WechatPushArticleJob extends IJobHandler {
                 .getMaterialService()
                 .materialFileUpload("image", wxMpMaterial);
         file.deleteOnExit();
-        return  result.getMediaId();
+        return result.getMediaId();
 
     }
 
-    private static void imgScale(File file) throws IOException{
+    private static void imgScale(File file) throws IOException {
         //判断大小，如果小于指定大小，不压缩；如果大于等于指定大小，压缩
-        if(file.length()<=2.8*1024*1024){
+        if (file.length() <= 2 * 1024 * 1024) {
             return;
         }
         //按照比例进行缩小
         Thumbnails.of(file).scale(0.9).toFile(file);//按比例缩小
         imgScale(file);
+    }
+
+    public static void main(String[] args) throws IOException {
+        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+        URL url = new URL("https://kan-jian.oss-cn-beijing.aliyuncs.com/topic/20200214/20200214181318_y3td.png");
+        ImageIO.write(ImageIO.read(url), "png", file);
+        System.out.println(file.length());
+        imgScale(file);
+        System.out.println(file.length());
     }
 
 
