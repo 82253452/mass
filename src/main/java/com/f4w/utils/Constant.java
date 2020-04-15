@@ -12,4 +12,9 @@ public class Constant {
     public static final int REPLAY_REQUESTION = 1;
     //答题自动回复 全局
     public static final int REPLAY_REQUESTION_GLOABLE = 2;
+
+    public class Cachekey{
+        public static final String TALENT_POOL = "TALENT_POOL";
+
+    }
 }

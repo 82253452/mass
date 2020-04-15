@@ -1,24 +1,22 @@
-package com.f4w.test;
+package com.f4w.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
-import com.f4w.entity.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 
 @Data
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @ColumnWidth(30)
-public class PersonData extends BaseEntity {
-    @Column(name = "pid")
+public class TalentPool extends BaseEntity {
     @ExcelProperty("id")
-    private String id;
+    private String pid;
+    private String tid;
     @ExcelProperty("姓名")
     private String name;
     @ExcelProperty("手机号")
@@ -27,5 +25,7 @@ public class PersonData extends BaseEntity {
     private String sc;
     @ExcelProperty("基本信息")
     private String base;
+    private String remark;
+    private Integer status;
 
 }
