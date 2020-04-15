@@ -82,7 +82,7 @@ public class TalentPoolService {
             //手机号
             Document phoneHtml = Jsoup.connect("http://www.dingzhourencai.com/tel.asp?action=tel&id=" + tid).cookies(map).get();
             String phone = getPartern(phoneHtml.html(), "document.write\\((.*?)\\)");
-            talentPoolMapper.insert(TalentPool.builder()
+            talentPoolMapper.insertSelective(TalentPool.builder()
                     .name(name)
                     .phone(phone)
                     .sc(sc)
