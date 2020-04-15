@@ -2,7 +2,6 @@ package com.f4w.test;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
-import com.f4w.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import javax.persistence.Column;
 @AllArgsConstructor
 @NoArgsConstructor
 @ColumnWidth(30)
-public class PersonData extends BaseEntity {
+public class PersonData{
     @Column(name = "pid")
     @ExcelProperty("id")
     private String id;
