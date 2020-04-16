@@ -24,12 +24,12 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
             "</script>"
     })
     List<TalentPool> selectAllByPage(TalentPoolReq req);
-    @Select("select distinct sc from talent_pool")
+    @Select("select distinct sc from talent_pool where sc is not null and sc !=''")
     List<String> selectScs();
 
-    @Select("select distinct education from talent_pool")
+    @Select("select distinct education from talent_pool where education is not null and education !=''")
     List<String> selectEdus();
 
-    @Select("select distinct major from talent_pool")
+    @Select("select distinct major from talent_pool where major is not null and major !=''")
     List<String> selectMajors();
 }
