@@ -25,6 +25,7 @@ mybatis:
   #  mapper-locations: classpath:com/f4w/mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
 mapper:
   mappers:
     - tk.mybatis.mapper.common.Mapper
