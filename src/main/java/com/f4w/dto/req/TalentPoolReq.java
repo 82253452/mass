@@ -16,4 +16,5 @@ public class TalentPoolReq extends Page {
     private String phone;
     private String sc;
     private String edu;
+    private String major;
 }

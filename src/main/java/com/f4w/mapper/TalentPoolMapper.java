@@ -20,6 +20,9 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
             "<when test='sc!=null'>",
             "AND sc = #{sc}",
             "</when>",
+            "<when test='major!=null'>",
+            "AND major = #{major}",
+            "</when>",
             "and `delete` =0",
             "</script>"
     })
