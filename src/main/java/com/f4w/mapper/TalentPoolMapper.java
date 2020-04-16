@@ -16,6 +16,7 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
             "</when>",
             "<when test='phone!=null'>",
             "AND phone = #{phone}",
+            "</when>",
             "<when test='sc!=null'>",
             "AND sc = #{sc}",
             "</when>",
