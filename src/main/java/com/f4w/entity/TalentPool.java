@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
+import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -25,6 +26,9 @@ public class TalentPool extends BaseEntity {
     private String sc;
     @ExcelProperty("基本信息")
     private String base;
+    private String education;
+    private Date updateTime;
+    private String major;
     private String remark;
     private Integer status;
 

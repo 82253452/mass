@@ -5,6 +5,8 @@ import com.f4w.mapper.TalentPoolMapper;
 import com.f4w.utils.Constant;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -78,6 +80,13 @@ public class TalentPoolService {
             String base = tdInfo.text();
             //毕业院校
             String sc = getPartern(baseInfo.html(), "毕业院校：(.*?)<br>");
+            //所学专业
+            String major = getPartern(baseInfo.html(), "所学专业：(.*?)<br>");
+            //更新时间
+            String utime = getPartern(baseInfo.html(), "更新时间:(.*?)&nbsp;");
+            //学历
+            String edu = getPartern(baseInfo.html(), "学历：(.*?)<br>");
+            //id
             String tid = getPartern(document.html(), "\"tel.asp\\?action=tel&amp;id=(.*?)\"");
             //手机号
             Document phoneHtml = Jsoup.connect("http://www.dingzhourencai.com/tel.asp?action=tel&id=" + tid).cookies(map).get();
@@ -89,6 +98,9 @@ public class TalentPoolService {
                     .pid(pid)
                     .tid(tid)
                     .base(base)
+                    .education(edu)
+                    .major(major)
+                    .updateTime(DateTime.parse(utime).toDate())
                     .build());
         } catch (Exception e) {
             System.out.println("解析html异常---" + pid);

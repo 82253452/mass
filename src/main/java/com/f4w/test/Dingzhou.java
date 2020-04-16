@@ -46,7 +46,7 @@ public class Dingzhou {
 
     @SneakyThrows
     private static Set getIds() {
-        for (int i = 1; i <= 500; i++) {
+        for (int i = 1; i <= 1; i++) {
             Document document = Jsoup.connect("http://www.dingzhourencai.com/rencai.asp?Page=" + i + "&Position_b=&Position_s=&Qualification=&sex=&City=&County=&ValidityDate=&keyword=").get();
             String pattern = "href=\"jl.asp\\?perid=(.*?)\"";
             Pattern p = Pattern.compile(pattern);
@@ -82,6 +82,15 @@ public class Dingzhou {
                 //手机号
                 Document phoneHtml = Jsoup.connect("http://www.dingzhourencai.com/tel.asp?action=tel&id=" + tid).cookies(map).get();
                 String phone = getPartern(phoneHtml.html(), "document.write\\((.*?)\\)");
+                //所学专业
+                String major = getPartern(baseInfo.html(), "所学专业：(.*?)<br>");
+                //更新时间
+                String utime = getPartern(baseInfo.html(), "更新时间:(.*?)&nbsp;");
+                //学历
+                String edu = getPartern(body.html(), "学历：(.*?)<br>");
+                System.out.println(major);
+                System.out.println(utime);
+                System.out.println(edu);
                 datas.add(PersonData.builder().name(name).phone(phone).sc(sc).base(base).id(tid).build());
             } catch (Exception e) {
                 error.add(pid);
