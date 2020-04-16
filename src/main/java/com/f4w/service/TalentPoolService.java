@@ -89,7 +89,7 @@ public class TalentPoolService {
             //更新时间
             String utime = getPartern(baseInfo.html(), "更新时间:(.*?)&nbsp;");
             //学历
-            String edu = getPartern(baseInfo.html(), "学历：(.*?)<br>");
+            String edu = getPartern(body.html(), "学历：(.*?)<br>");
             //id
             String tid = getPartern(document.html(), "\"tel.asp\\?action=tel&amp;id=(.*?)\"");
             //手机号
