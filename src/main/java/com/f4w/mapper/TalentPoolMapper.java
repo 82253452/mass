@@ -24,4 +24,12 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
             "</script>"
     })
     List<TalentPool> selectAllByPage(TalentPoolReq req);
+    @Select("select distinct sc from talent_pool")
+    List<String> selectScs();
+
+    @Select("select distinct education from talent_pool")
+    List<String> selectEdus();
+
+    @Select("select distinct major from talent_pool")
+    List<String> selectMajors();
 }

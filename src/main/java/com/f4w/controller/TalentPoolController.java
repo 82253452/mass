@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/talent")
@@ -21,6 +22,24 @@ public class TalentPoolController {
     public R selectByPage(TalentPoolReq req) {
         PageInfo<TalentPool> page = PageInfo.of(talentPoolMapper.selectAllByPage(req));
         return R.ok(page);
+    }
+
+    @GetMapping("/selectScs")
+    public R selectScs() {
+        List<String> strings = talentPoolMapper.selectScs();
+        return R.ok(strings);
+    }
+
+    @GetMapping("/selectEdus")
+    public R selectEdus() {
+        List<String> strings = talentPoolMapper.selectEdus();
+        return R.ok(strings);
+    }
+
+    @GetMapping("/selectMajors")
+    public R selectMajors() {
+        List<String> strings = talentPoolMapper.selectMajors();
+        return R.ok(strings);
     }
 
     @PutMapping
