@@ -7,6 +7,9 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.FormatUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +18,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,7 +104,7 @@ public class TalentPoolService {
                     .base(base)
                     .education(edu)
                     .major(major)
-                    .updateTime(DateTime.parse(utime).toDate())
+                    .updateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(utime))
                     .build());
         } catch (Exception e) {
             System.out.println("解析html异常---" + pid);
