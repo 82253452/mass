@@ -1,10 +1,12 @@
 package com.f4w.job;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.f4w.dto.req.JobInfoReq;
 import com.f4w.entity.Wxmp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.WxmpMapper;
+import com.f4w.utils.JobException;
+import com.f4w.utils.ValidateUtils;
 import com.f4w.weapp.WxOpenService;
 import com.github.pagehelper.PageHelper;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -19,20 +21,21 @@ import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import net.coobird.thumbnailator.Thumbnails;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,90 +53,103 @@ public class WechatPushArticleJob extends IJobHandler {
     private WxmpMapper wxmpMapper;
 
     @Override
-    public ReturnT<String> execute(String s) {
-        JSONObject o = JSON.parseObject(s);
-        String appId = o.getString("appId");
-//        Integer num = o.getInteger("num");
-//        Integer type = o.getInteger("type");
-        Integer column = o.getInteger("column");
-        Boolean comment = o.getBoolean("comment");
-        String types = o.getString("types");
-//        Wxmp wxmp = new Wxmp();
-        //        wxmp.setType(type);
-//        wxmp.setColumnId(column);
-        if (StringUtils.isBlank(types)) {
-            log.error("没有要发送的图文");
-            return new ReturnT<>("ok");
+    @Transactional
+    public ReturnT<String> execute(String s) throws JobException {
+        log.info("群发素材--" + s);
+        JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
+        //校验
+        ValidateUtils.validateThrowsJobException(jobinfo);
+        //数据库查找素材
+        List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = addNewsList(jobinfo);
+        //上传素材到微信
+        String mediaId = uploadArticles(jobinfo, newsList);
+        //发布文章
+        pushMedias(jobinfo, mediaId);
+        return new ReturnT<>("ok");
+    }
+
+    private void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
+        //不群发消息
+        if (BooleanUtils.isNotTrue(jobinfo.getIsPush())) {
+            return;
         }
-        String[] typesArray = types.split("-");
-        if (ArrayUtils.isEmpty(typesArray)) {
-            log.error("没有要发送的图文");
-            return new ReturnT<>("ok");
+        pushMedias(jobinfo, mediaId);
+        WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
+        wxMpMassTagMessage.setSendAll(true);
+        wxMpMassTagMessage.setMediaId(mediaId);
+        wxMpMassTagMessage.setMsgType("mpnews");
+        wxMpMassTagMessage.setSendIgnoreReprint(true);
+        try {
+            wxOpenService.getWxOpenComponentService()
+                    .getWxMpServiceByAppid(jobinfo.getAppId())
+                    .getMassMessageService()
+                    .massGroupMessageSend(wxMpMassTagMessage);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+            throw new JobException("发布文章失败");
         }
+    }
+
+    private String uploadArticles(JobInfoReq jobinfo, List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList) throws JobException {
+        WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
+        wxMpMaterialNews.setArticles(newsList);
+        WxMpMaterialUploadResult re;
+        try {
+            re = wxOpenService
+                    .getWxOpenComponentService()
+                    .getWxMpServiceByAppid(jobinfo.getAppId())
+                    .getMaterialService().materialNewsUpload(wxMpMaterialNews);
+        } catch (WxErrorException e) {
+            throw new JobException("上传素材失败");
+        }
+        return re.getMediaId();
+    }
+
+    private List<WxMpMaterialNews.WxMpMaterialNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
         List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
-        for (String type : typesArray) {
+        for (String type : jobinfo.getTypes().split("-")) {
             Example example = new Example(Wxmp.class);
             example.setOrderByClause("id DESC");
             example.createCriteria()
                     .andEqualTo("type", type)
                     .andEqualTo("del", "0")
-                    .andEqualTo("columnId", column);
-
+                    .andEqualTo("columnId", jobinfo.getColumn());
             PageHelper.startPage(1, 1);
             List<Wxmp> list = wxmpMapper.selectByExample(example);
+            if (CollectionUtils.isEmpty(list)) {
+                throw new JobException("列表数据为空");
+            }
             list.forEach(e -> {
-                wxmpMapper.deleteById(e.getId());
-                if (StringUtils.isBlank(e.getThumbnail())) {
-                    log.error("图片为空---", e.getId());
-                    return;
-                }
-                WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
-                news.setTitle(e.getTitle());
-                try {
-                    news.setThumbMediaId(uploadFile(appId, e.getThumbnail()));
-                } catch (IOException | WxErrorException ex) {
-                    log.error("图片上传失败---", e.getThumbnail(), "---", ex.getMessage());
-                    return;
-                }
-                news.setAuthor(e.getAuther());
-                news.setContent(getContent(appId, type, e));
-                news.setDigest(e.getSummary());
-                if (comment != null && comment) {
-                    news.setNeedOpenComment(true);
-                }
-                newsList.add(news);
+                addWxArticle(jobinfo, newsList, type, e);
             });
-
         }
+        if (CollectionUtils.isEmpty(newsList)) {
+            throw new JobException("数据处理失败素材为空");
+        }
+        return newsList;
+    }
 
-        WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
-        wxMpMaterialNews.setArticles(newsList);
-        WxMpMaterialUploadResult re = null;
+    private void addWxArticle(JobInfoReq jobinfo, List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList, String type, Wxmp e) {
+        wxmpMapper.deleteById(e.getId());
+        if (StringUtils.isBlank(e.getThumbnail())) {
+            log.error("图片为空---", e.getId());
+            return;
+        }
+        WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
+        news.setTitle(e.getTitle());
         try {
-            re = wxOpenService
-                    .getWxOpenComponentService()
-                    .getWxMpServiceByAppid(appId)
-                    .getMaterialService().materialNewsUpload(wxMpMaterialNews);
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-            return new ReturnT<>("上传图片失败");
+            news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
+        } catch (IOException | WxErrorException ex) {
+            log.error("图片上传失败---", e.getThumbnail(), "---", ex.getMessage());
+            return;
         }
-        WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
-        wxMpMassTagMessage.setSendAll(true);
-        wxMpMassTagMessage.setMediaId(re.getMediaId());
-        wxMpMassTagMessage.setMsgType("mpnews");
-        wxMpMassTagMessage.setSendIgnoreReprint(true);
-        try {
-            wxOpenService.getWxOpenComponentService()
-                    .getWxMpServiceByAppid(appId)
-                    .getMassMessageService()
-                    .massGroupMessageSend(wxMpMassTagMessage);
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-            return new ReturnT<>("上传文章失败");
+        news.setAuthor(e.getAuther());
+        news.setContent(getContent(jobinfo.getAppId(), type, e));
+        news.setDigest(e.getSummary());
+        if (jobinfo.getComment() != null && jobinfo.getComment()) {
+            news.setNeedOpenComment(true);
         }
-
-        return new ReturnT<>("ok");
+        newsList.add(news);
     }
 
     private String getContent(String appId, String type, Wxmp e) {

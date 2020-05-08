@@ -65,7 +65,15 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
             "<when test='column!=null'>",
             "AND column_id = #{column}",
             "</when>",
-            "and del =0",
+            "<when test='del!=null'>",
+            "AND del = #{del}",
+            "</when>",
+            "<when test='type!=null'>",
+            "AND type = #{type}",
+            "</when>",
+            "<when test='status!=null'>",
+            "AND status = #{status}",
+            "</when>",
             "order by ctime desc",
             "</script>"
     })
