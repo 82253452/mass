@@ -8,6 +8,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Page {
-    private int pageNum;
-    private int pageSize;
+    private int page = 1;
+    private int limit = 10;
 }

@@ -1,12 +1,6 @@
 path:
   filesave: D:/packzipfile/
   filetemp: D:/tmp/
-weapp:
-  open:
-    componentAppId: wxcfd4c6237161d1e7
-    componentSecret: 96c0b9554390e49d5bc0825314a5249a
-    componentToken: token
-    componentAesKey: r82FieYYZZ2tTG3Gklh9LBCh3k4Gxtwgsai4n2juvk1
 xxl:
   job:
     admin:

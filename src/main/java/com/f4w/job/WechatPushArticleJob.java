@@ -5,6 +5,7 @@ import com.f4w.dto.req.JobInfoReq;
 import com.f4w.entity.Wxmp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.WxmpMapper;
+import com.f4w.utils.DingWarning;
 import com.f4w.utils.JobException;
 import com.f4w.utils.ValidateUtils;
 import com.f4w.weapp.WxOpenService;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -108,31 +110,39 @@ public class WechatPushArticleJob extends IJobHandler {
     private List<WxMpMaterialNews.WxMpMaterialNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
         List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
         for (String type : jobinfo.getTypes().split("-")) {
-            Example example = new Example(Wxmp.class);
-            example.setOrderByClause("id DESC");
-            example.createCriteria()
-                    .andEqualTo("type", type)
-                    .andEqualTo("del", "0")
-                    .andEqualTo("columnId", jobinfo.getColumn());
-            PageHelper.startPage(1, 1);
-            List<Wxmp> list = wxmpMapper.selectByExample(example);
-            if (CollectionUtils.isEmpty(list)) {
-                throw new JobException("列表数据为空");
-            }
-            list.forEach(e -> {
-                addWxArticle(jobinfo, newsList, type, e);
-            });
+            addWxArticle(jobinfo, newsList, type, findTypeData(type, Integer.parseInt(type) > 1 ? "1" : "0", jobinfo.getColumn()));
         }
         if (CollectionUtils.isEmpty(newsList)) {
+            DingWarning.log("数据处理失败素材为空-{}", jobinfo.getAppId());
             throw new JobException("数据处理失败素材为空");
         }
         return newsList;
     }
 
+    private Wxmp findTypeData(String type, String isTop, Integer columnId) throws JobException {
+        Example example = new Example(Wxmp.class);
+        example.setOrderByClause("id DESC");
+        example.createCriteria()
+                .andEqualTo("type", Integer.parseInt(type) % 2)
+                .andEqualTo("del", "0")
+                .andEqualTo("isTop", isTop)
+                .andEqualTo("columnId", columnId);
+        PageHelper.startPage(1, 1);
+        List<Wxmp> list = wxmpMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(list) && StringUtils.equals("1", isTop)) {
+            return findTypeData(type, "0", columnId);
+        }
+        if (CollectionUtils.isEmpty(list) && StringUtils.equals("0", isTop)) {
+            DingWarning.log("列表数据为空-{}", type);
+            throw new JobException("列表数据为空");
+        }
+        return list.get(0);
+    }
+
     private void addWxArticle(JobInfoReq jobinfo, List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList, String type, Wxmp e) {
         wxmpMapper.deleteById(e.getId());
         if (StringUtils.isBlank(e.getThumbnail())) {
-            log.error("图片为空---", e.getId());
+            log.error("图片为空---{}", e.getId());
             return;
         }
         WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
@@ -140,12 +150,16 @@ public class WechatPushArticleJob extends IJobHandler {
         try {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
         } catch (IOException | WxErrorException ex) {
-            log.error("图片上传失败---", e.getThumbnail(), "---", ex.getMessage());
+            log.error("图片上传失败---{}--{}--¬", e.getThumbnail(), ex.getMessage());
+            DingWarning.log("图片上传失败-{}-{}-", e.getThumbnail(), ex.getMessage());
             return;
         }
         news.setAuthor(e.getAuther());
         news.setContent(getContent(jobinfo.getAppId(), type, e));
         news.setDigest(e.getSummary());
+        if (StringUtils.isNotBlank(jobinfo.getContentSourceUrl())) {
+            news.setContentSourceUrl(jobinfo.getContentSourceUrl());
+        }
         if (jobinfo.getComment() != null && jobinfo.getComment()) {
             news.setNeedOpenComment(true);
         }
@@ -202,13 +216,15 @@ public class WechatPushArticleJob extends IJobHandler {
     }
 
     public static void main(String[] args) throws IOException {
-        Document doc = Jsoup.parse("<span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/32da4a7897af7e515fe78e2f1333f885.png\" /></p></span></span><span><p>首先毋庸置疑的是，war3重置版虽然褒贬不一，甚至很多玩家不买账，但的的确确为war3提供了一波人气，如果暴雪后面能真的推出让人信服的正式版，没准会有真香，但这种事现在都不好说。不过，war3到底还能走多久？</p></span><span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/6c6d675dd1bbc94f00fae38212cf7192.png\" /></p></span></span><span><p>就看比赛而言，几乎全都是老一辈的人，moon，happy，infi，三蛋等等，我在想，如果这一批人真的老去了，真的就提不动刀了，留给他们还有多长时间？我约莫着是五年，最长十年，首先五年左右，80后的一线选手率先提不起刀，十年左右，90后的一批人会提不起刀。</p><p>这不一定是好事，也不一定是坏事，或许如果moon某一天宣布彻底退役会让我们的青春结束，那么happy，infi，TH000，lyn、fly等人如果逐渐也都退役，是不是我们的青春是一次又一次的结束？等老的一批真的都退役了，首先，war3选手的水平并不会有断崖式的下降。</p><p>因为网易已经提暴雪，把魔兽争霸3玩起来了，rpg地图的售卖让网易赚了不少钱，然后反哺war3，搞比赛，奖金说实话不低，这肯定能吸引不少俱乐部的注意，因为war3项目对于一个俱乐部而言，是单人项目，不是5v5，6v6的，只需要养一个或者两个就够了。</p></span><span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/0052776cfccea6715d25fa9daf733214.png\" /></p></span></span><span><p>其实从13年左右，就一直有一种声音就是war3已死，war3已死，实际上七年过去了，war3依然活得好好的，比赛依然有，观看人数依然不输大部分游戏。要知道rpg是零门槛的，跟如今的新游戏一样，上手很快，玩法又独特，总能吸引新鲜血液，只要这批新鲜血液能记住魔兽争霸，就会去看比赛，就会对war3本身感兴趣。</p><p>所以，我认为war3如今保持这种良性循环，就一定可以继续走下去，长久不衰。</p></span>,,");
-        Element body = doc.body();
-        //处理 image
-        Elements src = body.getElementsByAttribute("src");
-        src.forEach(s -> {
-            System.out.println(s.toString());
-        });
+//        Document doc = Jsoup.parse("<span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/32da4a7897af7e515fe78e2f1333f885.png\" /></p></span></span><span><p>首先毋庸置疑的是，war3重置版虽然褒贬不一，甚至很多玩家不买账，但的的确确为war3提供了一波人气，如果暴雪后面能真的推出让人信服的正式版，没准会有真香，但这种事现在都不好说。不过，war3到底还能走多久？</p></span><span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/6c6d675dd1bbc94f00fae38212cf7192.png\" /></p></span></span><span><p>就看比赛而言，几乎全都是老一辈的人，moon，happy，infi，三蛋等等，我在想，如果这一批人真的老去了，真的就提不动刀了，留给他们还有多长时间？我约莫着是五年，最长十年，首先五年左右，80后的一线选手率先提不起刀，十年左右，90后的一批人会提不起刀。</p><p>这不一定是好事，也不一定是坏事，或许如果moon某一天宣布彻底退役会让我们的青春结束，那么happy，infi，TH000，lyn、fly等人如果逐渐也都退役，是不是我们的青春是一次又一次的结束？等老的一批真的都退役了，首先，war3选手的水平并不会有断崖式的下降。</p><p>因为网易已经提暴雪，把魔兽争霸3玩起来了，rpg地图的售卖让网易赚了不少钱，然后反哺war3，搞比赛，奖金说实话不低，这肯定能吸引不少俱乐部的注意，因为war3项目对于一个俱乐部而言，是单人项目，不是5v5，6v6的，只需要养一个或者两个就够了。</p></span><span><span><p ><img src=\"http://image.uc.cn/s/wemedia/s/upload/2020/0052776cfccea6715d25fa9daf733214.png\" /></p></span></span><span><p>其实从13年左右，就一直有一种声音就是war3已死，war3已死，实际上七年过去了，war3依然活得好好的，比赛依然有，观看人数依然不输大部分游戏。要知道rpg是零门槛的，跟如今的新游戏一样，上手很快，玩法又独特，总能吸引新鲜血液，只要这批新鲜血液能记住魔兽争霸，就会去看比赛，就会对war3本身感兴趣。</p><p>所以，我认为war3如今保持这种良性循环，就一定可以继续走下去，长久不衰。</p></span>,,");
+//        Element body = doc.body();
+//        //处理 image
+//        Elements src = body.getElementsByAttribute("src");
+//        src.forEach(s -> {
+//            System.out.println(s.toString());
+//        });
+        String type = "2";
+        System.out.println(Integer.parseInt(type) % 2);
     }
 
 

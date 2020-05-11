@@ -1,15 +1,6 @@
 path:
   filesave: /data/package/
   filetemp: /data/temp/
-weapp:
-  open:
-    #    componentAppId: wxcfd4c6237161d1e7
-    componentAppId: wx45a4a88f12821319
-    #    componentSecret: 96c0b9554390e49d5bc0825314a5249a
-    componentSecret: d39bc9471c30be91f7818df6ada3c259
-    componentToken: token
-    componentAesKey: r82FieYYZZ2tTG3Gklh9LBCh3k4Gxtwgsai4n2juvk1
-  comkey:
 xxl:
   job:
     admin:
