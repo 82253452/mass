@@ -22,7 +22,6 @@ public class JobInfoReq {
     private String types;
     private Boolean comment;
     private Boolean isPush;
-    @NotNull
     private Integer topNum;
     private String contentSourceUrl;
 }
