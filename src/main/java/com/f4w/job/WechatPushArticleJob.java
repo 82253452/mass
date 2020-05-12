@@ -104,6 +104,7 @@ public class WechatPushArticleJob extends IJobHandler {
                     .getWxMpServiceByAppid(jobinfo.getAppId())
                     .getMaterialService().materialNewsUpload(wxMpMaterialNews);
         } catch (WxErrorException e) {
+            e.printStackTrace();
             throw new JobException("上传素材失败");
         }
         return re.getMediaId();
