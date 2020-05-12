@@ -1,6 +1,9 @@
 package com.f4w.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 
 import javax.persistence.*;
@@ -15,6 +18,9 @@ import java.util.Map;
  */
 @Table(name = "`busi_app`")
 @Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BusiApp extends BaseEntity {
 
     private String appId;
@@ -40,4 +46,6 @@ public class BusiApp extends BaseEntity {
     private Integer autoMessage;
     private Integer messageId;
     private String messageParam;
+    private String headerText;
+    private String footerText;
 }
