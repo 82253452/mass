@@ -37,7 +37,7 @@ public class MiniAppVideoCommentStrategy extends CommentStrategy {
                "    color: #888;" +
                "\" " +
                "data-miniprogram-appid=\""+jobinfo.getMiniAppId()+"\" " +
-               "data-miniprogram-path=\""+jobinfo.getMiniAppPath()+"\" " +
+               "data-miniprogram-path=\""+jobinfo.getMiniAppPath()+"?vid="+wxmp.getVideoId()+"\" " +
                "data-miniprogram-nickname=\""+busiApp.getNickName()+"\" href=\"\" " +
                "data-miniprogram-type=\"text\" " +
                "data-miniprogram-servicetype=\"\">" +
