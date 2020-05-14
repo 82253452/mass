@@ -155,6 +155,7 @@ public abstract class CommentStrategy {
         imgScale(file, size);
     }
 
+
     public String replaceStr(String str,String rep){
         return str.replaceFirst("\\{(.*?)\\}",rep);
     }
