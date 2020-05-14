@@ -14,8 +14,10 @@ import javax.annotation.Resource;
 public class test {
     @Resource
     private WechatPushArticleJob wechatPushArticleJob;
-//    @Test
-//    public void test() throws JobException {
-//        wechatPushArticleJob.execute("{\"type\":\"1\",\"time\":\"2019-01-28 08:05:41\",\"num\":\"5\",\"appId\":\"wx72d6e2a25d7b3bfa\",\"column\":\"1\",\"comment\":\"false\",\"types\":\"2-3-1-1\",\"isPush\":\"false\",\"topNum\":\"2\",\"contentSourceUrl\":\"www.baidu.com\"}");
-//    }
+    @Test
+    public void test() throws JobException {
+//        wechatPushArticleJob.execute("{\"type\":\"1\",\"time\":\"2019-01-28 08:05:41\",\"num\":\"5\",\"appId\":\"wx72d6e2a25d7b3bfa\"," +
+//                "\"column\":\"1\",\"comment\":\"false\",\"types\":\"5-4-2-3-1\",\"isPush\":\"false\",\"topNum\":\"2\"," +
+//                "\"contentSourceUrl\":\"www.baidu.com\",\"miniAppId\":\"wx66b6bc6daa7a51ec\",\"miniAppPath\":\"/pages/play/play\"}");
+    }
 }

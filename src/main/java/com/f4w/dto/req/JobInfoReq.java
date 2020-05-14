@@ -24,4 +24,6 @@ public class JobInfoReq {
     private Boolean isPush;
     private Integer topNum;
     private String contentSourceUrl;
+    private String miniAppId;
+    private String miniAppPath;
 }

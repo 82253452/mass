@@ -77,6 +77,12 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
             "order by ctime desc",
             "</script>"
     })
-    @ResultMap(value="base")
+    @ResultMap(value = "base")
     List<Wxmp> selectAllByPage(Map map);
+
+    @Select("select * from wxmp where column_id = ${columnId} and type = ${type} and del=0 order by id desc limit 1")
+    Wxmp findWxmpByType(@Param("type") Integer type, @Param("columnId") Integer columnId);
+
+    @Select("select * from wxmp where column_id = ${columnId} and type = ${type} and del=0 and is_top = 1 order by id desc limit 1")
+    Wxmp findWxmpTopByType(@Param("type") Integer type, @Param("columnId") Integer columnId);
 }
