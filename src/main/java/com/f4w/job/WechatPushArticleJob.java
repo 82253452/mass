@@ -161,7 +161,7 @@ public class WechatPushArticleJob extends IJobHandler {
         if (read == null) {
             throw new NullPointerException("图片异常");
         }
-        ImageIO.write(ImageIO.read(url), "png", file);
+        ImageIO.write(read, "png", file);
         imgScale(file, 1.8);
         WxMpMaterial wxMpMaterial = new WxMpMaterial();
         wxMpMaterial.setFile(file);
