@@ -140,7 +140,7 @@ public class WechatPushArticleJob extends IJobHandler {
         } catch (IOException | WxErrorException ex) {
             log.error("图片上传失败---{}--{}--¬", e.getThumbnail(), ex.getMessage());
             DingWarning.log("图片上传失败-{}-{}-", e.getThumbnail(), ex.getMessage());
-            return;
+            addWxArticle(jobinfo,busiApp,newsList,type);
         }
         news.setAuthor(e.getAuther());
         news.setDigest(e.getSummary());
