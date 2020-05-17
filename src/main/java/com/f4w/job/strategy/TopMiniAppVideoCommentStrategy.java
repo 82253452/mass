@@ -31,11 +31,10 @@ public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
                 "    display:block;\n" +
                 "    border-radius: 8px;" +
                 " background-color: rgba(0,0,0,0)!important;" +
-                "    padding:12px 12px 8px;\n" +
                 "    background-image:url("+img+");\n" +
                 "    background-repeat: no-repeat;\n" +
                 "    background-size: 100% 100%;\n" +
-                "    background-position: 0px 50px;\n" +
+                "    background-position: 0px 23px;\n" +
                 "    color: #888;" +
                 "\" " +
                 "data-miniprogram-appid=\""+jobinfo.getMiniAppId()+"\" " +
