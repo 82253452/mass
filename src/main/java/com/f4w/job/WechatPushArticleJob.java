@@ -142,7 +142,7 @@ public class WechatPushArticleJob extends IJobHandler {
             DingWarning.log("图片上传失败-{}-{}-", e.getThumbnail(), ex.getMessage());
             addWxArticle(jobinfo, busiApp, newsList, type);
         }
-        news.setAuthor("点这里关注\uD83C");
+        news.setAuthor("点这里关注\uD83C\uDFFB");
         news.setDigest(e.getSummary());
         news.setContent(commentContext.getCommentStrategy(type).dealHeadAndFooter(jobinfo, busiApp, e));
         if (StringUtils.isNotBlank(jobinfo.getContentSourceUrl())) {
