@@ -132,6 +132,7 @@ public class WechatPushArticleJob extends IJobHandler {
         if (StringUtils.isBlank(e.getThumbnail())) {
             log.error("图片为空---{}", e.getId());
             addWxArticle(jobinfo, busiApp, newsList, type);
+            return;
         }
         WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
         news.setTitle(e.getTitle());
@@ -141,6 +142,7 @@ public class WechatPushArticleJob extends IJobHandler {
             log.error("图片上传失败---{}--{}--¬", e.getThumbnail(), ex.getMessage());
             DingWarning.log("图片上传失败-{}-{}-", e.getThumbnail(), ex.getMessage());
             addWxArticle(jobinfo, busiApp, newsList, type);
+            return;
         }
         news.setAuthor("点这里关注\uD83D\uDC49\uD83C\uDFFB");
         news.setDigest(e.getSummary());
