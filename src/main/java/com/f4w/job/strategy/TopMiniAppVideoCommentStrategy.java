@@ -26,7 +26,7 @@ public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
         return "<p>" +
                 "<a class=\"weapp_text_link\"" +
                 " style=\"font-size:14px;display:block;width:100%!important;" +
-                "height: 220px!important;\n" +
+                "height: 180px!important;\n" +
                 "box-shadow: #dddddd 2px 2px 8px;" +
                 "    display:block;\n" +
                 "    border-radius: 8px;" +
