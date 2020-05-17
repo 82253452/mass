@@ -33,6 +33,8 @@ public class WxOpenService extends WxOpenServiceImpl {
     private static int maxConnPerHost = 10;//每路最大连接数,默认10
     private static int maxTotalConn = 50;//连接池最大连接数,默认50
 
+
+
     @Resource
     private WeiXinOpenConfig weiXinOpenConfig;
     @Resource
