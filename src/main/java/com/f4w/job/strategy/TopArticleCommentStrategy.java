@@ -12,11 +12,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@DependsOn("springContextUtils")
 @ArticleType(ArticleTypeEnum.TOP_ARTICLE)
 public class TopArticleCommentStrategy extends CommentStrategy {
     @Override

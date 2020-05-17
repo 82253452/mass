@@ -11,12 +11,14 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Optional;
 
 @Component
+@DependsOn("springContextUtils")
 @ArticleType(ArticleTypeEnum.MINIAPP_VIDEO)
 public class MiniAppVideoCommentStrategy extends CommentStrategy {
     @Override

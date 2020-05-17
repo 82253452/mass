@@ -10,12 +10,14 @@ import com.f4w.utils.JobException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Optional;
 
 @Component
+@DependsOn("springContextUtils")
 @ArticleType(ArticleTypeEnum.TOP_MINIAPP_VIDEO)
 public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
     @Override

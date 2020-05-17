@@ -7,11 +7,13 @@ import com.f4w.entity.BusiApp;
 import com.f4w.entity.Wxmp;
 import com.f4w.job.CommentStrategy;
 import com.f4w.utils.JobException;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@DependsOn("springContextUtils")
 @ArticleType(ArticleTypeEnum.TOP_VIDEO)
 public class TopVideoCommentStrategy extends CommentStrategy {
     @Override
