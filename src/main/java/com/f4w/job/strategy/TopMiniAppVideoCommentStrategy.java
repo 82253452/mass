@@ -30,7 +30,7 @@ public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
                 "box-shadow: #dddddd 2px 2px 8px;" +
                 "    display:block;\n" +
                 "    border-radius: 8px;" +
-                " background-color: rgba(0,0,0,0)!important;" +
+                "    background-color: #f7f7f7;\n" +
                 "    background-image:url("+img+");\n" +
                 "    background-repeat: no-repeat;\n" +
                 "    background-size: 100% 100%;\n" +
