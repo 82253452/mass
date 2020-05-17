@@ -40,7 +40,7 @@ public class MiniAppVideoCommentStrategy extends CommentStrategy {
                "data-miniprogram-nickname=\""+busiApp.getNickName()+"\" href=\"\" " +
                "data-miniprogram-type=\"text\" " +
                "data-miniprogram-servicetype=\"\">" +
-               busiApp.getNickName() +
+               busiApp.getNickName() +"（点击播放视频）"+
                "</a>" ;
     }
 
