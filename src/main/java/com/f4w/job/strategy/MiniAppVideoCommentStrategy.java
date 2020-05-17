@@ -28,8 +28,10 @@ public class MiniAppVideoCommentStrategy extends CommentStrategy {
                "<a class=\"weapp_text_link\"" +
                " style=\"font-size:14px;display:block;width:100%!important;" +
                "height: 240px!important;\n" +
+               "box-shadow: #dddddd 2px 2px 8px;" +
                "    display:block;\n" +
                "    border-radius: 8px;" +
+               " background-color: rgba(0,0,0,0)!important;" +
                "    padding:12px 12px 8px;\n" +
                "    background-image:url("+img+");\n" +
                "    background-repeat: no-repeat;\n" +
