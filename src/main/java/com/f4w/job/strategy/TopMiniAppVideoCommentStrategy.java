@@ -23,10 +23,9 @@ public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
         String img = imageCoverUpload(busiApp.getAppId(), wxmp.getThumbnail());
         return "<p>" +
                 "<a class=\"weapp_text_link\"" +
-                " style=\"font-size:17px;display:block;width:100%!important;" +
-                "height: 250px!important;\n" +
+                " style=\"font-size:14px;display:block;width:100%!important;" +
+                "height: 240px!important;\n" +
                 "    display:block;\n" +
-                "    background-color: #f7f7f7;\n" +
                 "    border-radius: 8px;" +
                 "    padding:12px 12px 8px;\n" +
                 "    background-image:url("+img+");\n" +
