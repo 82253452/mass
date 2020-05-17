@@ -1,6 +1,7 @@
 package com.f4w.weapp;
 
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.util.http.apache.DefaultApacheHttpClientBuilder;
 import me.chanjar.weixin.open.api.impl.WxOpenInRedisConfigStorage;
 import me.chanjar.weixin.open.api.impl.WxOpenMessageRouter;
 import me.chanjar.weixin.open.api.impl.WxOpenServiceImpl;
@@ -24,11 +25,20 @@ import java.net.URLConnection;
 @Slf4j
 @EnableConfigurationProperties({WeiXinOpenConfig.class})
 public class WxOpenService extends WxOpenServiceImpl {
+    private static int connectionRequestTimeout = 3000;//从连接池获取链接的超时时间设置,默认3000ms
+    private static int connectionTimeout = 5000;//建立链接的超时时间,默认5000ms.(由于使用了连接池,这个参数没有实际意义)
+    private static int soTimeout = 8000;//连接池socket超时时间,默认5000ms
+    private static int idleConnTimeout = 60000;//空闲链接的超时时间,默认60000ms
+    private static int checkWaitTime = 60000;//空闲链接的检测周期,默认60000ms
+    private static int maxConnPerHost = 10;//每路最大连接数,默认10
+    private static int maxTotalConn = 50;//连接池最大连接数,默认50
+
     @Resource
     private WeiXinOpenConfig weiXinOpenConfig;
     @Resource
     private RedisProperties redisProperies;
     private static JedisPool pool;
+
 
     @PostConstruct
     public void init() {
@@ -37,6 +47,15 @@ public class WxOpenService extends WxOpenServiceImpl {
         wxOpenInMemoryConfigStorage.setComponentAppSecret(weiXinOpenConfig.getComponentSecret());
         wxOpenInMemoryConfigStorage.setComponentToken(weiXinOpenConfig.getComponentToken());
         wxOpenInMemoryConfigStorage.setComponentAesKey(weiXinOpenConfig.getComponentAesKey());
+        DefaultApacheHttpClientBuilder clientBuilder = DefaultApacheHttpClientBuilder.get();
+        clientBuilder.setConnectionRequestTimeout(connectionRequestTimeout);
+        clientBuilder.setConnectionTimeout(connectionTimeout);
+        clientBuilder.setSoTimeout(soTimeout);
+        clientBuilder.setIdleConnTimeout(idleConnTimeout);
+        clientBuilder.setCheckWaitTime(checkWaitTime);
+        clientBuilder.setMaxConnPerHost(maxConnPerHost);
+        clientBuilder.setMaxTotalConn(maxTotalConn);
+        wxOpenInMemoryConfigStorage.setApacheHttpClientBuilder(clientBuilder);
         setWxOpenConfigStorage(wxOpenInMemoryConfigStorage);
     }
 
@@ -52,7 +71,7 @@ public class WxOpenService extends WxOpenServiceImpl {
 
     private JedisPool getJedisPool() {
         if (pool == null) {
-            pool = new JedisPool(new GenericObjectPoolConfig(), redisProperies.getHost(), redisProperies.getPort(), 2000,redisProperies.getPassword());
+            pool = new JedisPool(new GenericObjectPoolConfig(), redisProperies.getHost(), redisProperies.getPort(), 2000, redisProperies.getPassword());
         }
         return pool;
     }
