@@ -131,20 +131,20 @@ public class WechatPushArticleJob extends IJobHandler {
         wxmpMapper.deleteById(e.getId());
         if (StringUtils.isBlank(e.getThumbnail())) {
             log.error("图片为空---{}", e.getId());
-            addWxArticle(jobinfo,busiApp,newsList,type);
+            addWxArticle(jobinfo, busiApp, newsList, type);
         }
         WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
         news.setTitle(e.getTitle());
         try {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
-        } catch (IOException | WxErrorException ex) {
+        } catch (NullPointerException | IOException | WxErrorException ex) {
             log.error("图片上传失败---{}--{}--¬", e.getThumbnail(), ex.getMessage());
             DingWarning.log("图片上传失败-{}-{}-", e.getThumbnail(), ex.getMessage());
-            addWxArticle(jobinfo,busiApp,newsList,type);
+            addWxArticle(jobinfo, busiApp, newsList, type);
         }
-        news.setAuthor(StringUtils.isBlank(e.getAuther())?"原创达人":e.getAuther());
+        news.setAuthor(StringUtils.isBlank(e.getAuther()) ? "原创达人" : e.getAuther());
         news.setDigest(e.getSummary());
-        news.setContent(commentContext.getCommentStrategy(type).dealHeadAndFooter(jobinfo,busiApp, e));
+        news.setContent(commentContext.getCommentStrategy(type).dealHeadAndFooter(jobinfo, busiApp, e));
         if (StringUtils.isNotBlank(jobinfo.getContentSourceUrl())) {
             news.setContentSourceUrl(jobinfo.getContentSourceUrl());
         }
@@ -157,6 +157,10 @@ public class WechatPushArticleJob extends IJobHandler {
     public String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
         URL url = new URL(thumbnail);
+        BufferedImage read = ImageIO.read(url);
+        if (read == null) {
+            throw new NullPointerException("图片异常");
+        }
         ImageIO.write(ImageIO.read(url), "png", file);
         imgScale(file, 1.8);
         WxMpMaterial wxMpMaterial = new WxMpMaterial();
