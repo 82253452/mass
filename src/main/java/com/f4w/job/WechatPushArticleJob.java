@@ -79,7 +79,7 @@ public class WechatPushArticleJob extends IJobHandler {
         if (BooleanUtils.isNotTrue(jobinfo.getIsPush())) {
             return;
         }
-        pushMedias(jobinfo, mediaId);
+//        pushMedias(jobinfo, mediaId);
         WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
         wxMpMassTagMessage.setSendAll(true);
         wxMpMassTagMessage.setMediaId(mediaId);
