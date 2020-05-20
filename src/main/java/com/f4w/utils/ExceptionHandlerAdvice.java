@@ -203,7 +203,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(value = {JobException.class})
     @ResponseStatus(value = HttpStatus.OK)
     public Object handleJobException(final Exception ex, final ServletWebRequest req) {
-        log.error("定时任务执行异常", ex);
+        log.error("定时任务执行异常---", ex.getMessage());
         return new ReturnT<>(ex.getMessage());
     }
 
