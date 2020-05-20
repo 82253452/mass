@@ -28,6 +28,5 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: ${PROFILE}
       PORT: ${PORT}
-      JAVA_OPTS: "-Xmx1024m -Xms1024m -XX:NewRatio=4 -XX:MaxPermSize=1024m"
     volumes:
       - /etc/localtime:/etc/localtime
