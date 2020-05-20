@@ -6,19 +6,15 @@ import com.f4w.entity.BusiApp;
 import com.f4w.entity.Wxmp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.WxmpMapper;
-import com.f4w.utils.DingWarning;
 import com.f4w.utils.JobException;
 import com.f4w.utils.ValidateUtils;
 import com.f4w.weapp.WxOpenService;
-import com.github.pagehelper.PageHelper;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
-import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
@@ -26,24 +22,18 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @JobHandler(value = "weArticleJobHandler")
@@ -61,26 +51,29 @@ public class WechatPushArticleJob extends IJobHandler {
     @Override
     public ReturnT<String> execute(String s) throws JobException {
         log.info("群发素材--" + s);
-        JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
-        //校验
-        ValidateUtils.validateThrowsJobException(jobinfo);
-        //数据库查找素材
-        List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = addNewsList(jobinfo);
-        //上传素材到微信
-        String mediaId = uploadArticles(jobinfo, newsList);
-        //发布文章
-        pushMedias(jobinfo, mediaId);
-        return new ReturnT<>("ok");
+        try {
+            JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
+            //校验
+            ValidateUtils.validateThrowsJobException(jobinfo);
+            //数据库查找素材
+            List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = addNewsList(jobinfo);
+            //上传素材到微信
+            String mediaId = uploadArticles(jobinfo, newsList);
+            //发布文章
+            pushMedias(jobinfo, mediaId);
+        } catch (Exception e) {
+            log.error("定时任务执行异常---", e.getMessage());
+            return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
+        }
+
+        return IJobHandler.SUCCESS;
     }
 
     private void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
         //不群发消息
         if (BooleanUtils.isNotTrue(jobinfo.getIsPush())) {
-
             return;
-
         }
-//        pushMedias(jobinfo, mediaId);
         WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
         wxMpMassTagMessage.setSendAll(true);
         wxMpMassTagMessage.setMediaId(mediaId);
@@ -120,7 +113,6 @@ public class WechatPushArticleJob extends IJobHandler {
             addWxArticle(jobinfo, busiApp, newsList, Integer.parseInt(type));
         }
         if (CollectionUtils.isEmpty(newsList)) {
-            DingWarning.log("数据处理失败素材为空-{}", jobinfo.getAppId());
             throw new JobException("数据处理失败素材为空");
         }
         return newsList;
@@ -141,7 +133,6 @@ public class WechatPushArticleJob extends IJobHandler {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
         } catch (NullPointerException | IOException | WxErrorException ex) {
             log.error("图片上传失败---{}--{}--¬", e.getThumbnail(), ex.getMessage());
-            DingWarning.log("图片上传失败-{}-{}-", e.getThumbnail(), ex.getMessage());
             addWxArticle(jobinfo, busiApp, newsList, type);
             return;
         }
