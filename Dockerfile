@@ -11,4 +11,4 @@ WORKDIR ${workdir}
 ADD ${APPDIR} app.jar
 EXPOSE ${PORT}
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
+ENTRYPOINT ["java","$JAVA_OPTS","-Djava.security.egd=file:/dev/./urandom","-jar","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
