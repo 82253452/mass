@@ -63,7 +63,6 @@ public class WechatPushArticleJob extends IJobHandler {
             pushMedias(jobinfo, mediaId);
         } catch (Exception e) {
             log.error("定时任务执行异常---", e.getMessage());
-            return IJobHandler.SUCCESS;
         }
 
         return IJobHandler.SUCCESS;
