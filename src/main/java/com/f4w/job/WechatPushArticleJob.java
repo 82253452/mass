@@ -76,7 +76,9 @@ public class WechatPushArticleJob extends IJobHandler {
     private void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
         //不群发消息
         if (BooleanUtils.isNotTrue(jobinfo.getIsPush())) {
+
             return;
+
         }
 //        pushMedias(jobinfo, mediaId);
         WxMpMassTagMessage wxMpMassTagMessage = new WxMpMassTagMessage();
