@@ -49,7 +49,7 @@ public class WechatPushArticleJob extends IJobHandler {
     private CommentContext commentContext;
 
     @Override
-    public ReturnT<String> execute(String s) throws JobException {
+    public ReturnT<String> execute(String s) {
         log.info("群发素材--" + s);
         try {
             JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
