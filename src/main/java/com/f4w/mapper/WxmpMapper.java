@@ -85,4 +85,28 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
 
     @Select("select * from wxmp where column_id = ${columnId} and type = ${type} and del=0 and is_top = 1 order by id desc limit 1")
     Wxmp findWxmpTopByType(@Param("type") Integer type, @Param("columnId") Integer columnId);
+
+    @Select({"<script>",
+            "select * from wxmp where 1=1",
+            "<when test='title!=null'>",
+            "AND title like CONCAT('%',${title},'%')",
+            "</when>",
+            "<when test='column!=null'>",
+            "AND column_id = #{column}",
+            "</when>",
+            "<when test='del!=null'>",
+            "AND del = #{del}",
+            "</when>",
+            "<when test='type!=null'>",
+            "AND type = #{type}",
+            "</when>",
+            "<when test='status!=null'>",
+            "AND status = #{status}",
+            "</when>",
+            "and to_days(ctime) = to_days(now())",
+            "order by ctime desc",
+            "</script>"
+    })
+    @ResultMap(value = "base")
+    List<Wxmp> selectCurrentByPage(Map map);
 }
