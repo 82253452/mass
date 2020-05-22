@@ -1,7 +1,10 @@
 package com.f4w.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Table;
 import java.util.Date;
@@ -12,6 +15,9 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "`sys_user`")
 @Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SysUser extends BaseEntity {
     private String openid;
 

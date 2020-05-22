@@ -60,7 +60,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     @Select({"<script>",
             "select * from wxmp where 1=1",
             "<when test='title!=null'>",
-            "AND title = #{title}",
+            "AND title like CONCAT('%',${title},'%')",
             "</when>",
             "<when test='column!=null'>",
             "AND column_id = #{column}",

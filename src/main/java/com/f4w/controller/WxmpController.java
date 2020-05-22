@@ -20,14 +20,12 @@ public class WxmpController {
 
     @GetMapping("/selectByPage")
     public R selectByPage(@RequestParam Map map) {
-        PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "rows", 10));
+        PageHelper.startPage(MapUtils.getIntValue(map, "page", 1), MapUtils.getIntValue(map, "limit", 10));
         PageInfo<Wxmp> page = new PageInfo<>(wxmpMapper.selectAllByPage(map));
         return R.ok().put("data", page);
     }
 
     @PostMapping("/insert")
-
-
     public R insert(@RequestBody Wxmp Wxmp) {
         int r = wxmpMapper.insert(Wxmp);
         return R.ok().put("data", r);
