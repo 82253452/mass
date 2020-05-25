@@ -29,7 +29,7 @@ services:
       SPRING_PROFILES_ACTIVE: ${PROFILE}
       PORT: ${PORT}
     logging:
-      driver: syslog
+      driver: "syslog"
       options:
         syslog-address: "tcp://192.168.0.2:12333"
     volumes:
