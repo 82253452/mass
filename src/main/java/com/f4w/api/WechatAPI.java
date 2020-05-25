@@ -4,6 +4,7 @@ package com.f4w.api;
 import cn.binarywang.wx.miniapp.api.WxMaUserService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.alibaba.fastjson.JSONObject;
 import com.f4w.dto.req.AlertBodyReq;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
@@ -113,7 +114,7 @@ public class WechatAPI {
     }
 
     @GetMapping("/getArticleList")
-    public R getArticleList(String appId,String type) {
+    public R getArticleList(String appId, String type) {
         BusiArticle busiArticle = new BusiArticle();
         busiArticle.setAppId(appId);
         busiArticle.setTag(type);
@@ -122,7 +123,7 @@ public class WechatAPI {
     }
 
     @GetMapping("/getArticleDetail")
-    public R getArticleDetail(Long id,String appId) {
+    public R getArticleDetail(Long id, String appId) {
         BusiArticle busiArticle1 = new BusiArticle();
         busiArticle1.setAppId(appId);
         busiArticle1.setId(id);
@@ -132,7 +133,7 @@ public class WechatAPI {
 
     @PostMapping("/sendAlert")
     public R sendAlert(@RequestBody Map alertBodyReq) throws WxErrorException {
-        System.out.println(alertBodyReq.toString());
+        System.out.println(JSONObject.toJSONString(alertBodyReq));
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
         article.setUrl("");
         article.setTitle("");
@@ -140,10 +141,10 @@ public class WechatAPI {
         article.setPicUrl("");
         wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
                 WxMpKefuMessage
-                .NEWS()
-                .addArticle(article)
-                .toUser("")
-                .build());
+                        .NEWS()
+                        .addArticle(article)
+                        .toUser("")
+                        .build());
         return R.ok();
     }
 
