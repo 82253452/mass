@@ -28,5 +28,9 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: ${PROFILE}
       PORT: ${PORT}
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://192.168.0.2:12333"
     volumes:
       - /etc/localtime:/etc/localtime
