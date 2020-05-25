@@ -10,7 +10,7 @@ services:
       resources:
         limits:
           memory: 1024M
-        reservations:
+        reservations:1
           memory: 1024M
       labels:
         - traefik.enable=true
@@ -29,8 +29,8 @@ services:
       SPRING_PROFILES_ACTIVE: ${PROFILE}
       PORT: ${PORT}
     logging:
-      driver: "syslog"
+      driver: "gelf"
       options:
-        syslog-address: "tcp://graylog:12333"
+        syslog-address: "udp://192.168.0.2:12201"
     volumes:
       - /etc/localtime:/etc/localtime
