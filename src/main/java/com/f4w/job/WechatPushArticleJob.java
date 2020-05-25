@@ -18,6 +18,7 @@ import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
+import me.chanjar.weixin.mp.bean.material.WxMpNewsArticle;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -56,7 +57,7 @@ public class WechatPushArticleJob extends IJobHandler {
             //校验
             ValidateUtils.validateThrowsJobException(jobinfo);
             //数据库查找素材
-            List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = addNewsList(jobinfo);
+            List<WxMpNewsArticle> newsList = addNewsList(jobinfo);
             //上传素材到微信
             String mediaId = uploadArticles(jobinfo, newsList);
             //发布文章
@@ -89,7 +90,7 @@ public class WechatPushArticleJob extends IJobHandler {
         }
     }
 
-    private String uploadArticles(JobInfoReq jobinfo, List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList) throws JobException {
+    private String uploadArticles(JobInfoReq jobinfo, List<WxMpNewsArticle> newsList) throws JobException {
         WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
         wxMpMaterialNews.setArticles(newsList);
         WxMpMaterialUploadResult re;
@@ -105,9 +106,9 @@ public class WechatPushArticleJob extends IJobHandler {
         return re.getMediaId();
     }
 
-    private List<WxMpMaterialNews.WxMpMaterialNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
+    private List<WxMpNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
         BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(jobinfo.getAppId()).build())).orElseThrow(() -> new JobException("appid 错误"));
-        List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList = new ArrayList<>();
+        List<WxMpNewsArticle> newsList = new ArrayList<>();
         for (String type : jobinfo.getTypes().split("-")) {
             addWxArticle(jobinfo, busiApp, newsList, Integer.parseInt(type));
         }
@@ -118,7 +119,7 @@ public class WechatPushArticleJob extends IJobHandler {
     }
 
 
-    private void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpMaterialNews.WxMpMaterialNewsArticle> newsList, Integer type) throws JobException {
+    private void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpNewsArticle> newsList, Integer type) throws JobException {
         Wxmp e = commentContext.getCommentStrategy(type).findWxmp(jobinfo);
         wxmpMapper.deleteById(e.getId());
         if (StringUtils.isBlank(e.getThumbnail())) {
@@ -126,7 +127,7 @@ public class WechatPushArticleJob extends IJobHandler {
             addWxArticle(jobinfo, busiApp, newsList, type);
             return;
         }
-        WxMpMaterialNews.WxMpMaterialNewsArticle news = new WxMpMaterialNews.WxMpMaterialNewsArticle();
+        WxMpNewsArticle news = new WxMpNewsArticle();
         news.setTitle(e.getTitle());
         try {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
