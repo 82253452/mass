@@ -75,7 +75,6 @@ public class WxOpenService extends WxOpenServiceImpl {
             log.info("接收到 {} 公众号请求消息，内容：{}", wxMpService.getWxMpConfigStorage().getAppId(), wxMpXmlMessage);
             return null;
         }).next();
-
         // 关注事件
         wxOpenMessageRouter
                 .rule()
