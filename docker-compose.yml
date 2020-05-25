@@ -31,6 +31,6 @@ services:
     logging:
       driver: "syslog"
       options:
-        syslog-address: "tcp://192.168.0.2:12333"
+        syslog-address: "tcp://graylog:12333"
     volumes:
       - /etc/localtime:/etc/localtime
