@@ -4,6 +4,7 @@ package com.f4w.api;
 import cn.binarywang.wx.miniapp.api.WxMaUserService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.f4w.dto.req.AlertBodyReq;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
 import com.f4w.entity.BusiArticle;
@@ -14,18 +15,18 @@ import com.f4w.mapper.BusiArticleMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.utils.JWTUtils;
 import com.f4w.utils.R;
-import com.f4w.utils.WxAppUtils;
+import com.f4w.weapp.WxOpenService;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.f4w.utils.Constant.Cachekey.ALERT_MESSAGE_APPID;
 
 @RestController
 @RequestMapping("/we")
@@ -40,6 +41,8 @@ public class WechatAPI {
     public SysUserMapper sysUserMapper;
     @Resource
     private JWTUtils jwtUtils;
+    @Resource
+    private WxOpenService wxOpenService;
 
     @RequestMapping("login")
     public R login(@RequestParam Map<String, String> map) {
@@ -53,7 +56,9 @@ public class WechatAPI {
                     return R.error("appid 不正确");
                 }
             }
-            WxMaUserService wxMaUserService = WxAppUtils.getWxMaUserService(busiApp);
+
+//            WxMaUserService wxMaUserService = WxAppUtils.getWxMaUserService(busiApp);
+            WxMaUserService wxMaUserService = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(busiApp.getAppId()).getUserService();
             WxMaJscode2SessionResult wxMaJscode2SessionResult = wxMaUserService.getSessionInfo(map.get("code"));
             WxMaUserInfo wxMaUserInfo = wxMaUserService.getUserInfo(wxMaJscode2SessionResult.getSessionKey(), map.get("encryptedData"), map.get("iv"));
             SysUser sysUser = new SysUser();
@@ -125,6 +130,22 @@ public class WechatAPI {
         return R.renderSuccess("data", busiArticle);
     }
 
+    @PostMapping("/sendAlert")
+    public R sendAlert(@RequestBody Map alertBodyReq) throws WxErrorException {
+        System.out.println(alertBodyReq.toString());
+        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
+        article.setUrl("");
+        article.setTitle("");
+        article.setDescription("");
+        article.setPicUrl("");
+        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+                WxMpKefuMessage
+                .NEWS()
+                .addArticle(article)
+                .toUser("")
+                .build());
+        return R.ok();
+    }
 
 }
 

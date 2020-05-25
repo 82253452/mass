@@ -1,6 +1,9 @@
 package com.f4w.weapp;
 
+import com.f4w.weapp.handler.SubscribeHandler;
+import com.f4w.weapp.handler.UnsubscribeHandler;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.util.http.apache.DefaultApacheHttpClientBuilder;
 import me.chanjar.weixin.open.api.impl.WxOpenInRedisConfigStorage;
 import me.chanjar.weixin.open.api.impl.WxOpenMessageRouter;
@@ -38,6 +41,10 @@ public class WxOpenService extends WxOpenServiceImpl {
     @Resource
     private WeiXinOpenConfig weiXinOpenConfig;
     @Resource
+    private SubscribeHandler subscribeHandler;
+    @Resource
+    private UnsubscribeHandler unsubscribeHandler;
+    @Resource
     private RedisProperties redisProperies;
     private static JedisPool pool;
 
@@ -68,6 +75,25 @@ public class WxOpenService extends WxOpenServiceImpl {
             log.info("接收到 {} 公众号请求消息，内容：{}", wxMpService.getWxMpConfigStorage().getAppId(), wxMpXmlMessage);
             return null;
         }).next();
+
+        // 关注事件
+        wxOpenMessageRouter
+                .rule()
+                .async(false)
+                .msgType(WxConsts.XmlMsgType.EVENT)
+                .event(WxConsts.EventType.SUBSCRIBE)
+                .handler(subscribeHandler)
+                .end();
+
+        // 取消关注事件
+        wxOpenMessageRouter
+                .rule()
+                .async(false)
+                .msgType(WxConsts.XmlMsgType.EVENT)
+                .event(WxConsts.EventType.UNSUBSCRIBE)
+                .handler(unsubscribeHandler)
+                .end();
+
         return wxOpenMessageRouter;
     }
 
