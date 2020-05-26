@@ -127,14 +127,16 @@ public class NotifyController {
         if (!StringUtils.equalsIgnoreCase("aes", encType) || !wxOpenService.getWxOpenComponentService().checkSignature(timestamp, nonce, signature)) {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
-        WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-        WxMpXmlOutMessage route = wxMpMessageRouter
-                .route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId));
-        if (route == null) {
-            return "";
+        String out = "";
+        WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody,
+                wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
+        WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(appId,inMessage, new HashMap<>());
+        if(outMessage != null){
+            out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(outMessage, wxOpenService.getWxOpenConfigStorage());
         }
-        log.info("返回消息内容22---{}", route.toXml());
-        return route.toXml();
+
+        log.info("返回消息内容22---{}", out);
+        return out;
     }
 
 }
