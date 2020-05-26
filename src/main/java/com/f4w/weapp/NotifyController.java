@@ -128,7 +128,6 @@ public class NotifyController {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-
         WxMpXmlOutMessage route = wxMpMessageRouter
                 .route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId));
         if (route == null) {

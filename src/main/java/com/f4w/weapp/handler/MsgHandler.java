@@ -69,15 +69,10 @@ public class MsgHandler implements WxMpMessageHandler {
         if (render.getBytes().length >= 2048) {
             render = "返回内容过多，请换个关键词试试！";
         }
-        System.out.println(render);
-        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(weixinService.getWxMpConfigStorage().getAppId())
-                .getKefuService()
-                .sendKefuMessage(WxMpKefuMessage
-                        .TEXT()
-                        .content(render)
-                        .toUser(wxMessage.getFromUser())
-                        .build());
-        return null;
+        return WxMpXmlOutMessage.TEXT().content(render)
+                .fromUser(wxMessage.getToUser())
+                .toUser(wxMessage.getFromUser())
+                .build();
     }
 
     private String buildPust(String appId, WxMpXmlMessage inMessage) {
