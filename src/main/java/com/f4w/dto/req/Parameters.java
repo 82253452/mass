@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlertBodyReq {
-    @JsonProperty("check_result")
-    private CheckResult check_result;
-    private Stream stream;
+public class Parameters {
+    private int grace;
+    private int backlog;
+    @JsonProperty("repeat_notifications")
+    private boolean repeatNotifications;
+    private String field;
+    private String value;
 }
-

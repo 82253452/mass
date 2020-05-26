@@ -132,12 +132,12 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    public R sendAlert(@RequestBody Map alertBodyReq) throws WxErrorException {
+    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws WxErrorException {
         System.out.println(JSONObject.toJSONString(alertBodyReq));
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
         article.setUrl("");
-        article.setTitle("");
-        article.setDescription("");
+        article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
+        article.setDescription(alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue());
         article.setPicUrl("");
         wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
                 WxMpKefuMessage
