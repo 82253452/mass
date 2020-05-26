@@ -16,18 +16,20 @@ import com.f4w.mapper.BusiArticleMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.utils.JWTUtils;
 import com.f4w.utils.R;
+import com.f4w.utils.ShowException;
 import com.f4w.weapp.WxOpenService;
+import lombok.SneakyThrows;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.f4w.utils.Constant.Cachekey.ALERT_MESSAGE_APPID;
+import static com.f4w.utils.Constant.Cachekey.SEND_MESSAGE_OPENID;
 
 @RestController
 @RequestMapping("/we")
@@ -44,6 +46,8 @@ public class WechatAPI {
     private JWTUtils jwtUtils;
     @Resource
     private WxOpenService wxOpenService;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @RequestMapping("login")
     public R login(@RequestParam Map<String, String> map) {
@@ -132,19 +136,22 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws WxErrorException {
+    @SneakyThrows
+    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws WxErrorException, ShowException {
         System.out.println(JSONObject.toJSONString(alertBodyReq));
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
         article.setUrl("");
         article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
         article.setDescription(alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue());
         article.setPicUrl("");
-        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
-                WxMpKefuMessage
-                        .NEWS()
-                        .addArticle(article)
-                        .toUser("")
-                        .build());
+        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 1, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
+            wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+                    WxMpKefuMessage
+                            .NEWS()
+                            .addArticle(article)
+                            .toUser(id)
+                            .build());
+        });
         return R.ok();
     }
 
