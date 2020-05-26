@@ -1,6 +1,7 @@
 package com.f4w.job;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.f4w.dto.req.JobInfoReq;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.Wxmp;
@@ -52,8 +53,8 @@ public class WechatPushArticleJob extends IJobHandler {
     @Override
     public ReturnT<String> execute(String s) {
         log.info("群发素材--" + s);
+        JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
         try {
-            JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
             //校验
             ValidateUtils.validateThrowsJobException(jobinfo);
             //数据库查找素材
@@ -63,7 +64,7 @@ public class WechatPushArticleJob extends IJobHandler {
             //发布文章
             pushMedias(jobinfo, mediaId);
         } catch (Exception e) {
-            log.error("定时任务执行异常---", e.getMessage());
+            log.error("定时任务执行异常---{}---{}", JSONObject.toJSONString(jobinfo), e.getMessage());
         }
 
         return IJobHandler.SUCCESS;
