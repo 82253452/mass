@@ -9,6 +9,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenAuthorizerInfoResult;
@@ -127,10 +128,14 @@ public class NotifyController {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-        String out = wxMpMessageRouter
-                .route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId))
-                .toEncryptedXml(wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getWxMpConfigStorage());
-        log.info("返回消息内容22---{}",out);
+
+        WxMpXmlOutMessage route = wxMpMessageRouter
+                .route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId));
+        if (route == null) {
+            return "";
+        }
+        String out = route.toEncryptedXml(wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getWxMpConfigStorage());
+        log.info("返回消息内容22---{}", out);
         return out;
     }
 
