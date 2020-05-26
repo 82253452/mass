@@ -29,6 +29,6 @@ services:
     logging:
       driver: "gelf"
       options:
-        syslog-address: "udp://192.168.0.2:12201"
+        gelf-address: "udp://192.168.0.2:12201"
     volumes:
       - /etc/localtime:/etc/localtime
