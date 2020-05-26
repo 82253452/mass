@@ -30,6 +30,7 @@ public class SubscribeHandler implements WxMpMessageHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
                                     Map<String, Object> context, WxMpService weixinService,
                                     WxSessionManager sessionManager) throws WxErrorException {
+        log.info("用户关注公众号-{}",wxMessage.getFromUser());
         stringRedisTemplate.opsForSet().add(String.format(WEIXIN_OPEN_USER_APPID, weixinService.getWxMpConfigStorage().getAppId()), wxMessage.getFromUser());
         return null;
     }

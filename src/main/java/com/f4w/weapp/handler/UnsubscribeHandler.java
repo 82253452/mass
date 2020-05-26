@@ -28,6 +28,7 @@ public class UnsubscribeHandler implements WxMpMessageHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
                                     Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) {
+        log.info("用户取消关注公众号-{}",wxMessage.getFromUser());
         stringRedisTemplate.opsForSet().remove(String.format(WEIXIN_OPEN_USER_APPID, wxMpService.getWxMpConfigStorage().getAppId()), wxMessage.getFromUser());
         return null;
     }
