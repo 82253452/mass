@@ -8,6 +8,7 @@ import com.f4w.weapp.WxOpenService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
+import me.chanjar.weixin.mp.api.WxMpKefuService;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
@@ -43,8 +44,8 @@ public class MsgHandler implements WxMpMessageHandler {
             WxMpService weixinService,
             WxSessionManager sessionManager) throws WxErrorException {
         log.info("msg handler");
-        String post = buildPust(weixinService.getWxMpConfigStorage().getAppId(),wxMessage);
-        if(StringUtils.isNotBlank(post)){
+        String post = buildPust(weixinService.getWxMpConfigStorage().getAppId(), wxMessage);
+        if (StringUtils.isNotBlank(post)) {
             return WxMpXmlOutMessage.TEXT().content(post)
                     .fromUser(wxMessage.getToUser())
                     .toUser(wxMessage.getFromUser())
@@ -69,10 +70,11 @@ public class MsgHandler implements WxMpMessageHandler {
             render = "返回内容过多，请换个关键词试试！";
         }
         System.out.println(render);
-        return WxMpXmlOutMessage.TEXT().content(render)
-                .fromUser(wxMessage.getToUser())
-                .toUser(wxMessage.getFromUser())
-                .build();
+        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(weixinService.getWxMpConfigStorage().getAppId())
+                .setKefuService((WxMpKefuService) WxMpKefuMessage.TEXT().content(render)
+                        .toUser(wxMessage.getFromUser())
+                        .build());
+        return null;
     }
 
     private String buildPust(String appId, WxMpXmlMessage inMessage) {

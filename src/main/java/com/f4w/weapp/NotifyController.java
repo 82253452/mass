@@ -1,11 +1,13 @@
 package com.f4w.weapp;
 
+import cn.binarywang.wx.miniapp.bean.WxMaKefuMessage;
 import com.f4w.entity.BusiApp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiQuestionMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
@@ -89,6 +91,7 @@ public class NotifyController {
                 signature, encType, msgSignature, timestamp, nonce, requestBody);
 
         if (!StringUtils.equalsIgnoreCase("aes", encType) || !wxOpenService.getWxOpenComponentService().checkSignature(timestamp, nonce, signature)) {
+            log.error("非法请求");
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
 
@@ -127,7 +130,7 @@ public class NotifyController {
         String out = wxMpMessageRouter
                 .route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId))
                 .toEncryptedXml(wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getWxMpConfigStorage());
-        log.info("返回消息内容---{}",out);
+        log.info("返回消息内容22---{}",out);
         return out;
     }
 
