@@ -130,8 +130,8 @@ public class NotifyController {
         String out = "";
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody,
                 wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-        WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(appId,inMessage, new HashMap<>());
-        if(outMessage != null){
+        WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId));
+        if (outMessage != null) {
             out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(outMessage, wxOpenService.getWxOpenConfigStorage());
         }
 
