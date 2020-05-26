@@ -135,9 +135,7 @@ public class NotifyController {
         if (!StringUtils.equalsIgnoreCase("aes", encType) || !wxOpenService.getWxOpenComponentService().checkSignature(timestamp, nonce, signature)) {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
-        String out = "success";
-//        WxOpenXmlMessage.fromEncryptedXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-        // aes加密的消息
+
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
@@ -146,66 +144,8 @@ public class NotifyController {
             log.info("返回测试--{}" + pushOut);
             return pushOut;
         }
-        BusiApp busiApp = new BusiApp();
-        busiApp.setAppId(appId);
-        busiApp = busiAppMapper.selectOne(busiApp);
-        if (null == busiApp) {
-            return out;
-        }
-        if (StringUtils.equals(inMessage.getMsgType(), "text")) {
-            List<BusiQuestionDto> list = null;
-            String render = "暂时未上传，请留言课程名称，或添加QQ171947004，私聊呦";
-            if (REPLAY_REQUESTION == busiApp.getReplay()) {
-                list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getUid(), busiApp.getAppId());
-            } else if (REPLAY_REQUESTION_GLOABLE == busiApp.getReplay()) {
-                list = busiQuestionMapper.getOneListQuestion(inMessage.getContent(), busiApp.getUid(), null);
-            } else {
-                render = "没有回复，请联系管理员后台配置";
-            }
-            if (CollectionUtils.isNotEmpty(list)) {
-                render = buildQuestion(list);
-            }
-            if (render.getBytes().length >= 2048) {
-                render = "返回内容过多，请换个关键词试试！";
-            }
-            out = new WxOpenCryptUtil(wxOpenService.getWxOpenConfigStorage()).encrypt(
-                    WxMpXmlOutMessage.TEXT().content(render)
-                            .fromUser(inMessage.getToUser())
-                            .toUser(inMessage.getFromUser())
-                            .build()
-                            .toXml()
-            );
-        } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
-            if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_success")) {
-                busiApp.setStatus(3);
-                busiApp.setAuditMsg("审核通过");
-                busiAppMapper.updateByPrimaryKey(busiApp);
-                WxOpenResult wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).releaesAudited();
-                if (!wxOpenResult.isSuccess()) {
-                    busiApp.setStatus(6);
-                    busiApp.setAuditMsg(wxOpenResult.getErrmsg());
-                } else {
-                    busiApp.setStatus(5);
-                    busiApp.setAuditMsg("发布成功");
-                    setDomain(appId);
-                }
-                busiAppMapper.updateByPrimaryKey(busiApp);
-            } else if (StringUtils.equals(inMessage.getEvent(), "weapp_audit_fail")) {
-                busiApp.setStatus(4);
-                busiApp.setAuditMsg(inMessage.getFailReason());
-                busiAppMapper.updateByPrimaryKey(busiApp);
-            }
-        }
-        log.info("返回的内容为：\n{}" + out);
-        return out;
-    }
-
-    private String buildQuestion(List<BusiQuestionDto> list) {
-        final String[] out = {""};
-        list.forEach(m -> {
-            out[0] += m.toString();
-        });
-        return out[0];
+        WxOpenXmlMessage outMessage = WxOpenXmlMessage.fromEncryptedXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
+        return wxOpenService.getWxOpenComponentService().route(outMessage);
     }
 
     private String buildPust(String appId, WxMpXmlMessage inMessage) {
@@ -239,26 +179,7 @@ public class NotifyController {
         return out;
     }
 
-    public void setDomain(String appId) throws WxErrorException {
-        String domain = "https://www.cxduo.com";
-        String domain2 = "https://mass.zhihuizhan.net";
-        List<String> webViewDomain = new ArrayList<>();
-        webViewDomain.add(domain2);
-        List<String> requestdomainList = new ArrayList<>();
-        requestdomainList.add(domain);
-        requestdomainList.add(domain2);
-        List<String> wsrequestdomainList = new ArrayList<>();
-        wsrequestdomainList.add(domain);
-        wsrequestdomainList.add(domain2);
-        List<String> uploaddomainList = new ArrayList<>();
-        uploaddomainList.add(domain);
-        uploaddomainList.add(domain2);
-        List<String> downloaddomainList = new ArrayList<>();
-        downloaddomainList.add(domain);
-        downloaddomainList.add(domain2);
-        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).setWebViewDomain("add", webViewDomain);
-        wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).modifyDomain("add", requestdomainList, wsrequestdomainList, uploaddomainList, downloaddomainList);
-    }
+
 
 
 }
