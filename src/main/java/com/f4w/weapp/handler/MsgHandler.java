@@ -69,9 +69,9 @@ public class MsgHandler implements WxMpMessageHandler {
         if (render.getBytes().length >= 2048) {
             render = "返回内容过多，请换个关键词试试！";
         }
+        log.info("来自用户---{}" + wxMessage.getFromUser());
         return WxMpXmlOutMessage.TEXT().content(render)
-                .fromUser(wxMessage.getFromUser())
-                .toUser(wxMessage.getToUser())
+                .toUser(wxMessage.getFromUser())
                 .build();
     }
 
