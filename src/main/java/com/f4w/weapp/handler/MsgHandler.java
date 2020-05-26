@@ -71,7 +71,10 @@ public class MsgHandler implements WxMpMessageHandler {
         }
         System.out.println(render);
         wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(weixinService.getWxMpConfigStorage().getAppId())
-                .setKefuService((WxMpKefuService) WxMpKefuMessage.TEXT().content(render)
+                .getKefuService()
+                .sendKefuMessage(WxMpKefuMessage
+                        .TEXT()
+                        .content(render)
                         .toUser(wxMessage.getFromUser())
                         .build());
         return null;
