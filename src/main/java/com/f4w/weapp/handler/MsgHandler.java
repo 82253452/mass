@@ -70,8 +70,8 @@ public class MsgHandler implements WxMpMessageHandler {
             render = "返回内容过多，请换个关键词试试！";
         }
         return WxMpXmlOutMessage.TEXT().content(render)
-                .fromUser(wxMessage.getToUser())
-                .toUser(wxMessage.getFromUser())
+                .fromUser(wxMessage.getFromUser())
+                .toUser(wxMessage.getToUser())
                 .build();
     }
 
