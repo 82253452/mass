@@ -10,9 +10,12 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -39,6 +42,13 @@ public class MsgHandler implements WxMpMessageHandler {
             Map<String, Object> context,
             WxMpService weixinService,
             WxSessionManager sessionManager) throws WxErrorException {
+        String post = buildPust(weixinService.getWxMpConfigStorage().getAppId(),wxMessage);
+        if(StringUtils.isNotBlank(post)){
+            return WxMpXmlOutMessage.TEXT().content(post)
+                    .fromUser(wxMessage.getToUser())
+                    .toUser(wxMessage.getFromUser())
+                    .build();
+        }
         BusiApp busiApp = new BusiApp();
         busiApp.setAppId(weixinService.getWxMpConfigStorage().getAppId());
         busiApp = busiAppMapper.selectOne(busiApp);
@@ -61,6 +71,37 @@ public class MsgHandler implements WxMpMessageHandler {
                 .fromUser(wxMessage.getToUser())
                 .toUser(wxMessage.getFromUser())
                 .build();
+    }
+
+    private String buildPust(String appId, WxMpXmlMessage inMessage) {
+        String out = "";
+        if (StringUtils.equalsAnyIgnoreCase(appId, "wxd101a85aa106f53e", "wx570bc396a51b8ff8")) {
+            try {
+                log.info("测试content--{}" + inMessage.getContent());
+                if (StringUtils.equals(inMessage.getMsgType(), "text")) {
+                    if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
+                        out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(
+                                WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
+                                        .fromUser(inMessage.getToUser())
+                                        .toUser(inMessage.getFromUser())
+                                        .build(),
+                                wxOpenService.getWxOpenConfigStorage()
+                        );
+                    } else if (StringUtils.startsWith(inMessage.getContent(), "QUERY_AUTH_CODE:")) {
+                        String msg = inMessage.getContent().replace("QUERY_AUTH_CODE:", "") + "_from_api";
+                        WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(msg).toUser(inMessage.getFromUser()).build();
+                        wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+                    }
+                } else if (StringUtils.equals(inMessage.getMsgType(), "event")) {
+                    WxMpKefuMessage kefuMessage = WxMpKefuMessage.TEXT().content(inMessage.getEvent() + "from_callback").toUser(inMessage.getFromUser()).build();
+                    wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getKefuService().sendKefuMessage(kefuMessage);
+                    out = "success";
+                }
+            } catch (WxErrorException e) {
+                log.error("callback", e);
+            }
+        }
+        return out;
     }
 
     private String buildQuestion(List<BusiQuestionDto> list) {

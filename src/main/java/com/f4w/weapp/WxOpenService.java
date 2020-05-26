@@ -1,7 +1,6 @@
 package com.f4w.weapp;
 
-import com.f4w.weapp.handler.SubscribeHandler;
-import com.f4w.weapp.handler.UnsubscribeHandler;
+import com.f4w.weapp.handler.*;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.util.http.apache.DefaultApacheHttpClientBuilder;
@@ -37,13 +36,18 @@ public class WxOpenService extends WxOpenServiceImpl {
     private static int maxTotalConn = 50;//连接池最大连接数,默认50
 
 
-
     @Resource
     private WeiXinOpenConfig weiXinOpenConfig;
     @Resource
     private SubscribeHandler subscribeHandler;
     @Resource
     private UnsubscribeHandler unsubscribeHandler;
+    @Resource
+    private AuditFailHandler auditFailHandler;
+    @Resource
+    private AuditSuccessHandler auditSuccessHandler;
+    @Resource
+    private MsgHandler msgHandler;
     @Resource
     private RedisProperties redisProperies;
     private static JedisPool pool;
@@ -92,6 +96,24 @@ public class WxOpenService extends WxOpenServiceImpl {
                 .event(WxConsts.EventType.UNSUBSCRIBE)
                 .handler(unsubscribeHandler)
                 .end();
+
+        wxOpenMessageRouter
+                .rule()
+                .async(false)
+                .msgType(WxConsts.XmlMsgType.EVENT)
+                .event(WxConsts.EventType.WEAPP_AUDIT_SUCCESS)
+                .handler(auditSuccessHandler)
+                .end();
+
+        wxOpenMessageRouter
+                .rule()
+                .async(false)
+                .msgType(WxConsts.XmlMsgType.EVENT)
+                .event(WxConsts.EventType.WEAPP_AUDIT_FAIL)
+                .handler(auditFailHandler)
+                .end();
+
+        wxOpenMessageRouter.rule().async(false).msgType(WxConsts.XmlMsgType.TEXT).handler(msgHandler).end();
 
         return wxOpenMessageRouter;
     }
