@@ -137,7 +137,7 @@ public class WechatAPI {
 
     @PostMapping("/sendAlert")
     @SneakyThrows
-    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws WxErrorException, ShowException {
+    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) {
         System.out.println(JSONObject.toJSONString(alertBodyReq));
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
         article.setUrl("");
