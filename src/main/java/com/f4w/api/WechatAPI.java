@@ -10,10 +10,12 @@ import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
 import com.f4w.entity.BusiArticle;
 import com.f4w.entity.SysUser;
+import com.f4w.job.WechatPushArticleJob;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiAppPageMapper;
 import com.f4w.mapper.BusiArticleMapper;
 import com.f4w.mapper.SysUserMapper;
+import com.f4w.service.WechatService;
 import com.f4w.utils.JWTUtils;
 import com.f4w.utils.R;
 import com.f4w.utils.ShowException;
@@ -25,6 +27,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -51,6 +54,10 @@ public class WechatAPI {
     private WxOpenService wxOpenService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private WechatPushArticleJob wechatPushArticleJob;
+    @Resource
+    private WechatService wechatService;
 
     @RequestMapping("login")
     public R login(@RequestParam Map<String, String> map) {
@@ -159,6 +166,19 @@ public class WechatAPI {
                 log.info("发送告警失败");
             }
         });
+        return R.ok();
+    }
+
+    @GetMapping("/getAppInfo/{appId}")
+    public R getAppInfo(@PathVariable String appId) throws ShowException {
+        BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(appId).build())).orElseThrow(() -> new ShowException("appid 不正确"));
+        return R.ok(busiApp);
+    }
+
+    @GetMapping("/sendMsg/{appId}")
+    public R sendMsg(@PathVariable String appId) throws ShowException {
+        BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(appId).build())).orElseThrow(() -> new ShowException("appid 不正确"));
+        wechatService.pushArticle(busiApp);
         return R.ok();
     }
 
