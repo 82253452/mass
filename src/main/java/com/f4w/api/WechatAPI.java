@@ -19,6 +19,8 @@ import com.f4w.utils.R;
 import com.f4w.utils.ShowException;
 import com.f4w.weapp.WxOpenService;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,7 @@ import java.util.*;
 import static com.f4w.utils.Constant.Cachekey.ALERT_MESSAGE_APPID;
 import static com.f4w.utils.Constant.Cachekey.SEND_MESSAGE_OPENID;
 
+@Slf4j
 @RestController
 @RequestMapping("/we")
 public class WechatAPI {
@@ -143,7 +146,7 @@ public class WechatAPI {
         article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
         article.setDescription(alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue());
         article.setPicUrl("");
-        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 1, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
+        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
             try {
                 wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
                         WxMpKefuMessage
@@ -153,6 +156,7 @@ public class WechatAPI {
                                 .build());
             } catch (WxErrorException e) {
                 e.printStackTrace();
+                log.info("发送告警失败");
             }
         });
         return R.ok();

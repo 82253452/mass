@@ -1,39 +1,23 @@
 package com.f4w.weapp;
 
-import com.alibaba.fastjson.JSONObject;
-import com.f4w.dto.BusiQuestionDto;
 import com.f4w.entity.BusiApp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiQuestionMapper;
-import com.f4w.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.open.bean.auth.WxOpenAuthorizerInfo;
 import me.chanjar.weixin.open.bean.message.WxOpenXmlMessage;
 import me.chanjar.weixin.open.bean.result.WxOpenAuthorizerInfoResult;
 import me.chanjar.weixin.open.bean.result.WxOpenQueryAuthResult;
-import me.chanjar.weixin.open.bean.result.WxOpenResult;
-import me.chanjar.weixin.open.util.WxOpenCryptUtil;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.ListUI;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-
-import static com.f4w.utils.Constant.REPLAY_REQUESTION;
-import static com.f4w.utils.Constant.REPLAY_REQUESTION_GLOABLE;
 
 @Slf4j
 @RestController
@@ -131,7 +115,7 @@ public class NotifyController {
                            @RequestParam("nonce") String nonce,
                            @RequestParam("openid") String openid,
                            @RequestParam("encrypt_type") String encType,
-                           @RequestParam("msg_signature") String msgSignature) throws WxErrorException {
+                           @RequestParam("msg_signature") String msgSignature) {
         log.info(
                 "\n接收微信请求：[appId=[{}], openid=[{}], signature=[{}], encType=[{}], msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
@@ -140,9 +124,11 @@ public class NotifyController {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody, wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
-        return wxMpMessageRouter
+        String out = wxMpMessageRouter
                 .route(inMessage, new HashMap<>(), wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId))
                 .toEncryptedXml(wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getWxMpConfigStorage());
+        log.info("返回消息内容---{}",out);
+        return out;
     }
 
 }

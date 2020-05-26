@@ -42,6 +42,7 @@ public class MsgHandler implements WxMpMessageHandler {
             Map<String, Object> context,
             WxMpService weixinService,
             WxSessionManager sessionManager) throws WxErrorException {
+        log.info("msg handler");
         String post = buildPust(weixinService.getWxMpConfigStorage().getAppId(),wxMessage);
         if(StringUtils.isNotBlank(post)){
             return WxMpXmlOutMessage.TEXT().content(post)
