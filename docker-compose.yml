@@ -10,8 +10,6 @@ services:
       resources:
         limits:
           memory: 1024M
-        reservations:1
-          memory: 1024M
       labels:
         - traefik.enable=true
 
