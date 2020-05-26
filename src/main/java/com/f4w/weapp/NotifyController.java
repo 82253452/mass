@@ -133,9 +133,8 @@ public class NotifyController {
         if (route == null) {
             return "";
         }
-        String out = route.toEncryptedXml(wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(appId).getWxMpConfigStorage());
-        log.info("返回消息内容22---{}", out);
-        return out;
+        log.info("返回消息内容22---{}", route.toXml());
+        return route.toXml();
     }
 
 }

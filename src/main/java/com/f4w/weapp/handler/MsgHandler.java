@@ -71,6 +71,7 @@ public class MsgHandler implements WxMpMessageHandler {
         }
         log.info("来自用户---{}" + wxMessage.getFromUser());
         return WxMpXmlOutMessage.TEXT().content(render)
+                .fromUser(wxMessage.getToUser())
                 .toUser(wxMessage.getFromUser())
                 .build();
     }
