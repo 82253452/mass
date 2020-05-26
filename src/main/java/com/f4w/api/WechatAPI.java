@@ -136,8 +136,7 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    @SneakyThrows
-    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) {
+    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws ShowException {
         System.out.println(JSONObject.toJSONString(alertBodyReq));
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
         article.setUrl("");
@@ -145,12 +144,16 @@ public class WechatAPI {
         article.setDescription(alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue());
         article.setPicUrl("");
         Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 1, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
-            wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
-                    WxMpKefuMessage
-                            .NEWS()
-                            .addArticle(article)
-                            .toUser(id)
-                            .build());
+            try {
+                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+                        WxMpKefuMessage
+                                .NEWS()
+                                .addArticle(article)
+                                .toUser(id)
+                                .build());
+            } catch (WxErrorException e) {
+                e.printStackTrace();
+            }
         });
         return R.ok();
     }
