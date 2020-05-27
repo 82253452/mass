@@ -149,7 +149,7 @@ public class WechatAPI {
 
     @PostMapping("/sendAlert")
     public R sendAlert(@RequestBody Map alertBodyReq) throws ShowException {
-        log.info(JSON.toJSONString(alertBodyReq));
+        log.info("发送微信告警--{}", JSON.toJSONString(alertBodyReq));
 //        String body = alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue();
 //        String[] split = body.split("---");
 //        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
