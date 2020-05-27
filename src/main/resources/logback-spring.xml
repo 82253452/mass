@@ -21,7 +21,7 @@
     </appender>
 
     <!-- 控制台输出日志级别 -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="GELF"/>
         <appender-ref ref="STDOUT"/>
     </root>
