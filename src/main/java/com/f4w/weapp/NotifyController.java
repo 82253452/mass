@@ -125,8 +125,10 @@ public class NotifyController {
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
                 appId, openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
         if (!StringUtils.equalsIgnoreCase("aes", encType) || !wxOpenService.getWxOpenComponentService().checkSignature(timestamp, nonce, signature)) {
+            log.error("非法请求");
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
+        log.info("开始路由");
         String out = "";
         WxMpXmlMessage inMessage = WxOpenXmlMessage.fromEncryptedMpXml(requestBody,
                 wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);

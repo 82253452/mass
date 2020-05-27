@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.f4w.utils.Constant.REPLAY_REQUESTION;
 import static com.f4w.utils.Constant.REPLAY_REQUESTION_GLOABLE;
@@ -42,18 +43,24 @@ public class MsgHandler implements WxMpMessageHandler {
             WxMpXmlMessage wxMessage,
             Map<String, Object> context,
             WxMpService weixinService,
-            WxSessionManager sessionManager) throws WxErrorException {
+            WxSessionManager sessionManager) {
         log.info("msg handler");
-        String post = buildPust(weixinService.getWxMpConfigStorage().getAppId(), wxMessage);
-        if (StringUtils.isNotBlank(post)) {
-            return WxMpXmlOutMessage.TEXT().content(post)
+        try {
+            String render = renderQeustion(wxMessage, weixinService);
+            render = buildPust(weixinService.getWxMpConfigStorage().getAppId(), wxMessage);
+            log.info("render---{}", render);
+            return WxMpXmlOutMessage.TEXT().content(render)
                     .fromUser(wxMessage.getToUser())
                     .toUser(wxMessage.getFromUser())
                     .build();
+        } catch (Exception e) {
+            log.error("返回消息异常---{}", e.getMessage());
         }
-        BusiApp busiApp = new BusiApp();
-        busiApp.setAppId(weixinService.getWxMpConfigStorage().getAppId());
-        busiApp = busiAppMapper.selectOne(busiApp);
+        return null;
+    }
+
+    private String renderQeustion(WxMpXmlMessage wxMessage, WxMpService weixinService) throws Exception {
+        BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(weixinService.getWxMpConfigStorage().getAppId()).build())).orElseThrow(() -> new Exception("没有appid"));
         List<BusiQuestionDto> list = null;
         String render = "暂时未上传，请留言课程名称，或添加QQ171947004，私聊呦";
         if (REPLAY_REQUESTION == busiApp.getReplay()) {
@@ -69,11 +76,7 @@ public class MsgHandler implements WxMpMessageHandler {
         if (render.getBytes().length >= 2048) {
             render = "返回内容过多，请换个关键词试试！";
         }
-        log.info("来自用户---{}" + wxMessage.getFromUser());
-        return WxMpXmlOutMessage.TEXT().content(render)
-                .fromUser(wxMessage.getToUser())
-                .toUser(wxMessage.getFromUser())
-                .build();
+        return render;
     }
 
     private String buildPust(String appId, WxMpXmlMessage inMessage) {
