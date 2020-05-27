@@ -4,8 +4,10 @@ package com.f4w.api;
 import cn.binarywang.wx.miniapp.api.WxMaUserService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.dto.req.AlertBodyReq;
+import com.f4w.dto.req.JobInfoReq;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
 import com.f4w.entity.BusiArticle;
@@ -147,12 +149,15 @@ public class WechatAPI {
 
     @PostMapping("/sendAlert")
     public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws ShowException {
-        System.out.println(JSONObject.toJSONString(alertBodyReq));
+        String body = alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue();
+        String[] split = body.split("---");
+        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
+        BusiApp busiApp = busiAppMapper.selectOne(BusiApp.builder().appId(jobInfoReq.getAppId()).build());
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
-        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/wx72d6e2a25d7b3bfa");
+        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/" + jobInfoReq.getAppId());
         article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
-        article.setDescription(alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue());
-        article.setPicUrl("");
+        article.setDescription(split[2]);
+        article.setPicUrl(busiApp.getHeadImg());
         Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
             try {
                 wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
