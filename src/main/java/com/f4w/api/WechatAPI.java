@@ -149,6 +149,7 @@ public class WechatAPI {
 
     @PostMapping("/sendAlert")
     public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws ShowException {
+        log.info(JSON.toJSONString(alertBodyReq));
         String body = alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue();
         String[] split = body.split("---");
         JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
@@ -185,6 +186,13 @@ public class WechatAPI {
         BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(appId).build())).orElseThrow(() -> new ShowException("appid 不正确"));
         wechatService.pushArticle(busiApp);
         return R.ok();
+    }
+
+    public static void main(String[] args) {
+        String test = "定时任务执行异常---{\"appId\":\"wx72d6e2a25d7b3bfa\",\"column\":1,\"comment\":false,\"isPush\":true,\"miniAppId\":\"wx327693c74d6cfd48\",\"miniAppPath\":\"/pages/play/play?vid={vid}\",\"time\":1589730459000,\"topNum\":2,\"types\":\"0-1-2-3-4-5\"}---发布文章失败";
+        String[] split = test.split("---");
+        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
+        System.out.println(jobInfoReq.getAppId());
     }
 
 }
