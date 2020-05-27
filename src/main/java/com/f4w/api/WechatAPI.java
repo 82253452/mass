@@ -148,30 +148,30 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws ShowException {
+    public R sendAlert(@RequestBody Map alertBodyReq) throws ShowException {
         log.info(JSON.toJSONString(alertBodyReq));
-        String body = alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue();
-        String[] split = body.split("---");
-        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
-        BusiApp busiApp = busiAppMapper.selectOne(BusiApp.builder().appId(jobInfoReq.getAppId()).build());
-        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
-        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/" + jobInfoReq.getAppId());
-        article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
-        article.setDescription(split[2]);
-        article.setPicUrl(busiApp.getHeadImg());
-        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
-            try {
-                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
-                        WxMpKefuMessage
-                                .NEWS()
-                                .addArticle(article)
-                                .toUser(id)
-                                .build());
-            } catch (WxErrorException e) {
-                e.printStackTrace();
-                log.info("发送告警失败");
-            }
-        });
+//        String body = alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue();
+//        String[] split = body.split("---");
+//        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
+//        BusiApp busiApp = busiAppMapper.selectOne(BusiApp.builder().appId(jobInfoReq.getAppId()).build());
+//        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
+//        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/" + jobInfoReq.getAppId());
+//        article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
+//        article.setDescription(split[2]);
+//        article.setPicUrl(busiApp.getHeadImg());
+//        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
+//            try {
+//                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+//                        WxMpKefuMessage
+//                                .NEWS()
+//                                .addArticle(article)
+//                                .toUser(id)
+//                                .build());
+//            } catch (WxErrorException e) {
+//                e.printStackTrace();
+//                log.info("发送告警失败");
+//            }
+//        });
         return R.ok();
     }
 
