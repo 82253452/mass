@@ -47,7 +47,7 @@ public class MsgHandler implements WxMpMessageHandler {
         log.info("msg handler");
         try {
             String render = renderQeustion(wxMessage, weixinService);
-            render = buildPust(weixinService.getWxMpConfigStorage().getAppId(), wxMessage);
+//            render = buildPust(weixinService.getWxMpConfigStorage().getAppId(), wxMessage);
             log.info("render---{}", render);
             if (StringUtils.isBlank(render)) {
                 return null;
