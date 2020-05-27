@@ -149,26 +149,26 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    public R sendAlert(@RequestBody AlertHttpBodyReq alertBodyReq) throws ShowException {
-        log.info(JSON.toJSONString(alertBodyReq));
-        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
-        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert");
-        article.setTitle(alertBodyReq.getEventDefinitionTitle());
-        article.setDescription(alertBodyReq.getEventDefinitionDescription());
-        article.setPicUrl("");
-        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
-            try {
-                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
-                        WxMpKefuMessage
-                                .NEWS()
-                                .addArticle(article)
-                                .toUser(id)
-                                .build());
-            } catch (WxErrorException e) {
-                e.printStackTrace();
-                log.info("发送告警失败");
-            }
-        });
+    public R sendAlert(@RequestBody Map alertBodyReq) throws ShowException {
+        log.info("接收告警---{}", JSON.toJSONString(alertBodyReq));
+//        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
+//        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert");
+//        article.setTitle(alertBodyReq.getEventDefinitionTitle());
+//        article.setDescription(alertBodyReq.getEventDefinitionDescription());
+//        article.setPicUrl("");
+//        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
+//            try {
+//                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+//                        WxMpKefuMessage
+//                                .NEWS()
+//                                .addArticle(article)
+//                                .toUser(id)
+//                                .build());
+//            } catch (WxErrorException e) {
+//                e.printStackTrace();
+//                log.info("发送告警失败");
+//            }
+//        });
         return R.ok();
     }
 
