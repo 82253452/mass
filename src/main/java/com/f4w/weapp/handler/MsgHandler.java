@@ -49,6 +49,9 @@ public class MsgHandler implements WxMpMessageHandler {
             String render = renderQeustion(wxMessage, weixinService);
             render = buildPust(weixinService.getWxMpConfigStorage().getAppId(), wxMessage);
             log.info("render---{}", render);
+            if (StringUtils.isBlank(render)) {
+                return null;
+            }
             return WxMpXmlOutMessage.TEXT().content(render)
                     .fromUser(wxMessage.getToUser())
                     .toUser(wxMessage.getFromUser())
