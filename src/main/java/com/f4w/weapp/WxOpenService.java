@@ -27,9 +27,9 @@ import java.net.URLConnection;
 @Slf4j
 @EnableConfigurationProperties({WeiXinOpenConfig.class})
 public class WxOpenService extends WxOpenServiceImpl {
-    private static int connectionRequestTimeout = 3000;//从连接池获取链接的超时时间设置,默认3000ms
-    private static int connectionTimeout = 5000;//建立链接的超时时间,默认5000ms.(由于使用了连接池,这个参数没有实际意义)
-    private static int soTimeout = 8000;//连接池socket超时时间,默认5000ms
+    private static int connectionRequestTimeout = 13000;//从连接池获取链接的超时时间设置,默认3000ms
+    private static int connectionTimeout = 15000;//建立链接的超时时间,默认5000ms.(由于使用了连接池,这个参数没有实际意义)
+    private static int soTimeout = 18000;//连接池socket超时时间,默认5000ms
     private static int idleConnTimeout = 60000;//空闲链接的超时时间,默认60000ms
     private static int checkWaitTime = 60000;//空闲链接的检测周期,默认60000ms
     private static int maxConnPerHost = 10;//每路最大连接数,默认10
