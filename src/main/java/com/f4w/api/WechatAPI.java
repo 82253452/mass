@@ -149,8 +149,8 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    public R sendAlert(@RequestBody Map alertBodyReq) throws ShowException {
-        log.info("接收告警---{}", JSON.toJSONString(alertBodyReq));
+    public R sendAlert(@RequestBody AlertHttpBodyReq alertBodyReq) throws ShowException {
+        log.info("test---{}", JSON.toJSONString(alertBodyReq.getBacklog()));
 //        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
 //        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert");
 //        article.setTitle(alertBodyReq.getEventDefinitionTitle());
@@ -186,10 +186,7 @@ public class WechatAPI {
     }
 
     public static void main(String[] args) {
-        String test = "定时任务执行异常---{\"appId\":\"wx72d6e2a25d7b3bfa\",\"column\":1,\"comment\":false,\"isPush\":true,\"miniAppId\":\"wx327693c74d6cfd48\",\"miniAppPath\":\"/pages/play/play?vid={vid}\",\"time\":1589730459000,\"topNum\":2,\"types\":\"0-1-2-3-4-5\"}---发布文章失败";
-        String[] split = test.split("---");
-        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
-        System.out.println(jobInfoReq.getAppId());
+
     }
 
 }
