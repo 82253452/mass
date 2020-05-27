@@ -150,7 +150,7 @@ public class WechatAPI {
 
     @PostMapping("/sendAlert")
     public R sendAlert(@RequestBody AlertHttpBodyReq alertBodyReq) throws ShowException {
-        log.info("test---{}", JSON.toJSONString(alertBodyReq.getBacklog()));
+//        log.info("test---{}", JSON.toJSONString(alertBodyReq.getBacklog()));
 //        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
 //        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert");
 //        article.setTitle(alertBodyReq.getEventDefinitionTitle());
@@ -183,10 +183,6 @@ public class WechatAPI {
         BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(appId).build())).orElseThrow(() -> new ShowException("appid 不正确"));
         wechatService.pushArticle(busiApp);
         return R.ok();
-    }
-
-    public static void main(String[] args) {
-
     }
 
 }

@@ -8,6 +8,7 @@ import com.f4w.entity.Wxmp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.WxmpMapper;
 import com.f4w.utils.JobException;
+import com.f4w.utils.ShowException;
 import com.f4w.utils.ValidateUtils;
 import com.f4w.weapp.WxOpenService;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -16,6 +17,7 @@ import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
@@ -24,6 +26,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,6 +40,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.f4w.utils.Constant.Cachekey.ALERT_MESSAGE_APPID;
+import static com.f4w.utils.Constant.Cachekey.SEND_MESSAGE_OPENID;
+
 @Slf4j
 @JobHandler(value = "weArticleJobHandler")
 @Service
@@ -49,6 +55,8 @@ public class WechatPushArticleJob extends IJobHandler {
     private WxmpMapper wxmpMapper;
     @Resource
     private CommentContext commentContext;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public ReturnT<String> execute(String s) {
@@ -65,9 +73,32 @@ public class WechatPushArticleJob extends IJobHandler {
             pushMedias(jobinfo, mediaId);
         } catch (Exception e) {
             log.error("定时任务执行异常---{}---{}", JSONObject.toJSONString(jobinfo), e.getMessage());
+            sendWx(jobinfo, e.getMessage());
         }
 
         return IJobHandler.SUCCESS;
+    }
+
+    private void sendWx(JobInfoReq jobinfo, String msg) {
+        BusiApp busiApp = busiAppMapper.selectOne(BusiApp.builder().appId(jobinfo.getAppId()).build());
+        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
+        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/" + jobinfo.getAppId());
+        article.setTitle(busiApp.getNickName() + "-告警");
+        article.setDescription(msg);
+        article.setPicUrl(busiApp.getHeadImg());
+        stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10).forEach(id -> {
+            try {
+                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+                        WxMpKefuMessage
+                                .NEWS()
+                                .addArticle(article)
+                                .toUser(id)
+                                .build());
+            } catch (WxErrorException e) {
+                e.printStackTrace();
+                log.info("发送告警失败");
+            }
+        });
     }
 
     private void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
@@ -120,7 +151,8 @@ public class WechatPushArticleJob extends IJobHandler {
     }
 
 
-    private void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpNewsArticle> newsList, Integer type) throws JobException {
+    private void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpNewsArticle> newsList, Integer type) throws
+            JobException {
         Wxmp e = commentContext.getCommentStrategy(type).findWxmp(jobinfo);
         wxmpMapper.deleteById(e.getId());
         if (StringUtils.isBlank(e.getThumbnail())) {
