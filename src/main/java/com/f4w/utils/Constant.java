@@ -16,7 +16,7 @@ public class Constant {
     public class Cachekey{
         public static final String TALENT_POOL = "TALENT_POOL";
         public static final String WEIXIN_OPEN_USER_APPID = "WEIXIN_OPEN_USER_APPID_%s";
-        public static final String ALERT_MESSAGE_APPID = "wx0f5002b339e3c95a";
+        public static final String ALERT_MESSAGE_APPID = "wxcb112e7357064e5a";
         public static final String SEND_MESSAGE_OPENID = "SEND_MESSAGE_OPENID";
 
     }
