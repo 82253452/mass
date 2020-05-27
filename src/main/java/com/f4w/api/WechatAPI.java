@@ -7,6 +7,7 @@ import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.f4w.dto.req.AlertBodyReq;
+import com.f4w.dto.req.AlertHttpBodyReq;
 import com.f4w.dto.req.JobInfoReq;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
@@ -148,30 +149,26 @@ public class WechatAPI {
     }
 
     @PostMapping("/sendAlert")
-    public R sendAlert(@RequestBody Map alertBodyReq) throws ShowException {
-        log.info("发送微信告警--{}", JSON.toJSONString(alertBodyReq));
-//        String body = alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue();
-//        String[] split = body.split("---");
-//        JobInfoReq jobInfoReq = JSON.parseObject(split[1], JobInfoReq.class);
-//        BusiApp busiApp = busiAppMapper.selectOne(BusiApp.builder().appId(jobInfoReq.getAppId()).build());
-//        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
-//        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/" + jobInfoReq.getAppId());
-//        article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
-//        article.setDescription(split[2]);
-//        article.setPicUrl(busiApp.getHeadImg());
-//        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
-//            try {
-//                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
-//                        WxMpKefuMessage
-//                                .NEWS()
-//                                .addArticle(article)
-//                                .toUser(id)
-//                                .build());
-//            } catch (WxErrorException e) {
-//                e.printStackTrace();
-//                log.info("发送告警失败");
-//            }
-//        });
+    public R sendAlert(@RequestBody AlertHttpBodyReq alertBodyReq) throws ShowException {
+        log.info(JSON.toJSONString(alertBodyReq));
+        WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
+        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert");
+        article.setTitle(alertBodyReq.getEventDefinitionTitle());
+        article.setDescription(alertBodyReq.getEventDefinitionDescription());
+        article.setPicUrl("");
+        Optional.ofNullable(stringRedisTemplate.opsForList().range(SEND_MESSAGE_OPENID, 0, 10)).orElseThrow(() -> new ShowException("没有openId")).forEach(id -> {
+            try {
+                wxOpenService.getWxOpenComponentService().getWxMpServiceByAppid(ALERT_MESSAGE_APPID).getKefuService().sendKefuMessage(
+                        WxMpKefuMessage
+                                .NEWS()
+                                .addArticle(article)
+                                .toUser(id)
+                                .build());
+            } catch (WxErrorException e) {
+                e.printStackTrace();
+                log.info("发送告警失败");
+            }
+        });
         return R.ok();
     }
 
