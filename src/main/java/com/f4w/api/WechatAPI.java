@@ -149,7 +149,7 @@ public class WechatAPI {
     public R sendAlert(@RequestBody AlertBodyReq alertBodyReq) throws ShowException {
         System.out.println(JSONObject.toJSONString(alertBodyReq));
         WxMpKefuMessage.WxArticle article = new WxMpKefuMessage.WxArticle();
-        article.setUrl("");
+        article.setUrl("https://mass.zhihuizhan.net//#/unemp/alert/wx72d6e2a25d7b3bfa");
         article.setTitle(alertBodyReq.getStream().getAlertConditions().get(1).getTitle());
         article.setDescription(alertBodyReq.getStream().getAlertConditions().get(1).getParameters().getValue());
         article.setPicUrl("");
