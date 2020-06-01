@@ -89,6 +89,9 @@ public abstract class CommentStrategy {
 
     @SneakyThrows
     public String imageCoverUpload(String appId, String thumbnail) {
+        if(StringUtils.isBlank(thumbnail)){
+            return "";
+        }
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
         URL url = new URL(thumbnail);
         BufferedImage read = ImageIO.read(url);
@@ -110,6 +113,9 @@ public abstract class CommentStrategy {
 
     @SneakyThrows
     public String imageUpload(String appId, String thumbnail) {
+        if (StringUtils.isBlank(thumbnail)) {
+            return "";
+        }
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
         URL url = new URL(thumbnail);
         ImageIO.write(ImageIO.read(url), "png", file);
@@ -156,8 +162,8 @@ public abstract class CommentStrategy {
     }
 
 
-    public String replaceStr(String str,String rep){
-        return str.replaceFirst("\\{(.*?)\\}",rep);
+    public String replaceStr(String str, String rep) {
+        return str.replaceFirst("\\{(.*?)\\}", rep);
     }
 
 }
