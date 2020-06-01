@@ -7,6 +7,7 @@ import com.f4w.entity.BusiApp;
 import com.f4w.entity.Wxmp;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.WxmpMapper;
+import com.f4w.service.PushUtils;
 import com.f4w.utils.JobException;
 import com.f4w.utils.ShowException;
 import com.f4w.utils.ValidateUtils;
@@ -57,6 +58,8 @@ public class WechatPushArticleJob extends IJobHandler {
     private CommentContext commentContext;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private PushUtils pushUtils;
 
     @Override
     public ReturnT<String> execute(String s) {
@@ -73,7 +76,7 @@ public class WechatPushArticleJob extends IJobHandler {
             pushMedias(jobinfo, mediaId);
         } catch (Exception e) {
             log.error("定时任务执行异常---{}---{}", JSONObject.toJSONString(jobinfo), e.getMessage());
-            sendWx(jobinfo, e.getMessage());
+            pushUtils.sendToJISHIDA(jobinfo, e.getMessage());
         }
 
         return IJobHandler.SUCCESS;
@@ -118,7 +121,7 @@ public class WechatPushArticleJob extends IJobHandler {
                     .massGroupMessageSend(wxMpMassTagMessage);
         } catch (WxErrorException e) {
             e.printStackTrace();
-            throw new JobException("发布文章失败");
+            throw new JobException("发布文章失败" + e.getMessage());
         }
     }
 
@@ -133,7 +136,7 @@ public class WechatPushArticleJob extends IJobHandler {
                     .getMaterialService().materialNewsUpload(wxMpMaterialNews);
         } catch (WxErrorException e) {
             e.printStackTrace();
-            throw new JobException("上传素材失败");
+            throw new JobException("上传素材失败" + e.getMessage());
         }
         return re.getMediaId();
     }
