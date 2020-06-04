@@ -77,6 +77,7 @@ public class WechatPushArticleJob extends IJobHandler {
             //发布文章
             pushMedias(jobinfo, mediaId);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("定时任务执行异常---{}---{}", JSONObject.toJSONString(jobinfo), e.getMessage());
             pushUtils.sendToJISHIDA(jobinfo, e.getMessage());
         }
