@@ -29,6 +29,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -62,6 +63,7 @@ public class WechatPushArticleJob extends IJobHandler {
     private PushUtils pushUtils;
 
     @Override
+    @Transactional
     public ReturnT<String> execute(String s) {
         log.info("群发素材--" + s);
         JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
@@ -103,8 +105,8 @@ public class WechatPushArticleJob extends IJobHandler {
             }
         });
     }
-
-    private void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
+    @Transactional
+    void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
         //不群发消息
         if (BooleanUtils.isNotTrue(jobinfo.getIsPush())) {
             return;
@@ -124,8 +126,8 @@ public class WechatPushArticleJob extends IJobHandler {
             throw new JobException("发布文章失败" + e.getMessage());
         }
     }
-
-    private String uploadArticles(JobInfoReq jobinfo, List<WxMpNewsArticle> newsList) throws JobException {
+    @Transactional
+    String uploadArticles(JobInfoReq jobinfo, List<WxMpNewsArticle> newsList) throws JobException {
         WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
         wxMpMaterialNews.setArticles(newsList);
         WxMpMaterialUploadResult re;
@@ -140,8 +142,8 @@ public class WechatPushArticleJob extends IJobHandler {
         }
         return re.getMediaId();
     }
-
-    private List<WxMpNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
+    @Transactional
+    List<WxMpNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
         BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(jobinfo.getAppId()).build())).orElseThrow(() -> new JobException("appid 错误"));
         List<WxMpNewsArticle> newsList = new ArrayList<>();
         for (String type : jobinfo.getTypes().split("-")) {
@@ -153,8 +155,8 @@ public class WechatPushArticleJob extends IJobHandler {
         return newsList;
     }
 
-
-    private void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpNewsArticle> newsList, Integer type) throws
+    @Transactional
+    void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpNewsArticle> newsList, Integer type) throws
             JobException {
         Wxmp e = commentContext.getCommentStrategy(type).findWxmp(jobinfo);
         wxmpMapper.deleteById(e.getId());
@@ -183,7 +185,7 @@ public class WechatPushArticleJob extends IJobHandler {
         }
         newsList.add(news);
     }
-
+    @Transactional
     public String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
         URL url = new URL(thumbnail);
@@ -204,7 +206,6 @@ public class WechatPushArticleJob extends IJobHandler {
         file.deleteOnExit();
         return result.getMediaId();
     }
-
     public static void imgScale(File file, double size) throws IOException {
         //判断大小，如果小于指定大小，不压缩；如果大于等于指定大小，压缩
         if (file.length() <= size * 1024 * 1024) {

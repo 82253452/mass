@@ -9,6 +9,10 @@ environment:
   APPDIR: ./target/app.jar
   PORT: 8080
 
+trigger:
+  branch:
+    - master
+
 steps:
 
   - name: maven-install
