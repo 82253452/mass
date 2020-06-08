@@ -80,6 +80,7 @@ public class WechatPushArticleJob extends IJobHandler {
             e.printStackTrace();
             log.error("定时任务执行异常---{}---{}", JSONObject.toJSONString(jobinfo), e.getMessage());
             pushUtils.sendToJISHIDA(jobinfo, e.getMessage());
+            throw new RuntimeException("transactional back");
         }
 
         return IJobHandler.SUCCESS;
@@ -106,6 +107,7 @@ public class WechatPushArticleJob extends IJobHandler {
             }
         });
     }
+
     @Transactional
     void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
         //不群发消息
@@ -127,6 +129,7 @@ public class WechatPushArticleJob extends IJobHandler {
             throw new JobException("发布文章失败" + e.getMessage());
         }
     }
+
     @Transactional
     String uploadArticles(JobInfoReq jobinfo, List<WxMpNewsArticle> newsList) throws JobException {
         WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
@@ -143,6 +146,7 @@ public class WechatPushArticleJob extends IJobHandler {
         }
         return re.getMediaId();
     }
+
     @Transactional
     List<WxMpNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
         BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(jobinfo.getAppId()).build())).orElseThrow(() -> new JobException("appid 错误"));
@@ -186,6 +190,7 @@ public class WechatPushArticleJob extends IJobHandler {
         }
         newsList.add(news);
     }
+
     @Transactional
     public String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
@@ -207,6 +212,7 @@ public class WechatPushArticleJob extends IJobHandler {
         file.deleteOnExit();
         return result.getMediaId();
     }
+
     public static void imgScale(File file, double size) throws IOException {
         //判断大小，如果小于指定大小，不压缩；如果大于等于指定大小，压缩
         if (file.length() <= size * 1024 * 1024) {
