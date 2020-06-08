@@ -27,9 +27,9 @@ public class TopArticleCommentStrategy extends CommentStrategy {
         Element body = doc.body();
         //处理 image
         Elements src = body.getElementsByAttribute("src");
-        src.forEach(s -> {
+        for (Element s : src) {
             s.attr("src", imageUpload(busiApp.getAppId(), s.attr("src")));
-        });
+        }
         return body.html();
     }
 

@@ -22,14 +22,14 @@ import java.util.Optional;
 @ArticleType(ArticleTypeEnum.ARTICLE)
 public class ArticleCommentStrategy extends CommentStrategy {
     @Override
-    public String dealHtml(JobInfoReq jobinfo,BusiApp busiApp, Wxmp wxmp) throws JobException {
+    public String dealHtml(JobInfoReq jobinfo, BusiApp busiApp, Wxmp wxmp) throws JobException {
         Document doc = Jsoup.parse(wxmp.getContent());
         Element body = doc.body();
         //处理 image
         Elements src = body.getElementsByAttribute("src");
-        src.forEach(s -> {
+        for (Element s : src) {
             s.attr("src", imageUpload(busiApp.getAppId(), s.attr("src")));
-        });
+        }
         return body.html();
     }
 
