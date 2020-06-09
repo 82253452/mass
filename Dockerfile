@@ -12,4 +12,4 @@ ADD ${APPDIR} app.jar
 EXPOSE ${PORT}
 
 
-ENTRYPOINT ["java","-jar","-Xmx1024m -Xms1024m -XX:MetaspaceSize=512m","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
+ENTRYPOINT ["java","-jar","-Xmx1024M -Xms1024M -XX:MetaspaceSize=512M","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
