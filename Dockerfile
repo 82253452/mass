@@ -12,4 +12,4 @@ ADD ${APPDIR} app.jar
 EXPOSE ${PORT}
 
 
-ENTRYPOINT ["java","-jar","-Xmx512M -Xms512M","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
+ENTRYPOINT ["java","-jar","-Xms512M","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
