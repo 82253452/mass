@@ -63,6 +63,7 @@ public class WechatPushArticleJob extends IJobHandler {
 
     @Override
     public ReturnT<String> execute(String s) {
+        log.debug("执行任务");
         DateTime now = DateTime.now();
         List<BusiApp> busiApps = busiAppMapper.select(BusiApp.builder().miniProgramInfo(1).build());
         busiApps.forEach(app -> {
@@ -88,7 +89,7 @@ public class WechatPushArticleJob extends IJobHandler {
 
     @Transactional
     public void sendMessage(JobInfoReq jobinfo) {
-        log.debug("执行任务");
+        log.debug("开始发送");
         try {
             //校验
             ValidateUtils.validateThrowsJobException(jobinfo);
