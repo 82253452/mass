@@ -7,6 +7,8 @@ services:
   service:
     image: 192.168.0.2:5000/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
     deploy:
+      deploy:
+        replicas: 2
       labels:
         - traefik.enable=true
 

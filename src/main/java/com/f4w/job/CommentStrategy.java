@@ -117,28 +117,23 @@ public abstract class CommentStrategy {
     }
 
 
-    public String imageUpload(String appId, String thumbnail) throws JobException {
+    public String imageUpload(String appId, String thumbnail) throws JobException, IOException, WxErrorException {
         if (StringUtils.isBlank(thumbnail)) {
             return "";
         }
-        try {
-            File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
-            URL url = new URL(thumbnail);
-            ImageIO.write(ImageIO.read(url), "png", file);
-            imgScale(file, 0.8);
-            WxMpMaterial wxMpMaterial = new WxMpMaterial();
-            wxMpMaterial.setFile(file);
-            wxMpMaterial.setName("media");
-            WxMediaImgUploadResult result = wxOpenService
-                    .getWxOpenComponentService()
-                    .getWxMpServiceByAppid(appId)
-                    .getMaterialService()
-                    .mediaImgUpload(file);
-            return result.getUrl();
-        } catch (IOException | WxErrorException e) {
-            e.printStackTrace();
-            throw new JobException("图片上传失败");
-        }
+        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+        URL url = new URL(thumbnail);
+        ImageIO.write(ImageIO.read(url), "png", file);
+        imgScale(file, 0.8);
+        WxMpMaterial wxMpMaterial = new WxMpMaterial();
+        wxMpMaterial.setFile(file);
+        wxMpMaterial.setName("media");
+        WxMediaImgUploadResult result = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMpServiceByAppid(appId)
+                .getMaterialService()
+                .mediaImgUpload(file);
+        return result.getUrl();
     }
 
     /**

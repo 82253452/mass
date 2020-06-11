@@ -22,13 +22,17 @@ import java.util.Optional;
 @ArticleType(ArticleTypeEnum.TOP_ARTICLE)
 public class TopArticleCommentStrategy extends CommentStrategy {
     @Override
-    public String dealHtml(JobInfoReq jobinfo,BusiApp busiApp, Wxmp wxmp) throws JobException {
+    public String dealHtml(JobInfoReq jobinfo, BusiApp busiApp, Wxmp wxmp) throws JobException {
         Document doc = Jsoup.parse(wxmp.getContent());
         Element body = doc.body();
         //处理 image
         Elements src = body.getElementsByAttribute("src");
         for (Element s : src) {
-            s.attr("src", imageUpload(busiApp.getAppId(), s.attr("src")));
+            try {
+                s.attr("src", imageUpload(busiApp.getAppId(), s.attr("src")));
+            } catch (Exception e) {
+                throw new JobException("内容图失败--{" + wxmp.getTitle() + "}");
+            }
         }
         return body.html();
     }

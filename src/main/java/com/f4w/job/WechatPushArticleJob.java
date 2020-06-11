@@ -175,7 +175,7 @@ public class WechatPushArticleJob extends IJobHandler {
         try {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
         } catch (NullPointerException | IOException | WxErrorException ex) {
-            log.error("图片上传失败---{}--{}--¬", e.getThumbnail(), ex.getMessage());
+            log.error("缩略图失败--{}--{}--¬", e.getTitle(), e.getThumbnail(), ex.getMessage());
             addWxArticle(jobinfo, busiApp, newsList, type);
             return;
         }

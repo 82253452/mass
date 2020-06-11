@@ -28,7 +28,11 @@ public class ArticleCommentStrategy extends CommentStrategy {
         //处理 image
         Elements src = body.getElementsByAttribute("src");
         for (Element s : src) {
-            s.attr("src", imageUpload(busiApp.getAppId(), s.attr("src")));
+            try {
+                s.attr("src", imageUpload(busiApp.getAppId(), s.attr("src")));
+            } catch (Exception e) {
+                throw new JobException("内容图失败--{" + wxmp.getTitle() + "}");
+            }
         }
         return body.html();
     }
