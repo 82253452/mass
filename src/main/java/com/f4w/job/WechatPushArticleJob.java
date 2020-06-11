@@ -66,6 +66,7 @@ public class WechatPushArticleJob extends IJobHandler {
         DateTime now = DateTime.now();
         List<BusiApp> busiApps = busiAppMapper.select(BusiApp.builder().miniProgramInfo(1).build());
         busiApps.forEach(app -> {
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
             JobInfoReq jobinfo = JSON.parseObject(app.getMessageParam(), JobInfoReq.class);
             log.debug(JSONObject.toJSONString(jobinfo));
             if (app.getAutoMessage() == 1 && new DateTime(jobinfo.getTime()).getMinuteOfDay() == now.getMinuteOfDay()) {
@@ -73,6 +74,10 @@ public class WechatPushArticleJob extends IJobHandler {
             }
         });
         return IJobHandler.SUCCESS;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Date(1577863800000L));
     }
 
 
