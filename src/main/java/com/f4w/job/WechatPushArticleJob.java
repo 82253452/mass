@@ -67,6 +67,7 @@ public class WechatPushArticleJob extends IJobHandler {
         List<BusiApp> busiApps = busiAppMapper.select(BusiApp.builder().miniProgramInfo(1).build());
         busiApps.forEach(app -> {
             JobInfoReq jobinfo = JSON.parseObject(app.getMessageParam(), JobInfoReq.class);
+            log.debug(JSONObject.toJSONString(jobinfo));
             if (app.getAutoMessage() == 1 && new DateTime(jobinfo.getTime()).getMinuteOfDay() == now.getMinuteOfDay()) {
                 sendMessage(jobinfo);
             }
