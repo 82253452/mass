@@ -20,6 +20,10 @@ spring:
     port: 6379
     database: 0
     password: zlsxsdfike.#@!
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 mybatis:
   type-aliases-package: com.f4w.entity
   #  mapper-locations: classpath:com/f4w/mapper/*.xml
