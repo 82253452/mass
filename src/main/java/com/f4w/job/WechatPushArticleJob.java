@@ -62,7 +62,6 @@ public class WechatPushArticleJob extends IJobHandler {
     private PushUtils pushUtils;
 
     @Override
-    @Transactional
     public ReturnT<String> execute(String s) {
         DateTime now = DateTime.now();
         List<BusiApp> busiApps = busiAppMapper.select(BusiApp.builder().miniProgramInfo(1).build());
@@ -74,6 +73,7 @@ public class WechatPushArticleJob extends IJobHandler {
         });
         return IJobHandler.SUCCESS;
     }
+
 
     @Transactional
     public void sendMessage(JobInfoReq jobinfo) {
