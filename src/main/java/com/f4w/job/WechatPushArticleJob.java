@@ -77,12 +77,18 @@ public class WechatPushArticleJob extends IJobHandler {
     }
 
     public static void main(String[] args) {
-        System.out.println(new Date(1577863800000L));
+        try {
+            int i = 0 / 1;
+        } catch (Exception e) {
+            throw new RuntimeException("a");
+        }
+        System.out.println(123);
     }
 
 
     @Transactional
     public void sendMessage(JobInfoReq jobinfo) {
+        log.debug("执行任务");
         try {
             //校验
             ValidateUtils.validateThrowsJobException(jobinfo);
@@ -124,6 +130,7 @@ public class WechatPushArticleJob extends IJobHandler {
 
     @Transactional
     void pushMedias(JobInfoReq jobinfo, String mediaId) throws JobException {
+        log.debug("群发");
         //不群发消息
         if (BooleanUtils.isNotTrue(jobinfo.getIsPush())) {
             return;
@@ -146,6 +153,7 @@ public class WechatPushArticleJob extends IJobHandler {
 
     @Transactional
     String uploadArticles(JobInfoReq jobinfo, List<WxMpNewsArticle> newsList) throws JobException {
+        log.debug("上传素材");
         WxMpMaterialNews wxMpMaterialNews = new WxMpMaterialNews();
         wxMpMaterialNews.setArticles(newsList);
         WxMpMaterialUploadResult re;
@@ -163,6 +171,7 @@ public class WechatPushArticleJob extends IJobHandler {
 
     @Transactional
     List<WxMpNewsArticle> addNewsList(JobInfoReq jobinfo) throws JobException {
+        log.debug("处理文章");
         BusiApp busiApp = Optional.ofNullable(busiAppMapper.selectOne(BusiApp.builder().appId(jobinfo.getAppId()).build())).orElseThrow(() -> new JobException("appid 错误"));
         List<WxMpNewsArticle> newsList = new ArrayList<>();
         for (String type : jobinfo.getTypes().split("-")) {
