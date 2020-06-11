@@ -27,20 +27,19 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.f4w.utils.Constant.Cachekey.ALERT_MESSAGE_APPID;
 import static com.f4w.utils.Constant.Cachekey.SEND_MESSAGE_OPENID;
@@ -65,8 +64,19 @@ public class WechatPushArticleJob extends IJobHandler {
     @Override
     @Transactional
     public ReturnT<String> execute(String s) {
-        log.info("群发素材--" + s);
-        JobInfoReq jobinfo = JSON.parseObject(s, JobInfoReq.class);
+        DateTime now = DateTime.now();
+        List<BusiApp> busiApps = busiAppMapper.selectByExample(BusiApp.builder().miniProgramInfo(1).build());
+        busiApps.forEach(app -> {
+            JobInfoReq jobinfo = JSON.parseObject(app.getMessageParam(), JobInfoReq.class);
+            if (app.getAutoMessage() == 1 && new DateTime(jobinfo.getTime()).getMinuteOfDay() == now.getMinuteOfDay()) {
+                sendMessage(jobinfo);
+            }
+        });
+        return IJobHandler.SUCCESS;
+    }
+
+    @Transactional
+    public void sendMessage(JobInfoReq jobinfo) {
         try {
             //校验
             ValidateUtils.validateThrowsJobException(jobinfo);
@@ -82,8 +92,6 @@ public class WechatPushArticleJob extends IJobHandler {
             pushUtils.sendToJISHIDA(jobinfo, e.getMessage());
             throw new RuntimeException("transactional back");
         }
-
-        return IJobHandler.SUCCESS;
     }
 
     private void sendWx(JobInfoReq jobinfo, String msg) {
