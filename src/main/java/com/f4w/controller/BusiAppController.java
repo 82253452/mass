@@ -9,7 +9,6 @@ import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiAppPage;
 import com.f4w.entity.SysUser;
-import com.f4w.entity.Wxmp;
 import com.f4w.freemarker.GeneratorZipFile;
 import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiAppPageMapper;
@@ -21,9 +20,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
-import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
-import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.*;
 import me.chanjar.weixin.open.bean.message.WxOpenMaSubmitAuditMessage;
@@ -32,8 +28,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -44,14 +38,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -63,8 +57,8 @@ public class BusiAppController {
     private BusiAppMapper busiAppMapper;
     @Resource
     private BusiAppPageMapper busiAppPageMapper;
-    @Resource
-    private ExecutorService threadPoolExecutor;
+//    @Resource
+//    private ExecutorService threadPoolExecutor;
 
     @Value("${path.filesave}")
     private String filesave;
@@ -498,7 +492,7 @@ public class BusiAppController {
         if (null != busiApp && null != busiApp.getPageId()) {
             busiApp.setStatus(2);
             busiAppMapper.updateByPrimaryKeySelective(busiApp);
-            threadPoolExecutor.execute(new GeneratorZipFile(busiAppMapper, busiAppPageMapper, busiApp.getId(), filesave, filetemp));
+//            threadPoolExecutor.execute(new GeneratorZipFile(busiAppMapper, busiAppPageMapper, busiApp.getId(), filesave, filetemp));
             return R.ok();
         }
         return R.error();

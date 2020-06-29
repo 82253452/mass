@@ -8,21 +8,17 @@ import com.f4w.utils.JobException;
 import com.f4w.utils.SpringContextUtils;
 import com.f4w.weapp.WxOpenService;
 import lombok.Data;
-import lombok.SneakyThrows;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
-import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -92,8 +88,9 @@ public abstract class CommentStrategy {
         if (StringUtils.isBlank(thumbnail)) {
             return "";
         }
+        File file = null;
         try {
-            File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+            file = File.createTempFile(UUID.randomUUID().toString(), ".png");
             URL url = new URL(thumbnail);
             BufferedImage read = ImageIO.read(url);
             coverImg(read);
@@ -112,28 +109,43 @@ public abstract class CommentStrategy {
         } catch (IOException | WxErrorException e) {
             e.printStackTrace();
             throw new JobException("图片上传失败");
+        } finally {
+            if (file != null) {
+                file.deleteOnExit();
+            }
         }
 
     }
 
 
-    public String imageUpload(String appId, String thumbnail) throws JobException, IOException, WxErrorException {
+    public String imageUpload(String appId, String thumbnail) throws JobException{
         if (StringUtils.isBlank(thumbnail)) {
             return "";
         }
-        File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
-        URL url = new URL(thumbnail);
-        ImageIO.write(ImageIO.read(url), "png", file);
-        imgScale(file, 0.8);
-        WxMpMaterial wxMpMaterial = new WxMpMaterial();
-        wxMpMaterial.setFile(file);
-        wxMpMaterial.setName("media");
-        WxMediaImgUploadResult result = wxOpenService
-                .getWxOpenComponentService()
-                .getWxMpServiceByAppid(appId)
-                .getMaterialService()
-                .mediaImgUpload(file);
-        return result.getUrl();
+        File file = null;
+        try {
+            file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+            URL url = new URL(thumbnail);
+            BufferedImage read = ImageIO.read(url);
+            ImageIO.write(read, "png", file);
+            imgScale(file, 0.8);
+            WxMpMaterial wxMpMaterial = new WxMpMaterial();
+            wxMpMaterial.setFile(file);
+            wxMpMaterial.setName("media");
+            WxMediaImgUploadResult result = wxOpenService
+                    .getWxOpenComponentService()
+                    .getWxMpServiceByAppid(appId)
+                    .getMaterialService()
+                    .mediaImgUpload(file);
+            return result.getUrl();
+        } catch (IOException | WxErrorException e) {
+            e.printStackTrace();
+            throw new JobException("图片上传失败");
+        } finally {
+            if (file != null) {
+                file.deleteOnExit();
+            }
+        }
     }
 
     /**
