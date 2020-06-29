@@ -29,5 +29,6 @@ services:
       driver: "gelf"
       options:
         gelf-address: "udp://192.168.0.2:12201"
+        tag: mass-api
     volumes:
       - /etc/localtime:/etc/localtime
