@@ -25,8 +25,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: ${PROFILE}
       PORT: ${PORT}
-    logging:
-      driver: "gelf"
+#    logging:
+#      driver: "gelf"
       options:
         gelf-address: "udp://192.168.0.2:12201"
         tag: mass-api
