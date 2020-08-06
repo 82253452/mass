@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,14 +67,19 @@ public class TalentPoolController {
     }
 
     @GetMapping("/exportExcel")
-    public void exportExcel(HttpServletResponse response, TalentPoolReq reportRequest) throws  IOException {
+    public void exportExcel(HttpServletResponse response, TalentPoolReq reportRequest) {
         List<TalentPool> list = talentPoolMapper.selectAllByPage(null);
         System.out.println(list.size());
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        String fileName = URLEncoder.encode("渠道报表", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xls");
-        EasyExcel.write(response.getOutputStream(), TalentPool.class).sheet("模板").doWrite(list);
+        try{
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding("utf-8");
+            String fileName = URLEncoder.encode("渠道报表", "UTF-8");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            EasyExcel.write(response.getOutputStream(), TalentPool.class).sheet("模板").doWrite(list);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 }
 
