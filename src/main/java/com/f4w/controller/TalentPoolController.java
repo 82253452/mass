@@ -68,6 +68,7 @@ public class TalentPoolController {
     @GetMapping("/exportExcel")
     public void exportExcel(HttpServletResponse response, TalentPoolReq reportRequest) throws  IOException {
         List<TalentPool> list = talentPoolMapper.selectAllByPage(null);
+        System.out.println(list.size());
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         String fileName = URLEncoder.encode("渠道报表", "UTF-8");
