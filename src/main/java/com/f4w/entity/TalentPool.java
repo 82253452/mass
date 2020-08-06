@@ -27,6 +27,7 @@ public class TalentPool extends BaseEntity {
     @ExcelProperty("基本信息")
     private String base;
     private String education;
+    @ExcelProperty("刷新时间")
     private Date updateTime;
     private String major;
     private String remark;

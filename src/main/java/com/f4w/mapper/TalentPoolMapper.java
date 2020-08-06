@@ -27,7 +27,7 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
             "</script>"
     })
     List<TalentPool> selectAllByPage(TalentPoolReq req);
-    @Select("select distinct sc from talent_pool where sc is not null and sc !=''")
+    @Select("select distinct sc from talent_pool where sc is not null and sc !='' order by update_time desc")
     List<String> selectScs();
 
     @Select("select distinct education from talent_pool where education is not null and education !=''")
