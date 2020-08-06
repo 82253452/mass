@@ -24,10 +24,11 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
             "AND major = #{major}",
             "</when>",
             "and `delete` =0",
+            " order by update_time desc",
             "</script>"
     })
     List<TalentPool> selectAllByPage(TalentPoolReq req);
-    @Select("select distinct sc from talent_pool where sc is not null and sc !='' order by update_time desc")
+    @Select("select distinct sc from talent_pool where sc is not null and sc !=''")
     List<String> selectScs();
 
     @Select("select distinct education from talent_pool where education is not null and education !=''")
