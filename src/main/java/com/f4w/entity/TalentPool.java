@@ -15,19 +15,19 @@ import java.util.Date;
 @NoArgsConstructor
 @ColumnWidth(30)
 public class TalentPool extends BaseEntity {
-    @ExcelProperty("id")
+    @ExcelProperty(value = "id",index = 0)
     private String pid;
     private String tid;
-    @ExcelProperty("姓名")
+    @ExcelProperty(value ="姓名",index = 1)
     private String name;
-    @ExcelProperty("手机号")
+    @ExcelProperty(value ="手机号",index = 2)
     private String phone;
-    @ExcelProperty("毕业院校")
+    @ExcelProperty(value ="毕业院校",index = 3)
     private String sc;
-    @ExcelProperty("基本信息")
+    @ExcelProperty(value ="基本信息",index = 4)
     private String base;
     private String education;
-    @ExcelProperty("刷新时间")
+    @ExcelProperty(value ="刷新时间",index = 5)
     private Date updateTime;
     private String major;
     private String remark;
