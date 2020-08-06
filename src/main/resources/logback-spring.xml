@@ -15,14 +15,14 @@
         </encoder>
     </appender>
 
-    <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
-        <graylogHost>192.168.0.2</graylogHost>
-        <graylogPort>12201</graylogPort>
-    </appender>
+<!--    <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">-->
+<!--        <graylogHost>192.168.0.2</graylogHost>-->
+<!--        <graylogPort>12201</graylogPort>-->
+<!--    </appender>-->
 
     <!-- 控制台输出日志级别 -->
-    <root level="debug">
-        <appender-ref ref="GELF"/>
-        <appender-ref ref="STDOUT"/>
-    </root>
+<!--    <root level="debug">-->
+<!--        <appender-ref ref="GELF"/>-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </root>-->
 </configuration>
