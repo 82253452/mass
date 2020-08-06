@@ -72,7 +72,7 @@ public class TalentPoolController {
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         String fileName = URLEncoder.encode("渠道报表", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xls");
         EasyExcel.write(response.getOutputStream(), TalentPool.class).sheet("模板").doWrite(list);
     }
 }
