@@ -7,6 +7,7 @@ import com.f4w.entity.BusiApp;
 import com.f4w.entity.Wxmp;
 import com.f4w.job.CommentStrategy;
 import com.f4w.utils.JobException;
+import org.apache.commons.lang3.RandomUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +24,8 @@ public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
     @Override
     public String dealHtml(JobInfoReq jobinfo, BusiApp busiApp, Wxmp wxmp) throws JobException {
         String img = imageCoverUpload(busiApp.getAppId(), wxmp.getThumbnail());
+        String[] miniAppIdArray = jobinfo.getMiniAppId().split(",");
+        String miniAppId = miniAppIdArray[RandomUtils.nextInt(0, miniAppIdArray.length)];
         return "<p>" +
                 "<a class=\"weapp_text_link\"" +
                 " style=\"font-size:14px;display:block;width:100%!important;" +
@@ -31,20 +34,20 @@ public class TopMiniAppVideoCommentStrategy extends CommentStrategy {
                 "    display:block;\n" +
                 "    border-radius: 8px;" +
                 "    background-color: #f7f7f7;\n" +
-                "    background-image:url("+img+");\n" +
+                "    background-image:url(" + img + ");\n" +
                 "    background-repeat: no-repeat;\n" +
                 "    background-size: 100% 100%;\n" +
                 "    background-position: 0px 23px;\n" +
                 "    color: #888;" +
                 "\" " +
-                "data-miniprogram-appid=\""+jobinfo.getMiniAppId()+"\" " +
-                "data-miniprogram-path=\""+replaceStr(jobinfo.getMiniAppPath(),wxmp.getVideoId())+"\" " +
-                "data-miniprogram-nickname=\""+busiApp.getNickName()+"\" href=\"\" " +
+                "data-miniprogram-appid=\"" + miniAppId + "\" " +
+                "data-miniprogram-path=\"" + replaceStr(jobinfo.getMiniAppPath(), wxmp.getVideoId()) + "\" " +
+                "data-miniprogram-nickname=\"" + busiApp.getNickName() + "\" href=\"\" " +
                 "data-miniprogram-type=\"text\" " +
                 "data-miniprogram-servicetype=\"\">" +
-                busiApp.getNickName() +"（点击播放视频）"+
+                busiApp.getNickName() + "（点击播放视频）" +
                 "</a>" +
-                "</p>" ;
+                "</p>";
     }
 
     @Override

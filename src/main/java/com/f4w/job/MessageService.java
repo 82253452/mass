@@ -148,7 +148,7 @@ public class MessageService {
             return;
         }
         news.setAuthor("点这里关注\uD83D\uDC49\uD83C\uDFFB");
-        news.setDigest(e.getSummary());
+        news.setDigest(e.getSummary().length() > 12 ? e.getSummary().substring(0, 12) : e.getSummary());
         news.setContent(commentContext.getCommentStrategy(type).dealHeadAndFooter(jobinfo, busiApp, e));
         if (StringUtils.isNotBlank(jobinfo.getContentSourceUrl())) {
             news.setContentSourceUrl(jobinfo.getContentSourceUrl());
