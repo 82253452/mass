@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -42,5 +43,10 @@ public class SysUser extends BaseEntity {
     private String userName;
 
     private String password;
+
+    private String phone;
+
+    @Transient
+    private String token;
 
 }
