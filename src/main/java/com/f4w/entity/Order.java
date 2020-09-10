@@ -28,4 +28,12 @@ public class Order extends BaseEntity {
     private String amount;
     private String des;
     private Integer status;
+    private Double latitudeFrom;
+    private Double latitudeTo;
+    private Double longitudeFrom;
+    private Double longitudeTo;
+    private String addressFrom;
+    private String addressTo;
+    private String userName;
+    private String phone;
 }
