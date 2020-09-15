@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * @Author: yp
@@ -24,8 +25,8 @@ public class Order extends BaseEntity {
     private Integer userId;
     private Integer receiveUserId;
     private Integer productId;
-    private String originalPrice;
-    private String amount;
+    private BigDecimal originalPrice;
+    private BigDecimal amount;
     private String des;
     private Integer status;
     private Double latitudeFrom;

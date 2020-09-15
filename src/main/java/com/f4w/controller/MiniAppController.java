@@ -27,8 +27,8 @@ public class MiniAppController {
     }
 
     @GetMapping("/user")
-    public Result<SysUser> user(String appId, String code) throws ForeseenException {
-        SysUser sysUser = wechatService.getUserInfoByCode(appId, code);
+    public Result<SysUser> user(MiniAppLoginReq request) throws ForeseenException {
+        SysUser sysUser = wechatService.getUserInfoByCode(request);
         return Result.ok(sysUser);
     }
 

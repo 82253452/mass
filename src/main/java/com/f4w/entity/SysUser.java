@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -45,6 +46,8 @@ public class SysUser extends BaseEntity {
     private String password;
 
     private String phone;
+
+    private BigDecimal amount;
 
     @Transient
     private String token;
