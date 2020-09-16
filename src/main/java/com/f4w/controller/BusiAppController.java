@@ -195,7 +195,7 @@ public class BusiAppController {
     @GetMapping("/addtotemplate")
     public R addtotemplate(Long draftId) throws WxErrorException {
         wxOpenService.getWxOpenComponentService().addToTemplate(draftId);
-        return R.ok();
+        return R.ok(true);
     }
 
     /**
@@ -207,7 +207,7 @@ public class BusiAppController {
     @GetMapping("/deleteTemplate")
     public R deleteTemplate(Long templateId) throws WxErrorException {
         wxOpenService.getWxOpenComponentService().deleteTemplate(templateId);
-        return R.ok();
+        return R.ok(true);
     }
 
 
