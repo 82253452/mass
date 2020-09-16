@@ -28,20 +28,20 @@ public class BannerController {
 
     @PostMapping
     public Result add(@RequestBody Banner banner) throws ForeseenException {
-        bannerMapper.insertSelective(banner);
-        return Result.ok();
+        int i = bannerMapper.insertSelective(banner);
+        return Result.ok(i);
     }
 
     @PutMapping
     public Result update(@RequestBody Banner banner) throws ForeseenException {
-        bannerMapper.updateByPrimaryKeySelective(banner);
-        return Result.ok();
+        int i = bannerMapper.updateByPrimaryKeySelective(banner);
+        return Result.ok(i);
     }
 
     @DeleteMapping
     public Result delete(String id) throws ForeseenException {
-        bannerMapper.deleteByPrimaryKey(id);
-        return Result.ok();
+        int i = bannerMapper.deleteByPrimaryKey(id);
+        return Result.ok(i);
     }
 
 }
