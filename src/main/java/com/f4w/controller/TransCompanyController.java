@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  * @Date: 2020/9/8 10:57
  */
 @RestController
-@RequestMapping("/tarns")
+@RequestMapping("/trans")
 public class TransCompanyController {
     @Resource
     private TransCompanyMapper mapper;
