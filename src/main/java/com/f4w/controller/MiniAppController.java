@@ -9,6 +9,8 @@ import com.f4w.utils.Result;
 import com.f4w.weapp.WxOpenService;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
+import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
+import me.chanjar.weixin.open.bean.result.WxOpenResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -67,5 +69,21 @@ public class MiniAppController {
     public R getTemplates() throws WxErrorException {
         List<WxOpenMaCodeTemplate> templateList = wxOpenService.getWxOpenComponentService().getTemplateList();
         return R.ok(templateList);
+    }
+
+    /**
+     * 上传小程序代码
+     *
+     * @return
+     * @throws WxErrorException
+     */
+    @GetMapping("/uploadApp")
+    public R uploadApp(String appId, Long templateId) throws WxErrorException {
+        WxMaOpenCommitExtInfo extInfo = WxMaOpenCommitExtInfo.INSTANCE();
+        WxOpenResult wxOpenResult = wxOpenService
+                .getWxOpenComponentService()
+                .getWxMaServiceByAppid(appId)
+                .codeCommit(templateId, "1.0", "发布", extInfo);
+        return R.ok(wxOpenResult);
     }
 }
