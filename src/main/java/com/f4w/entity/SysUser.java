@@ -52,4 +52,6 @@ public class SysUser extends BaseEntity {
     @Transient
     private String token;
 
+    private Integer transId;
+
 }

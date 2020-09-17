@@ -23,6 +23,7 @@ public class Order extends BaseEntity {
     private String orderNo;
     private Integer orderType;
     private Integer userId;
+    private Integer transId;
     private Integer receiveUserId;
     private Integer productId;
     private BigDecimal originalPrice;

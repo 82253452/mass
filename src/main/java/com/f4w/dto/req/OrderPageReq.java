@@ -16,7 +16,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CommonPageReq extends Page {
+public class OrderPageReq extends Page {
     private Integer status;
     private Integer userId;
+    private Integer transId;
 }

@@ -2,18 +2,25 @@ package com.f4w.controller;
 
 import com.f4w.annotation.CurrentUser;
 import com.f4w.dto.OrderInfoDto;
+import com.f4w.dto.SysRoleDto;
 import com.f4w.dto.req.CommonPageReq;
+import com.f4w.dto.req.OrderPageReq;
 import com.f4w.dto.req.OrderReq;
+import com.f4w.dto.req.TransPageReq;
 import com.f4w.entity.Order;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.OrderMapper;
+import com.f4w.mapper.SysRoleMapper;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.Result;
 import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,10 +32,26 @@ import java.util.Optional;
 public class OrderController {
     @Resource
     private OrderMapper orderMapper;
+    @Resource
+    private SysRoleMapper sysRoleMapper;
 
     @GetMapping("/list")
     public Result<PageInfo<OrderInfoDto>> list(CommonPageReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getList(req));
+        return Result.ok(page);
+    }
+
+    @GetMapping("/admin/list")
+    public Result<PageInfo<OrderInfoDto>> adminList(@CurrentUser SysUser sysUser, OrderPageReq req) throws ForeseenException {
+        List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
+        if (roleDtos.contains("admin")) {
+
+        } else if (roleDtos.contains("trans")) {
+            req.setTransId(sysUser.getTransId());
+        } else {
+            req.setUserId(sysUser.getId().intValue());
+        }
+        PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getAdminList(req));
         return Result.ok(page);
     }
 
