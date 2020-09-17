@@ -9,8 +9,10 @@ import com.f4w.mapper.BusiAppMapper;
 import com.f4w.mapper.BusiWCitysMapper;
 import com.f4w.mapper.BusiWProvienceMapper;
 import com.f4w.mapper.SysUserMapper;
+import com.f4w.utils.ForeseenException;
 import com.f4w.utils.Pinyin4j;
 import com.f4w.utils.R;
+import com.f4w.utils.Result;
 import com.f4w.weapp.WxOpenService;
 import com.google.gson.JsonObject;
 import com.qiniu.util.Auth;
@@ -161,14 +163,14 @@ public class CommonAPI {
      * @return
      */
     @GetMapping("ypQiniuToken")
-    public R ypQiniuToken() {
+    public Result ypQiniuToken() throws ForeseenException {
         String accessKey = "yAKiOwwpqTz23aqui0nUY-HJOCRpXsy8wTE94TK9";
         String secretKey = "YuyGHpSygf4rqQtRyijAulllibUtZ7P-sghjYu7w";
         String bucket = "supe";
         Auth auth = Auth.create(accessKey, secretKey);
         String upToken = auth.uploadToken(bucket, null, 3600, new StringMap()
                 .put("returnBody", " {\"key\": $(key), \"hash\": $(etag), \"w\": $(imageInfo.width), \"h\": $(imageInfo.height)}"));
-        return R.ok(upToken);
+        return Result.ok(upToken);
     }
 
 
