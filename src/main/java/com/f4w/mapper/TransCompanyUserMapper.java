@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface TransCompanyUserMapper extends BaseMapper<TransCompanyUser> {
 
-    @Select("select su.*, tcu.status,tcu.id id\n" +
+    @Select("select tcu.id id,su.*, tcu.status\n" +
             "from trans_company_user tcu\n" +
             "         left join sys_user su on tcu.user_id = su.id")
     List<TransCompanyUserDto> getList(CommonPageReq req);
