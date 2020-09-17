@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "`busi_question`")
+@Table(name = "`car_type`")
 @EqualsAndHashCode(callSuper = true)
 public class CarType extends BaseEntity {
     private String title;
