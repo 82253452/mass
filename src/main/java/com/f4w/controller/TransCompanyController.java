@@ -26,6 +26,12 @@ public class TransCompanyController {
         return Result.ok(page);
     }
 
+    @GetMapping("/detail")
+    public Result<TransCompany> detail(String id) throws ForeseenException {
+        TransCompany transCompany = mapper.selectByPrimaryKey(id);
+        return Result.ok(transCompany);
+    }
+
     @PostMapping
     public Result add(@RequestBody TransCompany banner) throws ForeseenException {
         int i = mapper.insertSelective(banner);
