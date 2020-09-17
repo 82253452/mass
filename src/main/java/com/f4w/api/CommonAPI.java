@@ -139,7 +139,8 @@ public class CommonAPI {
 
     /**
      * 获取七牛token
-     *laohuangli
+     * laohuangli
+     *
      * @return
      */
     @GetMapping("qiniuToken")
@@ -152,6 +153,24 @@ public class CommonAPI {
                 .put("returnBody", " {\"key\": $(key), \"hash\": $(etag), \"w\": $(imageInfo.width), \"h\": $(imageInfo.height)}"));
         return R.renderSuccess("uptoken", upToken);
     }
+
+    /**
+     * 获取七牛token
+     * laohuangli
+     *
+     * @return
+     */
+    @GetMapping("ypQiniuToken")
+    public R ypQiniuToken() {
+        String accessKey = "yAKiOwwpqTz23aqui0nUY-HJOCRpXsy8wTE94TK9";
+        String secretKey = "YuyGHpSygf4rqQtRyijAulllibUtZ7P-sghjYu7w";
+        String bucket = "avatar";
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket, null, 3600, new StringMap()
+                .put("returnBody", " {\"key\": $(key), \"hash\": $(etag), \"w\": $(imageInfo.width), \"h\": $(imageInfo.height)}"));
+        return R.ok(upToken);
+    }
+
 
     @GetMapping("setDomain")
     public R setDomain(String appId) throws WxErrorException {
@@ -184,7 +203,7 @@ public class CommonAPI {
         if (2 == busiApp.getStatus()) {
             WxOpenResult wxOpenResult = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(appId).undoCodeAudit();
             if (!wxOpenResult.isSuccess()) {
-                return R.error(1001,wxOpenResult.getErrmsg());
+                return R.error(1001, wxOpenResult.getErrmsg());
             }
             busiApp.setStatus(1);
             busiApp = busiAppMapper.selectOne(busiApp);
