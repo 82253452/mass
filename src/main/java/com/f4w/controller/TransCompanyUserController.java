@@ -37,7 +37,7 @@ public class TransCompanyUserController {
         return Result.ok(1);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public Result delete(@RequestBody Integer id) throws ForeseenException {
         mapper.deleteByPrimaryKey(id);
         return Result.ok(1);
