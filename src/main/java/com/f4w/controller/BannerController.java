@@ -38,8 +38,8 @@ public class BannerController {
         return Result.ok(i);
     }
 
-    @DeleteMapping
-    public Result delete(String id) throws ForeseenException {
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable String id) throws ForeseenException {
         int i = bannerMapper.deleteByPrimaryKey(id);
         return Result.ok(i);
     }

@@ -44,8 +44,8 @@ public class TransCompanyController {
         return Result.ok(i);
     }
 
-    @DeleteMapping
-    public Result delete(@RequestBody String id) throws ForeseenException {
+    @DeleteMapping("{id}")
+    public Result delete(@PathVariable String id) throws ForeseenException {
         int i = mapper.deleteByPrimaryKey(id);
         return Result.ok(i);
     }
