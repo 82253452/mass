@@ -23,6 +23,7 @@ public interface TransCompanyUserMapper extends BaseMapper<TransCompanyUser> {
             "select tcu.id id,su.*, tcu.status\n" +
             "from trans_company_user tcu\n" +
             "         left join sys_user su on tcu.user_id = su.id\n" +
+            "    where 1=1\n" +
             "    <if test='transId!=null and transId != &quot;&quot; '>\n" +
             "        and tcu.trans_id = #{transId}\n" +
             "    </if>\n" +
