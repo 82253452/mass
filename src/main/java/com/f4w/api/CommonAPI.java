@@ -164,7 +164,7 @@ public class CommonAPI {
     public R ypQiniuToken() {
         String accessKey = "yAKiOwwpqTz23aqui0nUY-HJOCRpXsy8wTE94TK9";
         String secretKey = "YuyGHpSygf4rqQtRyijAulllibUtZ7P-sghjYu7w";
-        String bucket = "avatar";
+        String bucket = "supe";
         Auth auth = Auth.create(accessKey, secretKey);
         String upToken = auth.uploadToken(bucket, null, 3600, new StringMap()
                 .put("returnBody", " {\"key\": $(key), \"hash\": $(etag), \"w\": $(imageInfo.width), \"h\": $(imageInfo.height)}"));
