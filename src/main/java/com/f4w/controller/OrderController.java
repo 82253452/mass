@@ -44,9 +44,9 @@ public class OrderController {
     @GetMapping("/admin/list")
     public Result<PageInfo<OrderInfoDto>> adminList(@CurrentUser SysUser sysUser, OrderPageReq req) throws ForeseenException {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
-        if (roleDtos.contains("admin")) {
+        if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
 
-        } else if (roleDtos.contains("trans")) {
+        } else if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("trans"))) {
             req.setTransId(sysUser.getTransId());
         } else {
             req.setUserId(sysUser.getId().intValue());

@@ -40,9 +40,9 @@ public class TransCompanyUserController {
     public Result<PageInfo<TransCompanyUserDto>> adminList(@CurrentUser SysUser sysUser, TransPageReq req) throws ForeseenException {
 
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
-        if (roleDtos.contains("admin")) {
+        if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
 
-        } else if (roleDtos.contains("trans")) {
+        } else if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("trans"))) {
             if (sysUser.getTransId() == null) {
                 throw new ShowException("无权限");
             }
