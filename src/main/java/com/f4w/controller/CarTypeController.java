@@ -40,4 +40,10 @@ public class CarTypeController {
         return Result.ok(i);
     }
 
+    @DeleteMapping("{id}")
+    public Result delete(@PathVariable String id) throws ForeseenException {
+        int i = carTypeMapper.deleteByPrimaryKey(id);
+        return Result.ok(i);
+    }
+
 }
