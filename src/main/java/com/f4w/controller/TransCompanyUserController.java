@@ -2,18 +2,14 @@ package com.f4w.controller;
 
 import com.f4w.dto.TransCompanyUserDto;
 import com.f4w.dto.req.CommonPageReq;
-import com.f4w.entity.TransCompany;
 import com.f4w.entity.TransCompanyUser;
-import com.f4w.mapper.TransCompanyMapper;
 import com.f4w.mapper.TransCompanyUserMapper;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.Result;
-import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 /**
  * @Author: yp
@@ -32,10 +28,10 @@ public class TransCompanyUserController {
     }
 
     @GetMapping("/checkUser")
-    public Result checkUser(Integer id) throws ForeseenException {
+    public Result checkUser(Integer id,Integer status) throws ForeseenException {
         TransCompanyUser transCompanyUser = mapper.selectByPrimaryKey(id);
         if (transCompanyUser.getStatus().equals(0)) {
-            transCompanyUser.setStatus(1);
+            transCompanyUser.setStatus(status);
             mapper.updateByPrimaryKeySelective(transCompanyUser);
         }
         return Result.ok(1);
