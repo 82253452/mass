@@ -28,7 +28,7 @@ public class TransCompanyUserController {
     }
 
     @GetMapping("/checkUser")
-    public Result checkUser(Integer id,Integer status) throws ForeseenException {
+    public Result checkUser(Integer id, Integer status) throws ForeseenException {
         TransCompanyUser transCompanyUser = mapper.selectByPrimaryKey(id);
         if (transCompanyUser.getStatus().equals(0)) {
             transCompanyUser.setStatus(status);
@@ -38,7 +38,7 @@ public class TransCompanyUserController {
     }
 
     @DeleteMapping
-    public Result delete(@RequestBody Integer id) throws ForeseenException {
+    public Result delete(@PathVariable Integer id) throws ForeseenException {
         mapper.deleteByPrimaryKey(id);
         return Result.ok(1);
     }
