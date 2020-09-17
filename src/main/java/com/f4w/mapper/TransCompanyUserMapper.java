@@ -19,8 +19,13 @@ public interface TransCompanyUserMapper extends BaseMapper<TransCompanyUser> {
             "         left join sys_user su on tcu.user_id = su.id")
     List<TransCompanyUserDto> getList(CommonPageReq req);
 
-    @Select("select tcu.id id,su.*, tcu.status\n" +
+    @Select("<script>\n" +
+            "select tcu.id id,su.*, tcu.status\n" +
             "from trans_company_user tcu\n" +
-            "         left join sys_user su on tcu.user_id = su.id")
+            "         left join sys_user su on tcu.user_id = su.id\n" +
+            "    <if test='transId!=null and transId != &quot;&quot; '>\n" +
+            "        and tcu.trans_id = #{transId}\n" +
+            "    </if>\n" +
+            "</script>")
     List<TransCompanyUserDto> getAdminList(TransPageReq req);
 }

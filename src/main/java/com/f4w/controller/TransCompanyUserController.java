@@ -48,7 +48,7 @@ public class TransCompanyUserController {
             }
             req.setTransId(sysUser.getTransId());
         } else {
-            req.setUserId(sysUser.getId().intValue());
+            throw new ShowException("无权限");
         }
         PageInfo<TransCompanyUserDto> page = PageInfo.of(mapper.getAdminList(req));
         return Result.ok(page);
