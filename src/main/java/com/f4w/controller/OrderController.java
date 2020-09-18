@@ -43,6 +43,47 @@ public class OrderController {
         return Result.ok(page);
     }
 
+    /**
+     * 抢单
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/index/list")
+    public Result<PageInfo<OrderInfoDto>> indexList(CommonPageReq req) throws ForeseenException {
+        PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
+        return Result.ok(page);
+    }
+
+    /**
+     * 查询我的订单
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/status/list")
+    public Result<PageInfo<OrderInfoDto>> statusList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+        req.setUserId(sysUser.getId().intValue());
+        PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getStatusList(req));
+        return Result.ok(page);
+    }
+
+    /**
+     * 完成得单子
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/finash/list")
+    public Result<PageInfo<OrderInfoDto>> fianshList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+        req.setUserId(sysUser.getId().intValue());
+        PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getFinashList(req));
+        return Result.ok(page);
+    }
+
     @GetMapping("/admin/list")
     public Result<PageInfo<OrderInfoDto>> adminList(@CurrentUser SysUser sysUser, OrderPageReq req) throws ForeseenException {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());

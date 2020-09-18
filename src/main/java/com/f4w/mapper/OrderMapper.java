@@ -23,7 +23,8 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @param req
      * @return
      */
-    @Select("select o.*, \n" +
+    @Select("<script>\n" +
+            "select o.*, \n" +
             "       " +
             "title,\n" +
             "       type,\n" +
@@ -35,8 +36,13 @@ public interface OrderMapper extends BaseMapper<Order> {
             "from `order` o\n" +
             "         left join car_type ct on o.product_id = ct.id\n" +
             "where o.delete = 0\n" +
+            "<if test='status!=null and status != &quot;&quot; '>\n" +
+            "    " +
             "and o.status = #{status}\n" +
-            "order by o.mtime desc")
+            "</if>\n" +
+            "\n" +
+            "order by o.mtime desc\n" +
+            "</script>")
     List<OrderInfoDto> getList(CommonPageReq req);
 
     @Select("select o.*, \n" +
@@ -80,4 +86,60 @@ public interface OrderMapper extends BaseMapper<Order> {
             "order by o.mtime desc\n" +
             "</script>")
     List<OrderInfoDto> getAdminList(OrderPageReq req);
+
+    @Select("<script>\n" +
+            "select o.*, \n" +
+            "       " +
+            "title,\n" +
+            "       type,\n" +
+            "       car_length,\n" +
+            "       car_width,\n" +
+            "       car_height,\n" +
+            "       carrying_capacity,\n" +
+            "       img\n" +
+            "from `order` o\n" +
+            "         left join car_type ct on o.product_id = ct.id\n" +
+            "where o.delete = 0\n" +
+            " and o.status = 0\n" +
+            "order by o.mtime desc\n" +
+            "</script>")
+    List<OrderInfoDto> getIndexList(CommonPageReq req);
+
+    @Select("<script>\n" +
+            "select o.*, \n" +
+            "       " +
+            "title,\n" +
+            "       type,\n" +
+            "       car_length,\n" +
+            "       car_width,\n" +
+            "       car_height,\n" +
+            "       carrying_capacity,\n" +
+            "       img\n" +
+            "from `order` o\n" +
+            "         left join car_type ct on o.product_id = ct.id\n" +
+            "where o.delete = 0\n" +
+            " and o.status = 0\n" +
+            " and o.userId = #{userId}\n" +
+            "order by o.mtime desc\n" +
+            "</script>")
+    List<OrderInfoDto> getStatusList(CommonPageReq req);
+
+    @Select("<script>\n" +
+            "select o.*, \n" +
+            "       " +
+            "title,\n" +
+            "       type,\n" +
+            "       car_length,\n" +
+            "       car_width,\n" +
+            "       car_height,\n" +
+            "       carrying_capacity,\n" +
+            "       img\n" +
+            "from `order` o\n" +
+            "         left join car_type ct on o.product_id = ct.id\n" +
+            "where o.delete = 0\n" +
+            " and (o.status = 4 or o.status = 5 or o.status = 6 or o.status = 7)\n" +
+            " and o.userId = #{userId}\n" +
+            "order by o.mtime desc\n" +
+            "</script>")
+    List<OrderInfoDto> getFinashList(CommonPageReq req);
 }
