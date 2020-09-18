@@ -69,6 +69,7 @@ public class OrderController {
         orderMapper.insertSelective(Order.builder()
                 .productId(orderReq.getCarTypeId())
                 .addressFrom(orderReq.getAddressFrom())
+                .addressTo(orderReq.getAddressTo())
                 .latitudeFrom(orderReq.getLatitudeFrom())
                 .latitudeTo(orderReq.getLatitudeTo())
                 .longitudeFrom(orderReq.getLongitudeFrom())
