@@ -119,7 +119,7 @@ public interface OrderMapper extends BaseMapper<Order> {
             "         left join car_type ct on o.product_id = ct.id\n" +
             "where o.delete = 0\n" +
             " and o.status = 0\n" +
-            " and o.userId = #{userId}\n" +
+            " and o.user_id = #{userId}\n" +
             "order by o.mtime desc\n" +
             "</script>")
     List<OrderInfoDto> getStatusList(CommonPageReq req);
@@ -138,7 +138,7 @@ public interface OrderMapper extends BaseMapper<Order> {
             "         left join car_type ct on o.product_id = ct.id\n" +
             "where o.delete = 0\n" +
             " and (o.status = 4 or o.status = 5 or o.status = 6 or o.status = 7)\n" +
-            " and o.userId = #{userId}\n" +
+            " and o.user_id = #{userId}\n" +
             "order by o.mtime desc\n" +
             "</script>")
     List<OrderInfoDto> getFinashList(CommonPageReq req);
