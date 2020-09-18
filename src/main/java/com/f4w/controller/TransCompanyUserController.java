@@ -57,14 +57,14 @@ public class TransCompanyUserController {
     @GetMapping("/checkUser")
     public Result checkUser(Integer id, Integer status) throws ForeseenException {
         TransCompanyUser transCompanyUser = mapper.selectByPrimaryKey(id);
-        if (transCompanyUser.getStatus().equals(0)) {
+        if (transCompanyUser.getStatus().equals(0) || transCompanyUser.getStatus().equals(2)) {
             transCompanyUser.setStatus(status);
             mapper.updateByPrimaryKeySelective(transCompanyUser);
         }
         return Result.ok(1);
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public Result delete(@PathVariable Integer id) throws ForeseenException {
         mapper.deleteByPrimaryKey(id);
         return Result.ok(1);

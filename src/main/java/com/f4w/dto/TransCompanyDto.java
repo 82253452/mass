@@ -1,25 +1,22 @@
-package com.f4w.entity;
+package com.f4w.dto;
 
+import com.f4w.entity.SysUser;
+import com.f4w.entity.TransCompany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Table;
-
 /**
  * @Author: yp
- * @Date: 2020/9/8 15:28
+ * @Date: 2020/9/17 16:16
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "`trans_company_user`")
 @EqualsAndHashCode(callSuper = true)
-public class TransCompanyUser extends BaseEntity {
-    private Integer transId;
-    private Integer userId;
+public class TransCompanyDto extends TransCompany {
     private Integer status;
 }

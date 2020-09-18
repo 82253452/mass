@@ -3,11 +3,15 @@ package com.f4w.service;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.f4w.dto.SysUserDto;
+import com.f4w.dto.TransCompanyUserDto;
 import com.f4w.dto.req.MiniAppLoginReq;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.SysUser;
+import com.f4w.entity.TransCompany;
 import com.f4w.job.WechatPushArticleJob;
 import com.f4w.mapper.SysUserMapper;
+import com.f4w.mapper.TransCompanyUserMapper;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.JWTUtils;
 import com.f4w.utils.ShowException;
@@ -15,10 +19,12 @@ import com.f4w.weapp.WxOpenService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -30,6 +36,8 @@ public class WechatService {
     @Resource
     private SysUserMapper sysUserMapper;
     @Resource
+    private TransCompanyUserMapper transCompanyUserMapper;
+    @Resource
     private JWTUtils jwtUtils;
 
     @Async
@@ -37,7 +45,7 @@ public class WechatService {
         wechatPushArticleJob.execute(busiApp.getMessageParam());
     }
 
-    public SysUser loginFromOpenThird(MiniAppLoginReq miniAppLoginDto) throws ForeseenException {
+    public SysUserDto loginFromOpenThird(MiniAppLoginReq miniAppLoginDto) throws ForeseenException {
         try {
             WxMaJscode2SessionResult session = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(miniAppLoginDto.getAppId()).getUserService().getSessionInfo(miniAppLoginDto.getCode());
             WxMaUserInfo userInfo = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(miniAppLoginDto.getAppId()).getUserService().getUserInfo(session.getSessionKey(), miniAppLoginDto.getEncryptedData(), miniAppLoginDto.getIv());
@@ -58,8 +66,8 @@ public class WechatService {
                         .build();
                 sysUserMapper.insertSelective(sysUser);
             }
-            jwtUtils.creatKey(sysUser);
-            return sysUser;
+            SysUserDto sysUserDto = setUserInfo(sysUser);
+            return sysUserDto;
         } catch (Exception e) {
             System.out.println(e);
             log.error("用户授权失败", e);
@@ -68,7 +76,7 @@ public class WechatService {
         // 解密用户信息
     }
 
-    public SysUser getUserInfoByCode(MiniAppLoginReq request) throws ForeseenException {
+    public SysUserDto getUserInfoByCode(MiniAppLoginReq request) throws ForeseenException {
         try {
             WxMaJscode2SessionResult session = wxOpenService.getWxOpenComponentService().getWxMaServiceByAppid(request.getAppId()).getUserService().getSessionInfo(request.getCode());
             //如果没有unionid 就用openid 去登录
@@ -78,12 +86,22 @@ public class WechatService {
             } else {
                 sysUser = sysUserMapper.selectOne(SysUser.builder().openid(session.getOpenid()).build());
             }
-            jwtUtils.creatKey(sysUser);
-            return sysUser;
+            SysUserDto sysUserDto = setUserInfo(sysUser);
+            return sysUserDto;
         } catch (Exception e) {
             log.error("用户授权失败", e);
             throw new ForeseenException(e.getMessage());
         }
+    }
+
+    private SysUserDto setUserInfo(SysUser sysUser) {
+        SysUserDto sysUserDto = SysUserDto.builder().build();
+        BeanUtils.copyProperties(sysUser, sysUserDto);
+        sysUserDto.setToken(jwtUtils.creatKey(sysUser));
+        //所属物流公司
+        List<TransCompany> userCompanyList = transCompanyUserMapper.getUserCompanyList(sysUser.getId().intValue());
+        sysUserDto.setTransCompanyList(userCompanyList);
+        return sysUserDto;
     }
 
     public String getPhoneNoInfo(MiniAppLoginReq request) throws ForeseenException {

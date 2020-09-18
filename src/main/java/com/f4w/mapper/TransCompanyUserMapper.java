@@ -3,8 +3,10 @@ package com.f4w.mapper;
 import com.f4w.dto.TransCompanyUserDto;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.TransPageReq;
+import com.f4w.entity.TransCompany;
 import com.f4w.entity.TransCompanyUser;
 import com.f4w.utils.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -29,4 +31,10 @@ public interface TransCompanyUserMapper extends BaseMapper<TransCompanyUser> {
             "    </if>\n" +
             "</script>")
     List<TransCompanyUserDto> getAdminList(TransPageReq req);
+
+    @Select("select tc.*\n" +
+            "from trans_company_user tcu\n" +
+            "         left join trans_company tc on tcu.trans_id = tc.id\n" +
+            "where tcu.user_id = #{userId}")
+    List<TransCompany> getUserCompanyList(@Param("userId") Integer userId);
 }

@@ -49,9 +49,6 @@ public class SysUser extends BaseEntity {
 
     private BigDecimal amount;
 
-    @Transient
-    private String token;
-
     private Integer transId;
 
 }

@@ -49,7 +49,6 @@ public class JWTUtils {
         builder.setNotBefore(new Date());
         builder.signWith(keySpec);
         String jws = builder.compact();
-        sysUser.setToken(jws);
         return jws;
     }
 
