@@ -1,5 +1,6 @@
 package com.f4w.dto;
 
+import com.f4w.entity.Company;
 import com.f4w.entity.SysUser;
 import com.f4w.entity.TransCompany;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,5 @@ import java.util.List;
 public class SysUserDto extends SysUser {
     private String token;
     private List<TransCompany> transCompanyList;
+    private Company company;
 }

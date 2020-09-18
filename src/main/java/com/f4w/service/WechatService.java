@@ -7,9 +7,11 @@ import com.f4w.dto.SysUserDto;
 import com.f4w.dto.TransCompanyUserDto;
 import com.f4w.dto.req.MiniAppLoginReq;
 import com.f4w.entity.BusiApp;
+import com.f4w.entity.Company;
 import com.f4w.entity.SysUser;
 import com.f4w.entity.TransCompany;
 import com.f4w.job.WechatPushArticleJob;
+import com.f4w.mapper.CompanyMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.mapper.TransCompanyUserMapper;
 import com.f4w.utils.ForeseenException;
@@ -37,6 +39,8 @@ public class WechatService {
     private SysUserMapper sysUserMapper;
     @Resource
     private TransCompanyUserMapper transCompanyUserMapper;
+    @Resource
+    private CompanyMapper companyMapper;
     @Resource
     private JWTUtils jwtUtils;
 
@@ -101,6 +105,9 @@ public class WechatService {
         //所属物流公司
         List<TransCompany> userCompanyList = transCompanyUserMapper.getUserCompanyList(sysUser.getId().intValue());
         sysUserDto.setTransCompanyList(userCompanyList);
+        //所属企业信息
+        Company company = companyMapper.selectOne(Company.builder().userId(sysUser.getId().intValue()).build());
+        sysUserDto.setCompany(company);
         return sysUserDto;
     }
 
