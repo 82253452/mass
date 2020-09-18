@@ -86,6 +86,7 @@ public class OrderController {
                 .productId(orderReq.getCarTypeId())
                 .addressFrom(orderReq.getAddressFrom())
                 .addressTo(orderReq.getAddressTo())
+                .des(orderReq.getDes())
                 .latitudeFrom(orderReq.getLatitudeFrom())
                 .latitudeTo(orderReq.getLatitudeTo())
                 .longitudeFrom(orderReq.getLongitudeFrom())
@@ -102,17 +103,13 @@ public class OrderController {
     @GetMapping("/receiveOrder")
     public Result receiveOrder(@CurrentUser SysUser sysUser, String id) throws ForeseenException {
         Order order = Optional.ofNullable(orderMapper.selectByPrimaryKey(id)).orElseThrow(() -> new ShowException("订单id错误"));
-        if (order.getStatus().equals(0)) {
-            order.setStatus(1);
+        if (order.getStatus() == 0) {
             order.setReceiveUserId(sysUser.getId().intValue());
-        } else if (order.getStatus().equals(1)) {
-            order.setStatus(2);
-        } else if (order.getStatus().equals(2)) {
-            order.setStatus(3);
-        } else {
-            return Result.ok();
         }
-        orderMapper.updateByPrimaryKeySelective(order);
+        if (order.getStatus() < 4) {
+            order.setStatus(order.getStatus() + 1);
+            orderMapper.updateByPrimaryKeySelective(order);
+        }
         return Result.ok();
     }
 }

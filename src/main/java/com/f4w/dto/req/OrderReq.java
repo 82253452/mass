@@ -26,6 +26,7 @@ public class OrderReq {
     private Double longitudeTo;
     private String addressFrom;
     private String addressTo;
+    private String des;
     private BigDecimal amount;
 }
 
