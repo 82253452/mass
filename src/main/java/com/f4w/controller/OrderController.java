@@ -7,6 +7,7 @@ import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.OrderPageReq;
 import com.f4w.dto.req.OrderReq;
 import com.f4w.dto.req.TransPageReq;
+import com.f4w.entity.Company;
 import com.f4w.entity.Order;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.OrderMapper;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @Author: yp
@@ -64,9 +66,23 @@ public class OrderController {
         return Result.ok(orderInfoDto);
     }
 
+    @PutMapping
+    public Result update(@RequestBody Order order) throws ForeseenException {
+        orderMapper.updateByPrimaryKeySelective(order);
+        return Result.ok();
+    }
+
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable String id) throws ForeseenException {
+        orderMapper.deleteByPrimaryKey(id);
+        return Result.ok();
+    }
+
     @PostMapping("/submit")
     public Result submit(@CurrentUser SysUser sysUser, @RequestBody OrderReq orderReq) throws ForeseenException {
         orderMapper.insertSelective(Order.builder()
+                .phone(orderReq.getPhone())
+                .orderNo(UUID.randomUUID().toString().replaceAll("-", ""))
                 .productId(orderReq.getCarTypeId())
                 .addressFrom(orderReq.getAddressFrom())
                 .addressTo(orderReq.getAddressTo())
