@@ -4,6 +4,7 @@ import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.TokenIntecerpt;
 import com.f4w.dto.SysMenuDto;
 import com.f4w.dto.SysRoleDto;
+import com.f4w.dto.resp.UserResp;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.SysMenuMapper;
 import com.f4w.mapper.SysRoleMapper;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -70,16 +69,13 @@ public class UserController {
      * @return
      */
     @GetMapping("getUserInfo")
-    public R getUserInfo(@CurrentUser SysUser sysUser) {
-        Map render = new HashMap(2);
-        render.put("userInfo", sysUser);
+    public UserResp getUserInfo(@CurrentUser SysUser sysUser) {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
-        List<String> roles = new ArrayList();
-        roleDtos.forEach(e->{
+        ArrayList<String> roles = new ArrayList();
+        roleDtos.forEach(e -> {
             roles.add(e.getRoleName());
         });
-         render.put("roles", roles);
-        return R.renderSuccess("user", render);
+        return UserResp.builder().userInfo(sysUser).roles(roles).build();
     }
 
 

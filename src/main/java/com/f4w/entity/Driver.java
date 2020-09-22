@@ -1,19 +1,24 @@
-package com.f4w.dto;
+package com.f4w.entity;
 
-import com.f4w.entity.SysUser;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import javax.persistence.Table;
 
 /**
  * @Author: yp
- * @Date: 2020/9/17 16:16
+ * @Date: 2020/9/8 15:28
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "`driver`")
 @EqualsAndHashCode(callSuper = true)
-public class TransCompanyUserDto extends SysUser {
+public class Driver extends BaseEntity {
     private String name;
     private String carNumber;
     private String carModel;

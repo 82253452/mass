@@ -1,13 +1,18 @@
 package com.f4w.controller;
 
+import com.f4w.dto.req.LoginReq;
+import com.f4w.dto.resp.UserResp;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.SysMenuMapper;
 import com.f4w.mapper.SysRoleMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.utils.JWTUtils;
 import com.f4w.utils.R;
+import com.f4w.utils.ShowException;
+import com.f4w.utils.SystemErrorEnum;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("userLogin")
@@ -49,5 +55,14 @@ public class LoginController {
             }
         }
         return R.error(1002, "账号或密码错误");
+    }
+
+    @PostMapping("/userLogin")
+    public UserResp login(@Validated @RequestBody LoginReq req) throws ShowException {
+        SysUser sysUser = Optional.ofNullable(sysUserMapper.selectOne(SysUser.builder().userName(req.getUsername()).build())).orElseThrow(() -> new ShowException(SystemErrorEnum.USER_ERROR));
+        if (!StringUtils.equals(DigestUtils.md5Hex(req.getPassword()), sysUser.getPassword())) {
+            throw new ShowException(SystemErrorEnum.USER_ERROR);
+        }
+        return UserResp.builder().uid(sysUser.getId().intValue()).userName(sysUser.getUserName()).token(jwtUtils.creatKey(sysUser)).build();
     }
 }

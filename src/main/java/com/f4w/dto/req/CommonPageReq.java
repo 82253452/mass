@@ -1,5 +1,6 @@
 package com.f4w.dto.req;
 
+import com.f4w.entity.SysUser;
 import com.f4w.utils.Page;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +20,5 @@ import lombok.experimental.SuperBuilder;
 public class CommonPageReq extends Page {
     private Integer status;
     private Integer userId;
+    private SysUser sysUser;
 }
