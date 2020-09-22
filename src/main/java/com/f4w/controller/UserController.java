@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -69,7 +71,26 @@ public class UserController {
      * @return
      */
     @GetMapping("getUserInfo")
-    public UserResp getUserInfo(@CurrentUser SysUser sysUser) {
+    public R getUserInfo(@CurrentUser SysUser sysUser) {
+        Map render = new HashMap(2);
+        render.put("userInfo", sysUser);
+        List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
+        List<String> roles = new ArrayList();
+        roleDtos.forEach(e->{
+            roles.add(e.getRoleName());
+        });
+        render.put("roles", roles);
+        return R.renderSuccess("user", render);
+    }
+
+    /**
+     * 获取用户信息
+     *
+     * @param sysUser
+     * @return
+     */
+    @GetMapping("/admin/getUserInfo")
+    public UserResp adminGetUserInfo(@CurrentUser SysUser sysUser) {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
         ArrayList<String> roles = new ArrayList();
         roleDtos.forEach(e -> {
