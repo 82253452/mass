@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented//说明该注解将被包含在javadoc中
 @Inherited
-public @interface TokenIntecerpt {
+public @interface NotTokenIntecerpt {
 
 }

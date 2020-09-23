@@ -90,6 +90,9 @@ public class WechatService {
             } else {
                 sysUser = sysUserMapper.selectOne(SysUser.builder().openid(session.getOpenid()).build());
             }
+            if (sysUser == null) {
+                return null;
+            }
             SysUserDto sysUserDto = setUserInfo(sysUser);
             return sysUserDto;
         } catch (Exception e) {

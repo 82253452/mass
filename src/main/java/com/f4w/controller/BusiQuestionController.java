@@ -2,7 +2,7 @@ package com.f4w.controller;
 
 
 import com.f4w.annotation.CurrentUser;
-import com.f4w.annotation.TokenIntecerpt;
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.entity.BusiQuestion;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.BusiQuestionMapper;
@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 @Slf4j
 @RestController
 @RequestMapping("/busiQuestion")
-@TokenIntecerpt
 public class BusiQuestionController {
     @Resource
     public BusiQuestionMapper busiQuestionMapper;

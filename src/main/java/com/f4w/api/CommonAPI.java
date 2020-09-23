@@ -2,6 +2,7 @@ package com.f4w.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.BusiWCitys;
 import com.f4w.entity.BusiWProvience;
@@ -37,6 +38,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("common")
+@NotTokenIntecerpt
 public class CommonAPI {
 
     @Resource

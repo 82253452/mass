@@ -1,4 +1,4 @@
-package com.f4w.controller;
+package com.f4w.carAdminController;
 
 import com.f4w.dto.req.CarTypeReq;
 import com.f4w.entity.CarType;
@@ -23,27 +23,27 @@ public class CarTypeController {
     private CarTypeMapper carTypeMapper;
 
     @GetMapping("/list")
-    public Result<PageInfo<CarType>> list(CarTypeReq req) throws ForeseenException {
+    public PageInfo<CarType> list(CarTypeReq req) throws ForeseenException {
         PageInfo<CarType> page = PageInfo.of(carTypeMapper.getList(req));
-        return Result.ok(page);
+        return page;
     }
 
     @PostMapping
-    public Result add(@RequestBody CarType req) throws ForeseenException {
+    public int add(@RequestBody CarType req) throws ForeseenException {
         int i = carTypeMapper.insertSelective(req);
-        return Result.ok(i);
+        return i;
     }
 
     @PutMapping
-    public Result update(@RequestBody CarType req) throws ForeseenException {
+    public int update(@RequestBody CarType req) throws ForeseenException {
         int i = carTypeMapper.updateByPrimaryKeySelective(req);
-        return Result.ok(i);
+        return i;
     }
 
     @DeleteMapping("{id}")
-    public Result delete(@PathVariable String id) throws ForeseenException {
+    public int delete(@PathVariable String id) throws ForeseenException {
         int i = carTypeMapper.deleteByPrimaryKey(id);
-        return Result.ok(i);
+        return i;
     }
 
 }

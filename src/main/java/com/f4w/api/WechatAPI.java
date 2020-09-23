@@ -6,6 +6,7 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.dto.req.AlertBodyReq;
 import com.f4w.dto.req.AlertHttpBodyReq;
 import com.f4w.dto.req.JobInfoReq;
@@ -42,6 +43,7 @@ import static com.f4w.utils.Constant.Cachekey.SEND_MESSAGE_OPENID;
 @Slf4j
 @RestController
 @RequestMapping("/we")
+@NotTokenIntecerpt
 public class WechatAPI {
     @Resource
     public BusiAppPageMapper busiAppPageMapper;

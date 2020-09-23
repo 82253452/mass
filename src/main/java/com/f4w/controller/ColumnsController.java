@@ -1,7 +1,7 @@
 package com.f4w.controller;
 
 
-import com.f4w.annotation.TokenIntecerpt;
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.dto.req.ColumnsReq;
 import com.f4w.entity.Columns;
 import com.f4w.mapper.ColumnsMapper;
@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/columns")
-@TokenIntecerpt
 public class ColumnsController {
     @Resource
     private ColumnsMapper columnsMapper;

@@ -1,7 +1,7 @@
 package com.f4w.controller;
 
 
-import com.f4w.annotation.TokenIntecerpt;
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.dto.req.UserReq;
 import com.f4w.entity.SysUser;
 import com.f4w.entity.SysUserRole;
@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/sysUser")
-@TokenIntecerpt
 public class SysUserController {
     @Resource
     public SysUserMapper sysUserMapper;

@@ -1,4 +1,4 @@
-package com.f4w.controller;
+package com.f4w.carAdminController;
 
 import com.f4w.annotation.CurrentUser;
 import com.f4w.dto.OrderInfoDto;
@@ -6,21 +6,16 @@ import com.f4w.dto.SysRoleDto;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.OrderPageReq;
 import com.f4w.dto.req.OrderReq;
-import com.f4w.dto.req.TransPageReq;
-import com.f4w.entity.Company;
 import com.f4w.entity.Order;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.OrderMapper;
 import com.f4w.mapper.SysRoleMapper;
 import com.f4w.utils.ForeseenException;
-import com.f4w.utils.Result;
 import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,9 +33,9 @@ public class OrderController {
     private SysRoleMapper sysRoleMapper;
 
     @GetMapping("/list")
-    public Result<PageInfo<OrderInfoDto>> list(CommonPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> list(CommonPageReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getList(req));
-        return Result.ok(page);
+        return page;
     }
 
     /**
@@ -51,9 +46,9 @@ public class OrderController {
      * @throws ForeseenException
      */
     @GetMapping("/index/list")
-    public Result<PageInfo<OrderInfoDto>> indexList(CommonPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> indexList(CommonPageReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
-        return Result.ok(page);
+        return page;
     }
 
     /**
@@ -64,10 +59,10 @@ public class OrderController {
      * @throws ForeseenException
      */
     @GetMapping("/status/list")
-    public Result<PageInfo<OrderInfoDto>> statusList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> statusList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
         req.setUserId(sysUser.getId().intValue());
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getStatusList(req));
-        return Result.ok(page);
+        return page;
     }
 
     /**
@@ -78,14 +73,14 @@ public class OrderController {
      * @throws ForeseenException
      */
     @GetMapping("/finash/list")
-    public Result<PageInfo<OrderInfoDto>> fianshList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> fianshList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
         req.setUserId(sysUser.getId().intValue());
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getFinashList(req));
-        return Result.ok(page);
+        return page;
     }
 
     @GetMapping("/admin/list")
-    public Result<PageInfo<OrderInfoDto>> adminList(@CurrentUser SysUser sysUser, OrderPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> adminList(@CurrentUser SysUser sysUser, OrderPageReq req) throws ForeseenException {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
         if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
 
@@ -98,29 +93,27 @@ public class OrderController {
             req.setUserId(sysUser.getId().intValue());
         }
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getAdminList(req));
-        return Result.ok(page);
+        return page;
     }
 
     @GetMapping("/detail")
-    public Result<OrderInfoDto> selectById(String id) throws ForeseenException {
+    public OrderInfoDto selectById(String id) throws ForeseenException {
         OrderInfoDto orderInfoDto = orderMapper.selectById(id);
-        return Result.ok(orderInfoDto);
+        return orderInfoDto;
     }
 
     @PutMapping
-    public Result update(@RequestBody Order order) throws ForeseenException {
-        orderMapper.updateByPrimaryKeySelective(order);
-        return Result.ok();
+    public int update(@RequestBody Order order) throws ForeseenException {
+        return orderMapper.updateByPrimaryKeySelective(order);
     }
 
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable String id) throws ForeseenException {
-        orderMapper.deleteByPrimaryKey(id);
-        return Result.ok();
+    public int delete(@PathVariable String id) throws ForeseenException {
+        return orderMapper.deleteByPrimaryKey(id);
     }
 
     @PostMapping("/submit")
-    public Result submit(@CurrentUser SysUser sysUser, @RequestBody OrderReq orderReq) throws ForeseenException {
+    public void submit(@CurrentUser SysUser sysUser, @RequestBody OrderReq orderReq) throws ForeseenException {
         orderMapper.insertSelective(Order.builder()
                 .phone(orderReq.getPhone())
                 .orderNo(UUID.randomUUID().toString().replaceAll("-", ""))
@@ -138,11 +131,10 @@ public class OrderController {
                 .userName(orderReq.getUserName())
                 .status(0)
                 .build());
-        return Result.ok();
     }
 
     @GetMapping("/receiveOrder")
-    public Result receiveOrder(@CurrentUser SysUser sysUser, String id) throws ForeseenException {
+    public void receiveOrder(@CurrentUser SysUser sysUser, String id) throws ForeseenException {
         Order order = Optional.ofNullable(orderMapper.selectByPrimaryKey(id)).orElseThrow(() -> new ShowException("订单id错误"));
         if (order.getStatus() == 0) {
             order.setReceiveUserId(sysUser.getId().intValue());
@@ -151,6 +143,5 @@ public class OrderController {
             order.setStatus(order.getStatus() + 1);
             orderMapper.updateByPrimaryKeySelective(order);
         }
-        return Result.ok();
     }
 }

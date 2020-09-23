@@ -1,10 +1,9 @@
-package com.f4w.controller;
+package com.f4w.carAdminController;
 
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.entity.Banner;
 import com.f4w.mapper.BannerMapper;
 import com.f4w.utils.ForeseenException;
-import com.f4w.utils.Result;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,27 +20,27 @@ public class BannerController {
     private BannerMapper bannerMapper;
 
     @GetMapping("/list")
-    public Result<PageInfo<Banner>> list(CommonPageReq req) throws ForeseenException {
+    public PageInfo<Banner> list(CommonPageReq req) throws ForeseenException {
         PageInfo<Banner> page = PageInfo.of(bannerMapper.getList(req));
-        return Result.ok(page);
+        return page;
     }
 
     @PostMapping
-    public Result add(@RequestBody Banner banner) throws ForeseenException {
+    public int add(@RequestBody Banner banner) throws ForeseenException {
         int i = bannerMapper.insertSelective(banner);
-        return Result.ok(i);
+        return i;
     }
 
     @PutMapping
-    public Result update(@RequestBody Banner banner) throws ForeseenException {
+    public int update(@RequestBody Banner banner) throws ForeseenException {
         int i = bannerMapper.updateByPrimaryKeySelective(banner);
-        return Result.ok(i);
+        return i;
     }
 
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable String id) throws ForeseenException {
+    public int delete(@PathVariable String id) throws ForeseenException {
         int i = bannerMapper.deleteByPrimaryKey(id);
-        return Result.ok(i);
+        return i;
     }
 
 }
