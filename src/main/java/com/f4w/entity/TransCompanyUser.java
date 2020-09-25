@@ -21,5 +21,4 @@ import javax.persistence.Table;
 public class TransCompanyUser extends BaseEntity {
     private Integer transId;
     private Integer userId;
-    private Integer status;
 }

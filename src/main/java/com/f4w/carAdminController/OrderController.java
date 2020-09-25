@@ -125,7 +125,7 @@ public class OrderController {
         if (order.getStatus() != 0) {
             throw new ShowException("订单状态错误");
         }
-        order.setStatus(OrderStatusEnum.TRANS_COMPANY1.getCode());
+        order.setStatus(OrderStatusEnum.WAITING_SHIPMENT.getCode());
         order.setReceiveUserId(userId);
         orderMapper.updateByPrimaryKeySelective(order);
     }

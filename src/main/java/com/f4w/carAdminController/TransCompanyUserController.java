@@ -34,14 +34,13 @@ public class TransCompanyUserController {
     private TransCompanyMapper transCompanyMapper;
 
     @GetMapping("/list")
-    public PageInfo<TransCompanyUserDto> list(CommonPageReq req) throws ForeseenException {
+    public PageInfo<TransCompanyUserDto> list(CommonPageReq req)  {
         PageInfo<TransCompanyUserDto> page = PageInfo.of(mapper.getList(req));
         return page;
     }
 
     @GetMapping("/admin/list")
-    public PageInfo<TransCompanyUserDto> adminList(@CurrentUser SysUser sysUser, TransPageReq req) throws ForeseenException {
-
+    public PageInfo<TransCompanyUserDto> adminList(@CurrentUser SysUser sysUser, TransPageReq req) throws ShowException {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
         if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
 
@@ -59,17 +58,17 @@ public class TransCompanyUserController {
     }
 
     @GetMapping("/checkUser")
-    public void checkUser(Integer id, Integer status) throws ForeseenException {
-        TransCompanyUser transCompanyUser = mapper.selectByPrimaryKey(id);
-        if (transCompanyUser.getStatus().equals(0) || transCompanyUser.getStatus().equals(2)) {
-            transCompanyUser.setStatus(status);
-            mapper.updateByPrimaryKeySelective(transCompanyUser);
+    public void checkUser(Integer id, Integer status)  {
+        TransCompany transCompany = transCompanyMapper.selectByPrimaryKey(id);
+        if (transCompany.getStatus().equals(0) || transCompany.getStatus().equals(2)) {
+            transCompany.setStatus(status);
+            transCompanyMapper.updateByPrimaryKeySelective(transCompany);
         }
     }
 
     @DeleteMapping("{id}")
-    public int delete(@PathVariable Integer id) throws ForeseenException {
-        return mapper.deleteByPrimaryKey(id);
+    public int delete(@PathVariable Integer id)  {
+        return transCompanyMapper.deleteByPrimaryKey(id);
     }
 
 }

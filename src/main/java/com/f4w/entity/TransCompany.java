@@ -29,4 +29,5 @@ public class TransCompany extends BaseEntity {
     private String email;
     private String remark;
     private Integer userId;
+    private Integer status;
 }

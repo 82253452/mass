@@ -23,7 +23,7 @@ public interface TransCompanyUserMapper extends BaseMapper<TransCompanyUser> {
     List<TransCompanyUserDto> getList(CommonPageReq req);
 
     @Select("<script>\n" +
-            "select tcu.id id,tcu.status,d.*,su.*\n" +
+            "select d.*,su.*\n" +
             "from trans_company_user tcu\n" +
             "         left join driver d on tcu.driver_id = d.id\n" +
             "         left join sys_user su on tcu.user_id = su.id\n" +
