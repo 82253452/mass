@@ -55,7 +55,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     void deleteDuplicates();
 
     @Delete("update wxmp wx set del ='1'  WHERE wx.id = #{id}")
-    void deleteById(Long id);
+    void deleteById(Integer id);
 
     @Select({"<script>",
             "select * from wxmp where 1=1",

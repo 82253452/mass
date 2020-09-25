@@ -18,7 +18,7 @@ import java.util.Date;
 public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @Column(insertable = false, updatable = false)
     private Date ctime;
     @Column(insertable = false, updatable = false)

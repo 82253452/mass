@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @author admin
@@ -49,6 +47,8 @@ public class SysUser extends BaseEntity {
 
     private BigDecimal amount;
 
-    private Integer transId;
+    private Integer creditScore;
+
+    private Integer type;
 
 }

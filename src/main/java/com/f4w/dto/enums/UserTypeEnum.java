@@ -7,17 +7,14 @@ import lombok.ToString;
 /**
  * @author admin
  */
-
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum ArticleTypeEnum {
-    VIDEO(0, "视频"),
-    ARTICLE(1,"文章"),
-    TOP_VIDEO(2, "头条视频"),
-    TOP_ARTICLE(3, "头条文章"),
-    MINIAPP_VIDEO(4, "小程序视频"),
-    TOP_MINIAPP_VIDEO(5, "小程序头条视频");
+public enum UserTypeEnum {
+    SYSTEM(0, "系统用户"),
+    TRANS_COMPANY(1, "物流公司"),
+    DRIVER(2, "司机"),
+    COMPANYH(3, "企业");
 
     private final Integer code;
     private final String description;

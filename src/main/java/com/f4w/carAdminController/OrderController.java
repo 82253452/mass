@@ -85,10 +85,10 @@ public class OrderController {
         if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
 
         } else if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("trans"))) {
-            if (sysUser.getTransId() == null) {
-                throw new ShowException("无权限");
-            }
-            req.setTransId(sysUser.getTransId());
+//            if (sysUser.getTransId() == null) {
+//                throw new ShowException("无权限");
+//            }
+//            req.setTransId(sysUser.getTransId());
         } else {
             req.setUserId(sysUser.getId().intValue());
         }

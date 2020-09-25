@@ -5,17 +5,12 @@ import com.f4w.dto.TransCompanyDto;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.entity.SysUser;
 import com.f4w.entity.TransCompany;
-import com.f4w.entity.TransCompanyUser;
 import com.f4w.mapper.TransCompanyMapper;
-import com.f4w.mapper.TransCompanyUserMapper;
-import com.f4w.utils.ForeseenException;
-import com.f4w.utils.Result;
-import com.f4w.utils.ShowException;
+import com.f4w.service.TransCompanyService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 /**
  * @Author: yp
@@ -27,60 +22,40 @@ public class TransCompanyController {
     @Resource
     private TransCompanyMapper mapper;
     @Resource
-    private TransCompanyUserMapper transCompanyUserMapper;
+    private TransCompanyService transCompanyService;
 
     @GetMapping("/list")
-    public PageInfo<TransCompany> list(CommonPageReq req) throws ForeseenException {
+    public PageInfo<TransCompany> list(CommonPageReq req) {
         PageInfo<TransCompany> page = PageInfo.of(mapper.getList(req));
         return page;
     }
 
     @GetMapping("/user/list")
-    public PageInfo<TransCompanyDto> userList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+    public PageInfo<TransCompanyDto> userList(@CurrentUser SysUser sysUser, CommonPageReq req) {
         req.setUserId(sysUser.getId().intValue());
         PageInfo<TransCompanyDto> page = PageInfo.of(mapper.getUserList(req));
         return page;
     }
 
     @GetMapping("/detail")
-    public TransCompany detail(String id) throws ForeseenException {
+    public TransCompany detail(String id) {
         TransCompany transCompany = mapper.selectByPrimaryKey(id);
         return transCompany;
     }
 
     @PostMapping
-    public int add(@RequestBody TransCompany banner) throws ForeseenException {
-        return mapper.insertSelective(banner);
+    public void add(@RequestBody TransCompany transCompany) {
+        transCompanyService.addCompany(transCompany);
     }
 
     @PutMapping
-    public int update(@RequestBody TransCompany banner) throws ForeseenException {
-        return mapper.updateByPrimaryKeySelective(banner);
+    public void update(@RequestBody TransCompany banner) {
+        mapper.updateByPrimaryKeySelective(banner);
     }
 
     @DeleteMapping("{id}")
-    public int delete(@PathVariable String id) throws ForeseenException {
-        return mapper.deleteByPrimaryKey(id);
-    }
-
-    @GetMapping("/attachCompany")
-    public void attachCompany(@CurrentUser SysUser sysUser, Integer transId) throws ForeseenException {
-        TransCompany transCompany = Optional.ofNullable(mapper.selectByPrimaryKey(transId)).orElseThrow(() -> new ShowException("参数错误"));
-        TransCompanyUser transCompanyUser = transCompanyUserMapper.selectOne(TransCompanyUser.builder().userId(sysUser.getId().intValue()).transId(transCompany.getId().intValue()).build());
-        if (transCompanyUser == null) {
-            transCompanyUserMapper.insertSelective(TransCompanyUser.builder().transId(transId).userId(sysUser.getId().intValue()).build());
-            return;
-        }
-        if (transCompanyUser.getStatus() == 0) {
-            throw new ShowException("已经申请加入该公司");
-        }
-        if (transCompanyUser.getStatus() == 1) {
-            throw new ShowException("已经加入该公司");
-        }
-        if (transCompanyUser.getStatus() == 2) {
-            transCompanyUser.setStatus(0);
-            transCompanyUserMapper.updateByPrimaryKeySelective(transCompanyUser);
-        }
+    public void delete(@PathVariable Integer id) {
+        transCompanyService.deleteCompany(id);
     }
 
 }

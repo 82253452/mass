@@ -29,7 +29,7 @@ public class BusiApp extends BaseEntity {
     //0 默认 1授权成功 2发版审核中 3审核通过 4审核失败 5发布成功 6发布失败 7上传成功(发版失败)
     private Integer status;
     private String fileName;
-    private Long uid;
+    private Integer uid;
     private Long auditId;
     private Integer version;
     private String auditMsg;

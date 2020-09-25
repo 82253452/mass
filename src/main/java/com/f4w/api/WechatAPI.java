@@ -142,7 +142,7 @@ public class WechatAPI {
     }
 
     @GetMapping("/getArticleDetail")
-    public R getArticleDetail(Long id, String appId) {
+    public R getArticleDetail(Integer id, String appId) {
         BusiArticle busiArticle1 = new BusiArticle();
         busiArticle1.setAppId(appId);
         busiArticle1.setId(id);

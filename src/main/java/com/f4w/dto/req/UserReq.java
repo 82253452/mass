@@ -12,10 +12,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+/**
+ * @author admin
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserReq extends SysUser {
-    private Long roleId;
+    private Integer roleId;
 }

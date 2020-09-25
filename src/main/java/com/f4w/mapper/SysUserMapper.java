@@ -1,10 +1,14 @@
 package com.f4w.mapper;
 
+import com.f4w.dto.AdminUserDto;
+import com.f4w.dto.req.CommonPageReq;
 import com.f4w.utils.BaseMapper;
 import com.f4w.dto.BusiAppDto;
 import com.f4w.entity.BusiApp;
 import com.f4w.entity.SysUser;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
@@ -27,4 +31,10 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
             }
     )
     BusiAppDto findDtoAll();
+
+    @Select("select * from sys_user where `delete` = 0 order by mtime desc ")
+    List<SysUser> getList(CommonPageReq req);
+
+    @Select("select * from sys_user where `delete` = 0 order by mtime desc ")
+    List<AdminUserDto> getAdminList(CommonPageReq req);
 }

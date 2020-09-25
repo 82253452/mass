@@ -67,9 +67,7 @@ public class MiniAppController {
     public UserResp adminGetUserInfo(@CurrentUser SysUser sysUser) {
         List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
         ArrayList<String> roles = new ArrayList();
-        roleDtos.forEach(e -> {
-            roles.add(e.getRoleName());
-        });
+        roleDtos.forEach(e -> roles.add(e.getRoleName()));
         return UserResp.builder().userInfo(sysUser).roles(roles).build();
     }
 

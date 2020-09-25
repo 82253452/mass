@@ -39,7 +39,7 @@ public class NotifyController {
     public void authorizerRefreshToken(
             @RequestParam("auth_code") String authCode
             , @RequestParam("expires_in") String expiresIn
-            , @RequestParam("uid") Long uid
+            , @RequestParam("uid") Integer uid
             , HttpServletResponse response) throws IOException {
         log.info(
                 "\n接收微信请求：[authCode=[{}], expiresIn=[{}], uid=[{}]",

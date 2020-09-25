@@ -1,13 +1,14 @@
-package com.f4w.entity;
+package com.f4w.dto;
 
+import com.f4w.entity.SysRole;
+import com.f4w.entity.SysUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
-import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author admin
@@ -16,11 +17,7 @@ import javax.persistence.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "`sys_user_role`")
 @EqualsAndHashCode(callSuper = true)
-public class SysUserRole extends BaseEntity {
-
-    private Integer roleId;
-    private Integer userId;
-
+public class AdminUserDto extends SysUser {
+    private List<SysRole> roles;
 }
