@@ -3,32 +3,35 @@ package com.f4w.carAdminController;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.dto.SysRoleDto;
+import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.LoginReq;
 import com.f4w.dto.req.MiniAppLoginReq;
 import com.f4w.dto.resp.UserResp;
+import com.f4w.entity.BusiApp;
+import com.f4w.entity.BusiAppPage;
 import com.f4w.entity.SysUser;
+import com.f4w.mapper.BusiAppMapper;
+import com.f4w.mapper.BusiAppPageMapper;
 import com.f4w.mapper.SysRoleMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.service.WechatService;
-import com.f4w.utils.ForeseenException;
-import com.f4w.utils.JWTUtils;
-import com.f4w.utils.ShowException;
-import com.f4w.utils.SystemErrorEnum;
+import com.f4w.utils.*;
 import com.f4w.weapp.WxOpenService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.open.bean.WxOpenMaCodeTemplate;
 import me.chanjar.weixin.open.bean.ma.WxMaOpenCommitExtInfo;
 import me.chanjar.weixin.open.bean.result.WxOpenResult;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Author: yp
@@ -45,6 +48,8 @@ public class MiniAppController {
     private SysUserMapper sysUserMapper;
     @Resource
     private SysRoleMapper sysRoleMapper;
+    @Resource
+    private BusiAppMapper busiAppMapper;
     @Resource
     private JWTUtils jwtUtils;
 
@@ -69,6 +74,12 @@ public class MiniAppController {
         ArrayList<String> roles = new ArrayList();
         roleDtos.forEach(e -> roles.add(e.getRoleName()));
         return UserResp.builder().userInfo(sysUser).roles(roles).build();
+    }
+
+    @GetMapping("/getAppPages")
+    public PageInfo<BusiApp> getAppPages(@CurrentUser SysUser sysUser, CommonPageReq req) {
+        PageInfo<BusiApp> of = PageInfo.of(busiAppMapper.select(BusiApp.builder().miniProgramInfo(req.getType()).build()));
+        return of;
     }
 
     /**

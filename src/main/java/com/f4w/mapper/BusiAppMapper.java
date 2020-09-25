@@ -1,9 +1,13 @@
 package com.f4w.mapper;
 
+import com.f4w.dto.req.CommonPageReq;
+import com.f4w.entity.Banner;
 import com.f4w.entity.BusiApp;
 import com.f4w.dto.BusiAppDto;
 import com.f4w.utils.BaseMapper;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 public interface BusiAppMapper extends BaseMapper<BusiApp> {
 
@@ -39,4 +43,7 @@ public interface BusiAppMapper extends BaseMapper<BusiApp> {
             }
     )
     BusiAppDto findDtoAll();
+
+    @Select("select * from banner where `busi_app` = 0 order by mtime desc ")
+    List<Banner> getList(CommonPageReq req);
 }

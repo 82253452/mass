@@ -19,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class CommonPageReq extends Page {
     private Integer status;
+    private Integer type;
     private Integer userId;
     private SysUser sysUser;
 }
