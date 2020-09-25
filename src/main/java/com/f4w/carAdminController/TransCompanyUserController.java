@@ -6,8 +6,10 @@ import com.f4w.dto.TransCompanyUserDto;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.TransPageReq;
 import com.f4w.entity.SysUser;
+import com.f4w.entity.TransCompany;
 import com.f4w.entity.TransCompanyUser;
 import com.f4w.mapper.SysRoleMapper;
+import com.f4w.mapper.TransCompanyMapper;
 import com.f4w.mapper.TransCompanyUserMapper;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.ShowException;
@@ -28,6 +30,8 @@ public class TransCompanyUserController {
     private TransCompanyUserMapper mapper;
     @Resource
     private SysRoleMapper sysRoleMapper;
+    @Resource
+    private TransCompanyMapper transCompanyMapper;
 
     @GetMapping("/list")
     public PageInfo<TransCompanyUserDto> list(CommonPageReq req) throws ForeseenException {
@@ -42,10 +46,11 @@ public class TransCompanyUserController {
         if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
 
         } else if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("trans"))) {
-//            if (sysUser.getTransId() == null) {
-//                throw new ShowException("无权限");
-//            }
-//            req.setTransId(sysUser.getTransId());
+            TransCompany transCompany = transCompanyMapper.selectOne(TransCompany.builder().userId(sysUser.getId()).build());
+            if (transCompany == null) {
+                throw new ShowException("无权限");
+            }
+            req.setTransId(transCompany.getId());
         } else {
             throw new ShowException("无权限");
         }
