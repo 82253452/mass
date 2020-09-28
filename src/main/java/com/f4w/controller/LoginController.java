@@ -1,5 +1,6 @@
 package com.f4w.controller;
 
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.dto.req.LoginReq;
 import com.f4w.dto.resp.UserResp;
 import com.f4w.entity.SysUser;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("userLogin")
+@NotTokenIntecerpt
 public class LoginController {
     @Resource
     private SysUserMapper sysUserMapper;
