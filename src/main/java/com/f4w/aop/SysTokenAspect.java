@@ -37,7 +37,15 @@ public class SysTokenAspect {
     private void tokenIntercept() {
     }
 
-    @Pointcut("!notTokenIntercept() && tokenIntercept()")
+    @Pointcut("execution(public * com.f4w.carAdminController..*(..))")
+    private void tokenCarIntercept() {
+    }
+
+    @Pointcut("execution(public * com.f4w.carApiController..*(..))")
+    private void tokenCarApiIntercept() {
+    }
+
+    @Pointcut("!notTokenIntercept() && tokenIntercept() && tokenCarIntercept() && tokenCarApiIntercept()")
     public void intercept() {
 
     }
