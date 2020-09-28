@@ -44,6 +44,12 @@ public interface BusiAppMapper extends BaseMapper<BusiApp> {
     )
     BusiAppDto findDtoAll();
 
-    @Select("select * from banner where `busi_app` = 0 order by mtime desc ")
-    List<Banner> getList(CommonPageReq req);
+    @Select("<script>\n" +
+            "select * from busi_app where `delete` = 0 \n" +
+            "<if test='type!=null and type != &quot;&quot; '>\n" +
+            "    and mini_program_info = #{type}\n" +
+            "</if>\n" +
+            "order by mtime desc \n" +
+            "</script>")
+    List<BusiApp> getList(CommonPageReq req);
 }
