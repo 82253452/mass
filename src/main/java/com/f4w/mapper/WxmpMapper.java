@@ -1,6 +1,7 @@
 package com.f4w.mapper;
 
 import com.f4w.dto.WxmpDto;
+import com.f4w.dto.req.CommonPageReq;
 import com.f4w.entity.Wxmp;
 import com.f4w.utils.BaseMapper;
 import org.apache.ibatis.annotations.*;
@@ -109,4 +110,7 @@ public interface WxmpMapper extends BaseMapper<Wxmp> {
     })
     @ResultMap(value = "base")
     List<Wxmp> selectCurrentByPage(Map map);
+
+    @Select("select * from wxmp where `delete` = 0 order by mtime desc ")
+    List<Wxmp> getList(CommonPageReq req);
 }

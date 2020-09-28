@@ -1,5 +1,6 @@
 package com.f4w.mapper;
 
+import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.TalentPoolReq;
 import com.f4w.entity.TalentPool;
 import com.f4w.utils.BaseMapper;
@@ -36,4 +37,7 @@ public interface TalentPoolMapper extends BaseMapper<TalentPool> {
 
     @Select("select distinct major from talent_pool where major is not null and major !=''")
     List<String> selectMajors();
+
+    @Select("select * from talent_pool where `delete` = 0 order by mtime desc ")
+    List<TalentPool> getList(CommonPageReq req);
 }
