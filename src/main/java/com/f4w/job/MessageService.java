@@ -162,6 +162,7 @@ public class MessageService {
     @Transactional
     public String uploadFile(String appId, String thumbnail) throws IOException, WxErrorException {
         File file = File.createTempFile(UUID.randomUUID().toString(), ".png");
+        thumbnail = dealWithUrl(thumbnail);
         URL url = new URL(thumbnail);
         BufferedImage read = ImageIO.read(url);
         if (read == null) {
@@ -179,6 +180,11 @@ public class MessageService {
                 .materialFileUpload("image", wxMpMaterial);
         file.deleteOnExit();
         return result.getMediaId();
+    }
+
+    private String dealWithUrl(String thumbnail) {
+        thumbnail = thumbnail.replace("http:http", "http");
+        return thumbnail;
     }
 
     public static void imgScale(File file, double size) throws IOException {
