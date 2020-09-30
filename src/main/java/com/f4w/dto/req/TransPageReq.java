@@ -1,5 +1,6 @@
 package com.f4w.dto.req;
 
+import com.f4w.dto.annotation.InjectTransId;
 import com.f4w.utils.Page;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,8 +17,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class TransPageReq extends Page {
-    private Integer status;
-    private Integer userId;
-    private Integer transId;
+public class TransPageReq extends CommonPageReq {
+    private Integer driverStatus;
 }

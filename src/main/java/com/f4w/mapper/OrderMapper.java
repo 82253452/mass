@@ -73,12 +73,13 @@ public interface OrderMapper extends BaseMapper<Order> {
             "       img\n" +
             "from `order` o\n" +
             "         left join car_type ct on o.product_id = ct.id\n" +
+            "         <if test='transId!=null and transId != &quot;&quot; '>\n" +
+            "            right join (select user_id from trans_company_user where trans_id = '') tcu on o.user_id = tcu.user_id\n" +
+            "        " +
+            "    </if>\n" +
             "where o.delete = 0\n" +
             "<if test='status!=null and status != &quot;&quot; '>\n" +
             "    and o.status = #{status}\n" +
-            "</if>\n" +
-            "<if test='transId!=null and transId != &quot;&quot; '>\n" +
-            "    and o.trans_id = #{transId}\n" +
             "</if>\n" +
             "<if test='userId!=null and userId != &quot;&quot; '>\n" +
             "    and o.user_id = #{userId}\n" +

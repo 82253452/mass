@@ -12,6 +12,14 @@ import java.util.List;
  */
 public interface CompanyMapper extends BaseMapper<Company> {
 
-    @Select("select * from company where `delete` = 0 order by mtime desc ")
+    @Select("<script>\n" +
+            "select * from company where 1=1 \n" +
+            "    " +
+            "<if test='name!=null and name != &quot;&quot; '>\n" +
+            "        AND nickname like CONCAT('%',#{name},'%')\n" +
+            "    </if>\n" +
+            "and `delete` = 0\n" +
+            " order by mtime desc \n" +
+            "</script>")
     List<Company> getList(CommonPageReq req);
 }

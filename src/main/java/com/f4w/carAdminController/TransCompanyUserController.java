@@ -3,15 +3,17 @@ package com.f4w.carAdminController;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.dto.SysRoleDto;
 import com.f4w.dto.TransCompanyUserDto;
+import com.f4w.dto.annotation.PermisionRole;
+import com.f4w.dto.enums.RoleEnum;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.TransPageReq;
+import com.f4w.entity.Driver;
 import com.f4w.entity.SysUser;
 import com.f4w.entity.TransCompany;
-import com.f4w.entity.TransCompanyUser;
+import com.f4w.mapper.DriverMapper;
 import com.f4w.mapper.SysRoleMapper;
 import com.f4w.mapper.TransCompanyMapper;
 import com.f4w.mapper.TransCompanyUserMapper;
-import com.f4w.utils.ForeseenException;
 import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -32,42 +34,33 @@ public class TransCompanyUserController {
     private SysRoleMapper sysRoleMapper;
     @Resource
     private TransCompanyMapper transCompanyMapper;
+    @Resource
+    private DriverMapper driverMapper;
 
     @GetMapping("/list")
-    public PageInfo<TransCompanyUserDto> list(CommonPageReq req)  {
+    public PageInfo<TransCompanyUserDto> list(CommonPageReq req) {
         PageInfo<TransCompanyUserDto> page = PageInfo.of(mapper.getList(req));
         return page;
     }
 
     @GetMapping("/admin/list")
-    public PageInfo<TransCompanyUserDto> adminList(@CurrentUser SysUser sysUser, TransPageReq req) throws ShowException {
-        List<SysRoleDto> roleDtos = sysRoleMapper.getRolesByUserId(sysUser.getId());
-        if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("admin"))) {
-
-        } else if (roleDtos.stream().anyMatch(r -> r.getRoleName().equals("trans"))) {
-            TransCompany transCompany = transCompanyMapper.selectOne(TransCompany.builder().userId(sysUser.getId()).build());
-            if (transCompany == null) {
-                throw new ShowException("无权限");
-            }
-            req.setTransId(transCompany.getId());
-        } else {
-            throw new ShowException("无权限");
-        }
+    @PermisionRole
+    public PageInfo<TransCompanyUserDto> adminList(TransPageReq req) throws ShowException {
         PageInfo<TransCompanyUserDto> page = PageInfo.of(mapper.getAdminList(req));
         return page;
     }
 
     @GetMapping("/checkUser")
-    public void checkUser(Integer id, Integer status)  {
-        TransCompany transCompany = transCompanyMapper.selectByPrimaryKey(id);
-        if (transCompany.getStatus().equals(0) || transCompany.getStatus().equals(2)) {
-            transCompany.setStatus(status);
-            transCompanyMapper.updateByPrimaryKeySelective(transCompany);
+    public void checkUser(Integer id, Integer status) {
+        Driver driver = driverMapper.selectByPrimaryKey(id);
+        if (driver.getStatus().equals(0) || driver.getStatus().equals(2)) {
+            driver.setStatus(status);
+            driverMapper.updateByPrimaryKeySelective(driver);
         }
     }
 
     @DeleteMapping("{id}")
-    public int delete(@PathVariable Integer id)  {
+    public int delete(@PathVariable Integer id) {
         return transCompanyMapper.deleteByPrimaryKey(id);
     }
 

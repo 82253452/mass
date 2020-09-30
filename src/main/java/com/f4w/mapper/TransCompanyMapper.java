@@ -13,7 +13,14 @@ import java.util.List;
  */
 public interface TransCompanyMapper extends BaseMapper<TransCompany> {
 
-    @Select("select * from trans_company where `delete` = 0 order by mtime desc ")
+    @Select("<script>\n" +
+            "select * from trans_company where 1=1 \n" +
+            " <if test='name!=null and name != &quot;&quot; '>\n" +
+            "        and name like CONCAT('%',#{name},'%')\n" +
+            "    </if>\n" +
+            "and `delete` = 0 \n" +
+            "order by mtime desc \n" +
+            "</script>")
     List<TransCompany> getList(CommonPageReq req);
 
     @Select("select tcu.status,tc.*\n" +

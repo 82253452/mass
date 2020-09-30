@@ -21,6 +21,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class SysUserDto extends SysUser {
     private String token;
+    //用户所属物流公司
     private List<TransCompany> transCompanyList;
+    //用户企业信息
     private Company company;
+    //用户物流公司信息
+    private TransCompany transCompany;
 }

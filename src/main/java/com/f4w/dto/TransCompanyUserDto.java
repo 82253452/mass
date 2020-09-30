@@ -26,5 +26,7 @@ public class TransCompanyUserDto extends SysUser {
     private Integer transId;
     private Integer userId;
     private Integer status;
+    private Integer driverStatus;
     private String remark;
+    private String transName;
 }

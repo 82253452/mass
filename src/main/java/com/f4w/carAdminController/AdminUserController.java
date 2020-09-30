@@ -1,6 +1,8 @@
 package com.f4w.carAdminController;
 
 import com.f4w.dto.AdminUserDto;
+import com.f4w.dto.annotation.PermisionRole;
+import com.f4w.dto.enums.RoleEnum;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.entity.SysRole;
 import com.f4w.entity.SysUser;
@@ -35,6 +37,7 @@ public class AdminUserController {
     private SysUserRoleMapper sysUserRoleMapper;
 
     @GetMapping("/list")
+    @PermisionRole
     public PageInfo<AdminUserDto> list(CommonPageReq req) {
         List<AdminUserDto> list = sysUserMapper.getAdminList(req);
         list.forEach(e -> e.setRoles(sysUserRoleMapper.queryUseRole(e.getId())));
