@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author: yp
@@ -38,4 +39,12 @@ public class Order extends BaseEntity {
     private String addressTo;
     private String userName;
     private String phone;
+    private String addressRoute;
+    private String addressFromDetail;
+    private String addressToDetail;
+    private String remark;
+    private Date deliveryTimeStart;
+    private Date deliveryTimeEnd;
+    private Integer discharge;
+    private Integer driverTop;
 }

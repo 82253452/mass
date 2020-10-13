@@ -13,6 +13,7 @@ import com.f4w.mapper.SysRoleMapper;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
+import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -95,17 +96,22 @@ public class ApiOrderController {
                 .phone(orderReq.getPhone())
                 .orderNo(UUID.randomUUID().toString().replaceAll("-", ""))
                 .productId(orderReq.getCarTypeId())
-                .addressFrom(orderReq.getAddressFrom())
-                .addressTo(orderReq.getAddressTo())
+                .addressFrom(orderReq.getAddressFrom().getLocation().getName())
+                .addressTo(orderReq.getAddressTo().getLocation().getName())
                 .des(orderReq.getDes())
-                .latitudeFrom(orderReq.getLatitudeFrom())
-                .latitudeTo(orderReq.getLatitudeTo())
-                .longitudeFrom(orderReq.getLongitudeFrom())
-                .longitudeTo(orderReq.getLongitudeTo())
+                .latitudeFrom(orderReq.getAddressFrom().getLocation().getLatitude())
+                .latitudeTo(orderReq.getAddressTo().getLocation().getLatitude())
+                .longitudeFrom(orderReq.getAddressFrom().getLocation().getLongitude())
+                .longitudeTo(orderReq.getAddressTo().getLocation().getLongitude())
                 .amount(orderReq.getAmount())
-                .userId(sysUser.getId().intValue())
+                .userId(sysUser.getId())
                 .originalPrice(orderReq.getAmount())
                 .userName(orderReq.getUserName())
+                .discharge(orderReq.getDischarge())
+                .deliveryTimeStart(DateTime.parse(orderReq.getTime()[0]).toDate())
+                .deliveryTimeEnd(DateTime.parse(orderReq.getTime()[1]).toDate())
+                .driverTop(orderReq.getDriverTop())
+                .remark(orderReq.getRemark())
                 .status(0)
                 .build());
     }

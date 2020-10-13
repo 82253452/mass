@@ -20,13 +20,14 @@ public class OrderReq {
     private String phone;
     private String sendAddress;
     private String receiveAddress;
-    private Double latitudeFrom;
-    private Double latitudeTo;
-    private Double longitudeFrom;
-    private Double longitudeTo;
-    private String addressFrom;
-    private String addressTo;
     private String des;
     private BigDecimal amount;
+    private String[] time;
+    private String[] addressRoute;
+    private Integer discharge;
+    private Integer driverTop;
+    private Address addressFrom;
+    private Address addressTo;
+    private String remark;
 }
 
