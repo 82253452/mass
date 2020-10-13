@@ -13,6 +13,7 @@ import com.f4w.mapper.SysRoleMapper;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,7 +94,7 @@ public class ApiOrderController {
     @PostMapping("/submit")
     public void submit(@CurrentUser SysUser sysUser, @RequestBody OrderReq orderReq) throws ForeseenException {
         orderMapper.insertSelective(Order.builder()
-                .phone(orderReq.getPhone())
+                .phone(orderReq.getAddressFrom().getUser().getPhone())
                 .orderNo(UUID.randomUUID().toString().replaceAll("-", ""))
                 .productId(orderReq.getCarTypeId())
                 .addressFrom(orderReq.getAddressFrom().getLocation().getName())
@@ -106,12 +107,19 @@ public class ApiOrderController {
                 .amount(orderReq.getAmount())
                 .userId(sysUser.getId())
                 .originalPrice(orderReq.getAmount())
-                .userName(orderReq.getUserName())
+                .userName(orderReq.getAddressFrom().getUser().getName())
                 .discharge(orderReq.getDischarge())
                 .deliveryTimeStart(DateTime.parse(orderReq.getTime()[0]).toDate())
                 .deliveryTimeEnd(DateTime.parse(orderReq.getTime()[1]).toDate())
                 .driverTop(orderReq.getDriverTop())
+                .addressToDetail(orderReq.getAddressTo().getLocation().getAddress())
+                .addressFromDetail(orderReq.getAddressFrom().getLocation().getAddress())
                 .remark(orderReq.getRemark())
+                .addressRoute(StringUtils.join(orderReq.getAddressRoute(),","))
+                .addressFromHome(orderReq.getAddressFrom().getUser().getAddress())
+                .addressToHome(orderReq.getAddressTo().getUser().getAddress())
+                .receiveName(orderReq.getAddressTo().getUser().getName())
+                .receivePhone(orderReq.getAddressTo().getUser().getPhone())
                 .status(0)
                 .build());
     }

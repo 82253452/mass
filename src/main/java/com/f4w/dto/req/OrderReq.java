@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderReq {
     private Integer carTypeId;
-    private String userName;
-    private String phone;
     private String sendAddress;
     private String receiveAddress;
     private String des;

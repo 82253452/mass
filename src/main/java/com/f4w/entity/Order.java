@@ -47,4 +47,8 @@ public class Order extends BaseEntity {
     private Date deliveryTimeEnd;
     private Integer discharge;
     private Integer driverTop;
+    private String addressFromHome;
+    private String addressToHome;
+    private String receivePhone;
+    private String receiveName;
 }
