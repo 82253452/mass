@@ -27,5 +27,6 @@ public class OrderReq {
     private Address addressFrom;
     private Address addressTo;
     private String remark;
+    private String carTypeName;
 }
 

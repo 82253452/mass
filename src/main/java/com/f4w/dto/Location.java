@@ -1,5 +1,6 @@
 package com.f4w.dto;
 
+import com.f4w.dto.req.LocationInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +19,5 @@ public class Location {
     private Double latitude;
     private Double longitude;
     private String name;
+    private LocationInfo info;
 }

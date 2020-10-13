@@ -120,6 +120,13 @@ public class ApiOrderController {
                 .addressToHome(orderReq.getAddressTo().getUser().getAddress())
                 .receiveName(orderReq.getAddressTo().getUser().getName())
                 .receivePhone(orderReq.getAddressTo().getUser().getPhone())
+                .productName(orderReq.getCarTypeName())
+                .addressProvinceFrom(orderReq.getAddressFrom().getLocation().getInfo().getProvince())
+                .addressCityFrom(orderReq.getAddressFrom().getLocation().getInfo().getCity())
+                .addressDistrictFrom(orderReq.getAddressFrom().getLocation().getInfo().getDistrict())
+                .addressProvinceTo(orderReq.getAddressTo().getLocation().getInfo().getProvince())
+                .addressCityTo(orderReq.getAddressTo().getLocation().getInfo().getCity())
+                .addressDistrictTo(orderReq.getAddressTo().getLocation().getInfo().getDistrict())
                 .status(0)
                 .build());
     }
@@ -128,7 +135,7 @@ public class ApiOrderController {
     public void receiveOrder(@CurrentUser SysUser sysUser, String id) throws ForeseenException {
         Order order = Optional.ofNullable(orderMapper.selectByPrimaryKey(id)).orElseThrow(() -> new ShowException("订单id错误"));
         if (order.getStatus() == 0) {
-            order.setReceiveUserId(sysUser.getId().intValue());
+            order.setReceiveUserId(sysUser.getId());
         }
         if (order.getStatus() < 4) {
             order.setStatus(order.getStatus() + 1);

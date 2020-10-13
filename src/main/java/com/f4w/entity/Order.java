@@ -51,4 +51,11 @@ public class Order extends BaseEntity {
     private String addressToHome;
     private String receivePhone;
     private String receiveName;
+    private String productName;
+    private String addressProvinceFrom;
+    private String addressCityFrom;
+    private String addressDistrictFrom;
+    private String addressProvinceTo;
+    private String addressCityTo;
+    private String addressDistrictTo;
 }
