@@ -18,7 +18,7 @@ public class LocationInfo {
     private String city;
     private String district;
     private Integer city_code;
-    private Integer name;
+    private String name;
     private Integer adcode;
     private Integer nation_code;
 }
