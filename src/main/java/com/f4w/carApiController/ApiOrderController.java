@@ -84,13 +84,29 @@ public class ApiOrderController {
      * @throws ForeseenException
      */
     @GetMapping("/close")
-    public void cancelOrder(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
-        req.setUserId(sysUser.getId());
+    public void closeOrder(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
         Order order = Optional.ofNullable(orderMapper.selectByPrimaryKey(req.getId())).orElseThrow(() -> new ShowException("订单查询错误"));
         if (!order.getUserId().equals(sysUser.getId())) {
             throw new ShowException("不可关闭的订单");
         }
         order.setDelete(1);
+        orderMapper.updateByPrimaryKeySelective(order);
+    }
+
+    /**
+     * 关闭订单
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/stop")
+    public void stopOrder(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+        Order order = Optional.ofNullable(orderMapper.selectByPrimaryKey(req.getId())).orElseThrow(() -> new ShowException("订单查询错误"));
+        if (!order.getReceiveUserId().equals(sysUser.getId())) {
+            throw new ShowException("不可操作的订单");
+        }
+        order.setStatus(1);
         orderMapper.updateByPrimaryKeySelective(order);
     }
 
