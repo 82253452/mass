@@ -1,5 +1,6 @@
 package com.f4w.carApiController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.dto.OrderInfoDto;
 import com.f4w.dto.SysRoleDto;
@@ -150,7 +151,7 @@ public class ApiOrderController {
                 .addressToDetail(orderReq.getAddressTo().getLocation().getAddress())
                 .addressFromDetail(orderReq.getAddressFrom().getLocation().getAddress())
                 .remark(orderReq.getRemark())
-                .addressRoute(StringUtils.join(orderReq.getAddressRoute(), ","))
+                .addressRoute(JSONObject.toJSONString(orderReq.getAddressRoute()))
                 .addressFromHome(orderReq.getAddressFrom().getUser().getAddress())
                 .addressToHome(orderReq.getAddressTo().getUser().getAddress())
                 .receiveName(orderReq.getAddressTo().getUser().getName())

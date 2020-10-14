@@ -1,5 +1,6 @@
 package com.f4w.entity;
 
+import com.f4w.dto.Location;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;

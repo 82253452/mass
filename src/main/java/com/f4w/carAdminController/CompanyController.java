@@ -64,7 +64,7 @@ public class CompanyController {
             company.setId(cert.getId());
             mapper.updateByPrimaryKeySelective(company);
         } else {
-            company.setUserId(sysUser.getId().intValue());
+            company.setUserId(sysUser.getId());
             mapper.insertSelective(company);
         }
     }

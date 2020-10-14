@@ -1,5 +1,6 @@
 package com.f4w.dto.req;
 
+import com.f4w.dto.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class OrderReq {
     private String des;
     private BigDecimal amount;
     private String[] time;
-    private String[] addressRoute;
+    private Location[] addressRoute;
     private Integer discharge;
     private Integer driverTop;
     private Address addressFrom;
