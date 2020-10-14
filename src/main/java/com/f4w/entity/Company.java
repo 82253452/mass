@@ -21,6 +21,7 @@ import javax.persistence.Table;
 public class Company extends BaseEntity {
     private String name;
     private String businessLicense;
+    private String organizationCodeCertificate;
     private String legalPerson;
     private String legalPhone;
     private String address;
