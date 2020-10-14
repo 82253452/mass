@@ -75,7 +75,7 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(value = HttpStatus.OK)
     public Object handleShowExceptions(final Exception ex, final ServletWebRequest req) {
         ForeseenException fex = (ForeseenException) ex;
-        return Result.render(fex.getErrorEnum());
+        return Result.error(SystemErrorEnum.NULL,ex.getMessage());
     }
 
     @ExceptionHandler(value = {NullPointerException.class})
@@ -88,7 +88,7 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(value = HttpStatus.OK)
     public Object handleCustomerExceptions(final Exception ex, final ServletWebRequest req) {
         ForeseenException fex = (ForeseenException) ex;
-        return Result.render(fex.getErrorEnum());
+        return Result.error(SystemErrorEnum.SYSTEM_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(value = {BindException.class})
