@@ -24,6 +24,7 @@ public class CommonPageReq extends Page {
     private String name;
     private String title;
     private Integer type;
+    private Integer id;
     @InjectUserId
     private Integer userId;
     @InjectTransId

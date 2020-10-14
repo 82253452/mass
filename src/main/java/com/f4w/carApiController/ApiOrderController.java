@@ -3,6 +3,7 @@ package com.f4w.carApiController;
 import com.f4w.annotation.CurrentUser;
 import com.f4w.dto.OrderInfoDto;
 import com.f4w.dto.SysRoleDto;
+import com.f4w.dto.enums.OrderStatusEnum;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.dto.req.OrderPageReq;
 import com.f4w.dto.req.OrderReq;
@@ -70,9 +71,27 @@ public class ApiOrderController {
      */
     @GetMapping("/finash/list")
     public PageInfo<OrderInfoDto> fianshList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
-        req.setUserId(sysUser.getId().intValue());
+        req.setUserId(sysUser.getId());
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getFinashList(req));
         return page;
+    }
+
+    /**
+     * 关闭订单
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/close")
+    public void cancelOrder(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
+        req.setUserId(sysUser.getId());
+        Order order = Optional.ofNullable(orderMapper.selectByPrimaryKey(req.getId())).orElseThrow(() -> new ShowException("订单查询错误"));
+        if (!order.getUserId().equals(sysUser.getId())) {
+            throw new ShowException("不可关闭的订单");
+        }
+        order.setDelete(1);
+        orderMapper.updateByPrimaryKeySelective(order);
     }
 
     @GetMapping("/detail")
@@ -115,7 +134,7 @@ public class ApiOrderController {
                 .addressToDetail(orderReq.getAddressTo().getLocation().getAddress())
                 .addressFromDetail(orderReq.getAddressFrom().getLocation().getAddress())
                 .remark(orderReq.getRemark())
-                .addressRoute(StringUtils.join(orderReq.getAddressRoute(),","))
+                .addressRoute(StringUtils.join(orderReq.getAddressRoute(), ","))
                 .addressFromHome(orderReq.getAddressFrom().getUser().getAddress())
                 .addressToHome(orderReq.getAddressTo().getUser().getAddress())
                 .receiveName(orderReq.getAddressTo().getUser().getName())
