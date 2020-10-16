@@ -47,10 +47,10 @@ public class Order extends BaseEntity {
     private String addressToDetail;
     private String remark;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy.MM.dd",timezone = "GMT+8")
     private Date deliveryTimeStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy.MM.dd",timezone = "GMT+8")
     private Date deliveryTimeEnd;
     private Integer discharge;
     private Integer driverTop;
