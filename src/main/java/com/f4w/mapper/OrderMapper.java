@@ -97,7 +97,6 @@ public interface OrderMapper extends BaseMapper<Order> {
             "       car_width,\n" +
             "       car_height,\n" +
             "       carrying_capacity,\n" +
-            "       o.order_type,\n" +
             "       img\n" +
             "from `order` o\n" +
             "         left join car_type ct on o.product_id = ct.id\n" +
