@@ -25,4 +25,5 @@ public class OrderInfoDto extends Order {
     private Integer carHeight;
     private Integer carryingCapacity;
     private Integer oType;
+    private Integer orderType;
 }
