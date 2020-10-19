@@ -26,6 +26,11 @@ public class ReponseHandlerAdvice implements ResponseBodyAdvice<Object> {
         if (o instanceof Result || o instanceof R) {
             return o;
         }
+        if ("byte[]".equals(o.getClass().getTypeName())) {
+            return o;
+        }
         return Result.ok(o);
     }
 }
+
+
