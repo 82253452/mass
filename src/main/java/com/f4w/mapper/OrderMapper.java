@@ -101,6 +101,9 @@ public interface OrderMapper extends BaseMapper<Order> {
             "from `order` o\n" +
             "         left join car_type ct on o.product_id = ct.id\n" +
             "where o.delete = 0\n" +
+            "<if test='type!=null'>\n" +
+            " and o.order_type=#{type}\n" +
+            "</if>\n" +
             " and o.status = 0\n" +
             "order by o.mtime desc\n" +
             "</script>")

@@ -43,6 +43,32 @@ public class ApiOrderController {
      * @return
      * @throws ForeseenException
      */
+    @GetMapping("/person/list")
+    public PageInfo<OrderInfoDto> personList(CommonPageReq req) throws ForeseenException {
+        PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
+        return page;
+    }
+
+    /**
+     * 抢单
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/company/list")
+    public PageInfo<OrderInfoDto> companyList(CommonPageReq req) throws ForeseenException {
+        PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
+        return page;
+    }
+
+    /**
+     * 抢单
+     *
+     * @param req
+     * @return
+     * @throws ForeseenException
+     */
     @GetMapping("/index/list")
     public PageInfo<OrderInfoDto> indexList(CommonPageReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
