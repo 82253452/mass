@@ -51,4 +51,6 @@ public class SysUser extends BaseEntity {
 
     private Integer type;
 
+    private Integer integral;
+
 }
