@@ -125,9 +125,6 @@ public interface OrderMapper extends BaseMapper<Order> {
             "<if test='status!=null'>\n" +
             " and o.status = #{status}\n" +
             "</if>\n" +
-            "<if test='status=null'>\n" +
-            " and o.status = #{status}\n" +
-            "</if>\n" +
             " and (o.receive_user_id = #{userId} or o.user_id = #{userId})\n" +
             "order by o.mtime desc\n" +
             "</script>")
