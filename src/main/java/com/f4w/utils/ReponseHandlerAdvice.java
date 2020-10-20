@@ -23,6 +23,9 @@ public class ReponseHandlerAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+        if (o == null) {
+            Result.ok();
+        }
         if (o instanceof Result || o instanceof R) {
             return o;
         }
