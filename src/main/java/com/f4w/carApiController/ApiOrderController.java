@@ -17,12 +17,15 @@ import com.f4w.utils.ShowException;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.f4w.utils.Constant.ORDER_ADDRESS;
 
 /**
  * @Author: yp
@@ -35,6 +38,19 @@ public class ApiOrderController {
     private OrderMapper orderMapper;
     @Resource
     private SysRoleMapper sysRoleMapper;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 上报订单位置
+     *
+     * @return
+     * @throws ForeseenException
+     */
+    @GetMapping("/uploadAddress")
+    public void uploadAddress(String id, String address) throws ForeseenException {
+        stringRedisTemplate.opsForList().rightPush(String.format(ORDER_ADDRESS, id), address);
+    }
 
     /**
      * 抢单

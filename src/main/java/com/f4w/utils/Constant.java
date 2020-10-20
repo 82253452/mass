@@ -20,4 +20,6 @@ public class Constant {
         public static final String SEND_MESSAGE_OPENID = "SEND_MESSAGE_OPENID";
 
     }
+
+    public static final String ORDER_ADDRESS = "ORDER_ADDRESS_%s";
 }
