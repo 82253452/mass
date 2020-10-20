@@ -40,7 +40,7 @@ public class ApiProductOrderController {
             throw new ShowException("订单id不能为空");
         }
         Product product = Optional.ofNullable(productMapper.selectByPrimaryKey(req.getId())).orElseThrow(() -> new ShowException("商品id错误"));
-        if (product.getId() != 0) {
+        if (product.getStatus() != 1) {
             throw new ShowException("商品已经下架");
         }
         if (0 == product.getType() && sysUser.getIntegral() < product.getPrice().intValue()) {
