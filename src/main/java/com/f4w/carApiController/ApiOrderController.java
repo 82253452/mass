@@ -100,7 +100,7 @@ public class ApiOrderController {
      */
     @GetMapping("/status/list")
     public PageInfo<OrderInfoDto> statusList(@CurrentUser SysUser sysUser, CommonPageReq req) throws ForeseenException {
-        req.setUserId(sysUser.getId().intValue());
+        req.setUserId(sysUser.getId());
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getStatusList(req));
         return page;
     }
