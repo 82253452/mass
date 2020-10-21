@@ -74,6 +74,7 @@ public class WechatService {
                         .build();
                 sysUserMapper.insertSelective(sysUser);
             }
+            stringRedisTemplate.opsForHash().put(String.format(Constant.USER_OPEN_ID,miniAppLoginDto.getAppId()),sysUser.getId().toString(),session.getOpenid());
             SysUserDto sysUserDto = setUserInfo(sysUser);
             return sysUserDto;
         } catch (Exception e) {
