@@ -128,7 +128,7 @@ public class MessageService {
         return newsList;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     void addWxArticle(JobInfoReq jobinfo, BusiApp busiApp, List<WxMpNewsArticle> newsList, Integer type) throws
             JobException {
         Wxmp e = commentContext.getCommentStrategy(type).findWxmp(jobinfo);
@@ -139,7 +139,7 @@ public class MessageService {
             return;
         }
         WxMpNewsArticle news = new WxMpNewsArticle();
-        news.setTitle(e.getTitle());
+        news.setTitle(e.getTitle().length() > 12 ? e.getTitle().substring(0, 12) : e.getTitle());
         try {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
         } catch (NullPointerException | IOException | WxErrorException ex) {
