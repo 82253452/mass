@@ -9,6 +9,12 @@ import java.util.List;
 
 public interface ProductMapper extends BaseMapper<Product> {
 
-    @Select("select * from product where `delete` = 0 order by mtime desc ")
+    @Select("<script>\n" +
+            "select * from product where `delete` = 0 \n" +
+            "<if test='type!=null'>\n" +
+            " and type = #{type}\n" +
+            "</if>\n" +
+            "order by mtime desc \n" +
+            "</script>")
     List<Product> getList(CommonPageReq req);
 }
