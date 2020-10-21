@@ -83,7 +83,7 @@ public class ApiProductOrderController {
                     .outTradeNo(orderNo)
                     .tradeType(WxPayConstants.TradeType.JSAPI)
                     .spbillCreateIp(IPUtils.getIpAddr())
-                    .openid(stringRedisTemplate.opsForHash().get(String.format(Constant.USER_OPEN_ID, ""), sysUser.getId().toString()).toString())
+                    .openid(stringRedisTemplate.opsForHash().get(String.format(Constant.USER_OPEN_ID, "wx91fad2501e704f40"), sysUser.getId().toString()).toString())
                     .notifyUrl(notifyUrl)
                     .build());
         }

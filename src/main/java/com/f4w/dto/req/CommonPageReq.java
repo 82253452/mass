@@ -21,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class CommonPageReq extends Page {
     private Integer status;
+    private String appId;
     private String name;
     private String title;
     private Integer type;
