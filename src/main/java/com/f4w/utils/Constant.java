@@ -22,4 +22,5 @@ public class Constant {
     }
 
     public static final String ORDER_ADDRESS = "ORDER_ADDRESS_%s";
+    public static final String USER_OPEN_ID = "USER_OPEN_ID_%s";
 }

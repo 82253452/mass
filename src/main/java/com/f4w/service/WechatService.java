@@ -14,6 +14,7 @@ import com.f4w.job.WechatPushArticleJob;
 import com.f4w.mapper.CompanyMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.mapper.TransCompanyUserMapper;
+import com.f4w.utils.Constant;
 import com.f4w.utils.ForeseenException;
 import com.f4w.utils.JWTUtils;
 import com.f4w.utils.ShowException;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,8 @@ public class WechatService {
     private CompanyMapper companyMapper;
     @Resource
     private JWTUtils jwtUtils;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Async
     public void pushArticle(BusiApp busiApp) {
@@ -93,6 +97,7 @@ public class WechatService {
             if (sysUser == null) {
                 return null;
             }
+            stringRedisTemplate.opsForHash().put(String.format(Constant.USER_OPEN_ID,request.getAppId()),sysUser.getId().toString(),session.getOpenid());
             SysUserDto sysUserDto = setUserInfo(sysUser);
             return sysUserDto;
         } catch (Exception e) {
