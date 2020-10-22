@@ -6,6 +6,9 @@ import com.f4w.aop.SysTokenAspect;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.utils.JWTUtils;
+import com.f4w.utils.R;
+import com.f4w.utils.Result;
+import com.f4w.utils.SystemErrorEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -47,18 +50,18 @@ public class CurrentUserMethodArgumentResolver implements HandlerMethodArgumentR
         String jToken = nativeWebRequest.getParameter(SysTokenAspect.TOKEN);
         if (StringUtils.isBlank(jToken)) {
             jToken = nativeWebRequest.getHeader("X-Token");
-            if (StringUtils.isBlank(jToken)) {
-                return null;
-            }
+        }
+        if (StringUtils.isBlank(jToken)) {
+            return Result.render(SystemErrorEnum.AUTH_TOKEN);
         }
         try {
             Object uid = jwtUtils.parseBody(jToken).get("uid");
             if (uid == null) {
-                return null;
+                return Result.render(SystemErrorEnum.AUTH_TOKEN);
             }
             return sysUserMapper.selectByPrimaryKey(uid);
         } catch (Exception e) {
-            return null;
+            return Result.render(SystemErrorEnum.AUTH_EXP);
         }
     }
 }
