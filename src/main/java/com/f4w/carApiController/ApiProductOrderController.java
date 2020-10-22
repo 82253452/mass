@@ -20,10 +20,7 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -105,7 +102,7 @@ public class ApiProductOrderController {
      * @throws ShowException
      * @throws WxPayException
      */
-    @GetMapping("/notify")
+    @PostMapping("/notify")
     @NotTokenIntecerpt
     public String notify(@RequestBody String xmlData) {
         try {
