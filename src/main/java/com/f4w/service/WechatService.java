@@ -6,12 +6,10 @@ import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.f4w.dto.SysUserDto;
 import com.f4w.dto.TransCompanyUserDto;
 import com.f4w.dto.req.MiniAppLoginReq;
-import com.f4w.entity.BusiApp;
-import com.f4w.entity.Company;
-import com.f4w.entity.SysUser;
-import com.f4w.entity.TransCompany;
+import com.f4w.entity.*;
 import com.f4w.job.WechatPushArticleJob;
 import com.f4w.mapper.CompanyMapper;
+import com.f4w.mapper.DriverMapper;
 import com.f4w.mapper.SysUserMapper;
 import com.f4w.mapper.TransCompanyUserMapper;
 import com.f4w.utils.Constant;
@@ -47,7 +45,8 @@ public class WechatService {
     private JWTUtils jwtUtils;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-
+    @Resource
+    private DriverMapper driverMapper;
     @Async
     public void pushArticle(BusiApp busiApp) {
         wechatPushArticleJob.execute(busiApp.getMessageParam());
@@ -112,11 +111,14 @@ public class WechatService {
         BeanUtils.copyProperties(sysUser, sysUserDto);
         sysUserDto.setToken(jwtUtils.creatKey(sysUser));
         //所属物流公司
-        List<TransCompany> userCompanyList = transCompanyUserMapper.getUserCompanyList(sysUser.getId().intValue());
-        sysUserDto.setTransCompanyList(userCompanyList);
+        List<TransCompany> userCompanyList = transCompanyUserMapper.getUserCompanyList(sysUser.getId());
         //所属企业信息
-        Company company = companyMapper.selectOne(Company.builder().userId(sysUser.getId().intValue()).build());
+        Company company = companyMapper.selectOne(Company.builder().userId(sysUser.getId()).build());
+        //司机认证信息
+        Driver driver = driverMapper.selectOne(Driver.builder().userId(sysUser.getId()).build());
+        sysUserDto.setTransCompanyList(userCompanyList);
         sysUserDto.setCompany(company);
+        sysUserDto.setDriver(driver);
         return sysUserDto;
     }
 

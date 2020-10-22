@@ -25,7 +25,7 @@ public class ApiCompanyController {
 
     @PostMapping("/certCompany")
     public void certCompany(@CurrentUser SysUser sysUser, @RequestBody Company company) throws ForeseenException {
-        Company cert = mapper.selectOne(Company.builder().userId(sysUser.getId().intValue()).build());
+        Company cert = mapper.selectOne(Company.builder().userId(sysUser.getId()).build());
         if (cert != null && !cert.getStatus().equals(2)) {
             throw new ShowException("您已经提交企业认证了");
         }

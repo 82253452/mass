@@ -2,6 +2,7 @@ package com.f4w.carApiController;
 
 import com.f4w.annotation.CurrentUser;
 import com.f4w.dto.SysRoleDto;
+import com.f4w.dto.SysUserDto;
 import com.f4w.dto.req.LoginReq;
 import com.f4w.dto.req.MiniAppLoginReq;
 import com.f4w.dto.resp.UserResp;
@@ -49,14 +50,14 @@ public class ApiMiniAppController {
 
 
     @PostMapping("/login")
-    public SysUser login(@RequestBody @Valid MiniAppLoginReq request) throws ForeseenException {
-        SysUser sysUser = wechatService.loginFromOpenThird(request);
+    public SysUserDto login(@RequestBody @Valid MiniAppLoginReq request) throws ForeseenException {
+        SysUserDto sysUser = wechatService.loginFromOpenThird(request);
         return sysUser;
     }
 
     @GetMapping("/user")
-    public SysUser user(MiniAppLoginReq request) throws ForeseenException {
-        SysUser sysUser = wechatService.getUserInfoByCode(request);
+    public SysUserDto user(MiniAppLoginReq request) throws ForeseenException {
+        SysUserDto sysUser = wechatService.getUserInfoByCode(request);
         return sysUser;
     }
 
