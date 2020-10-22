@@ -1,15 +1,19 @@
 package com.f4w.carApiController;
 
 import com.f4w.annotation.CurrentUser;
+import com.f4w.annotation.NotTokenIntecerpt;
 import com.f4w.dto.req.CommonPageReq;
 import com.f4w.entity.Product;
 import com.f4w.entity.ProductOrder;
 import com.f4w.entity.SysUser;
 import com.f4w.mapper.ProductMapper;
 import com.f4w.mapper.ProductOrderMapper;
+import com.f4w.service.OrderService;
 import com.f4w.utils.Constant;
 import com.f4w.utils.IPUtils;
 import com.f4w.utils.ShowException;
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -17,6 +21,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +47,8 @@ public class ApiProductOrderController {
     private StringRedisTemplate stringRedisTemplate;
     @Value("${wx.pay.notifyUrl}")
     private String notifyUrl;
+    @Resource
+    private OrderService orderService;
 
     /**
      * 兑换商品
@@ -90,4 +97,24 @@ public class ApiProductOrderController {
         return null;
     }
 
+    /**
+     * 支付回调
+     *
+     * @param xmlData
+     * @return
+     * @throws ShowException
+     * @throws WxPayException
+     */
+    @GetMapping("/notify")
+    @NotTokenIntecerpt
+    public String notify(@RequestBody String xmlData) {
+        try {
+            final WxPayOrderNotifyResult notifyResult = wxPayService.parseOrderNotifyResult(xmlData);
+            orderService.finallyOrder(notifyResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return WxPayNotifyResponse.fail(e.getMessage());
+        }
+        return WxPayNotifyResponse.success("成功");
+    }
 }
