@@ -103,6 +103,12 @@ public class ExceptionHandlerAdvice {
         return Result.error(SystemErrorEnum.ARGUMENT_VALID, "");
     }
 
+    @ExceptionHandler(value = {ExpiredTokenException.class})
+    @ResponseStatus(value = HttpStatus.OK)
+    public Object expiredTokenException(final Exception ex, final ServletWebRequest req) {
+        return Result.render(SystemErrorEnum.AUTH_EXP);
+    }
+
     @ExceptionHandler(value = {ExpiredJwtException.class})
     @ResponseStatus(value = HttpStatus.OK)
     public Object expiredJwtException(final Exception ex, final ServletWebRequest req) {
