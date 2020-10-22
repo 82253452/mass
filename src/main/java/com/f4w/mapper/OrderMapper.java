@@ -3,6 +3,7 @@ package com.f4w.mapper;
 import com.f4w.dto.OrderInfoDto;
 import com.f4w.dto.req.CarTypeReq;
 import com.f4w.dto.req.CommonPageReq;
+import com.f4w.dto.req.OrderIndexReq;
 import com.f4w.dto.req.OrderPageReq;
 import com.f4w.entity.CarType;
 import com.f4w.entity.Order;
@@ -104,10 +105,19 @@ public interface OrderMapper extends BaseMapper<Order> {
             "<if test='type!=null'>\n" +
             " and o.order_type=#{type}\n" +
             "</if>\n" +
+            "<if test='reginFrom!=null'>\n" +
+            " and o.address_district_from=#{reginFrom[2],javaType=java.lang.String,jdbcType=VARCHAR}\n" +
+            "</if>\n" +
+            "<if test='reginTo!=null'>\n" +
+            " and o.address_district_to=#{reginTo[2],javaType=java.lang.String,jdbcType=VARCHAR}\n" +
+            "</if>\n" +
+            "<if test='keyWrod!=null'>\n" +
+            " and 1=1\n" +
+            "</if>\n" +
             " and o.status = 0\n" +
             "order by o.mtime desc\n" +
             "</script>")
-    List<OrderInfoDto> getIndexList(CommonPageReq req);
+    List<OrderInfoDto> getIndexList(OrderIndexReq req);
 
     @Select("<script>\n" +
             "select o.*, \n" +

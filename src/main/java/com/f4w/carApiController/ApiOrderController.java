@@ -6,6 +6,7 @@ import com.f4w.dto.OrderInfoDto;
 import com.f4w.dto.SysRoleDto;
 import com.f4w.dto.enums.OrderStatusEnum;
 import com.f4w.dto.req.CommonPageReq;
+import com.f4w.dto.req.OrderIndexReq;
 import com.f4w.dto.req.OrderPageReq;
 import com.f4w.dto.req.OrderReq;
 import com.f4w.entity.Order;
@@ -60,7 +61,7 @@ public class ApiOrderController {
      * @throws ForeseenException
      */
     @GetMapping("/person/list")
-    public PageInfo<OrderInfoDto> personList(CommonPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> personList(OrderIndexReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
         return page;
     }
@@ -73,7 +74,7 @@ public class ApiOrderController {
      * @throws ForeseenException
      */
     @GetMapping("/company/list")
-    public PageInfo<OrderInfoDto> companyList(CommonPageReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> companyList(OrderIndexReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
         return page;
     }
@@ -85,8 +86,8 @@ public class ApiOrderController {
      * @return
      * @throws ForeseenException
      */
-    @GetMapping("/index/list")
-    public PageInfo<OrderInfoDto> indexList(CommonPageReq req) throws ForeseenException {
+    @PostMapping("/index/list")
+    public PageInfo<OrderInfoDto> indexList(@RequestBody OrderIndexReq req) throws ForeseenException {
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
         return page;
     }
