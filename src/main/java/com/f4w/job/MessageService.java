@@ -139,7 +139,7 @@ public class MessageService {
             return;
         }
         WxMpNewsArticle news = new WxMpNewsArticle();
-        news.setTitle(e.getTitle().length() > 12 ? e.getTitle().substring(0, 12) : e.getTitle());
+        news.setTitle(e.getTitle().length() > 63 ? e.getTitle().substring(0, 63) : e.getTitle());
         try {
             news.setThumbMediaId(uploadFile(jobinfo.getAppId(), e.getThumbnail()));
         } catch (NullPointerException | IOException | WxErrorException ex) {
