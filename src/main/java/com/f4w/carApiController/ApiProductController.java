@@ -25,5 +25,9 @@ public class ApiProductController {
         PageInfo<Product> page = PageInfo.of(mapper.getList(req));
         return page;
     }
-
+    @GetMapping("/detail")
+    public Product detail(String id) {
+        Product product = mapper.selectByPrimaryKey(id);
+        return product;
+    }
 }
