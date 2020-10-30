@@ -32,7 +32,7 @@ steps:
       - name: registry-auth
         path: /root/.docker
     settings:
-      repo: $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}
+      repo: ${DRONE_STAGE_NAME}/${DRONE_BRANCH}
       tags:
         - ${DRONE_BUILD_NUMBER}
       registry: $REGISTRY
