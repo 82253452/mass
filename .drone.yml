@@ -40,7 +40,7 @@ steps:
     url: https://62.234.46.46:7002/v3
     access_key: token-ckkjg
     secret_key: bgr7nnf62m49fptbpglqsnrc85m5snkpsscs4nj8hrmrww7kc8sdnt
-    service: ${DRONE_STAGE_NAME}
+    service: mass-api
     docker_image: $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
 
 volumes:
