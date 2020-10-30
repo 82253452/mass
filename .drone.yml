@@ -37,6 +37,8 @@ steps:
     commands:
       - ls
       - pwd
+      - cd /etc/ssl/certs
+      - ls
     settings:
       insecure: false
       registry: registry.doatu.com
