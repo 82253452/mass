@@ -3,7 +3,7 @@ name: mass-api
 
 environment:
   DOMAIN: mass.zhihuizhan.net
-  REGISTRY: https://registry.doatu.com
+  REGISTRY: registry.doatu.com
   PATHPREFIX: api
   PROFILE: prod
   APPDIR: ./target/app.jar
