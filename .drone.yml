@@ -24,6 +24,7 @@ steps:
     volumes:
       - name: maven-cache
         path: /root/.m2
+
   - name: docker
     image: plugins/docker
     volumes:
@@ -31,6 +32,8 @@ steps:
         path: /var/run/docker.sock
       - name: registry-auth
         path: /root/.docker
+      - name: certs
+        path: /etc/ssl/certs
     settings:
       registry: registry.doatu.com
       repo: registry.doatu.com/${DRONE_STAGE_NAME}/${DRONE_BRANCH}
@@ -58,6 +61,9 @@ steps:
 
 
 volumes:
+  - name: certs
+    host:
+      path: /etc/ssl/certs
   - name: maven-cache
     host:
       path: /opt/cache/maven
