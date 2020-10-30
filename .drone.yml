@@ -12,6 +12,8 @@ environment:
 trigger:
   branch:
     - master
+clone:
+  skip_verify: true
 
 steps:
 
