@@ -33,7 +33,7 @@ steps:
         path: /root/.docker
     settings:
       registry: registry.doatu.com
-      repo: ${DRONE_STAGE_NAME}/${DRONE_BRANCH}
+      repo: registry.doatu.com/${DRONE_STAGE_NAME}/${DRONE_BRANCH}
       tags:
         - ${DRONE_BUILD_NUMBER}
 
