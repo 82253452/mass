@@ -27,9 +27,8 @@ steps:
       - name: certs
         path: /etc/ssl/certs
     settings:
-      insecure: true
-      registry: registry.doatu.com
-      repo: registry.doatu.com/${DRONE_STAGE_NAME}/${DRONE_BRANCH}
+      registry: 62.234.46.46:30738
+      repo: 62.234.46.46:30738/${DRONE_STAGE_NAME}/${DRONE_BRANCH}
       tags:
         - ${DRONE_BUILD_NUMBER}
       build_args:
