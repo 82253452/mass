@@ -35,7 +35,7 @@ steps:
       repo: ${DRONE_STAGE_NAME}/${DRONE_BRANCH}
       tags:
         - ${DRONE_BUILD_NUMBER}
-      registry: $REGISTRY
+      registry: ${REGISTRY}
 
   - name: build
     image: docker:dind
