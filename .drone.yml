@@ -38,19 +38,8 @@ steps:
       tags:
         - ${DRONE_BUILD_NUMBER}
       build_args:
-        - APPDIR=$APPDIR
-        - PORT=$PORT
-
-  - name: build
-    image: docker:dind
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-      - name: registry-auth
-        path: /root/.docker
-    commands:
-      - docker build --rm=true -f Dockerfile -t $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER} . --pull=true --build-arg APPDIR=$APPDIR --build-arg PORT=$PORT
-      - docker push $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
+        - APPDIR=${APPDIR}
+        - PORT=${PORT}
 
   - name: rancher
     image: pelotech/drone-rancher
