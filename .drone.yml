@@ -25,7 +25,7 @@ steps:
       - name: maven-cache
         path: /root/.m2
 
-  - name: release
+  - name: build
     image: docker:dind
     volumes:
       - name: dockersock
@@ -35,22 +35,15 @@ steps:
     commands:
       - docker build --rm=true -f Dockerfile -t $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER} . --pull=true --build-arg APPDIR=$APPDIR --build-arg PORT=$PORT
       - docker push $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
-      - docker service update --image $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER} ${DRONE_STAGE_NAME}-${DRONE_BRANCH}_service --with-registry-auth
 
-  - name: release-failed
-    image: docker:dind
-    environment:
-      IMAGE: $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-      - name: registry-auth
-        path: /root/.docker
-    when:
-      status:
-        - failure
-    commands:
-      - docker stack deploy -c docker-compose.yml ${DRONE_STAGE_NAME}-${DRONE_BRANCH} --with-registry-auth
+  - name: rancher
+    image: pelotech/drone-rancher
+    url: https://62.234.46.46:7002/v3
+    access_key: token-ckkjg
+    secret_key: bgr7nnf62m49fptbpglqsnrc85m5snkpsscs4nj8hrmrww7kc8sdnt
+    service: ${DRONE_STAGE_NAME}
+    docker_image: $REGISTRY/${DRONE_STAGE_NAME}/${DRONE_BRANCH}:${DRONE_BUILD_NUMBER}
+
 
 volumes:
   - name: maven-cache
