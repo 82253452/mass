@@ -38,7 +38,7 @@ spec:
 #          ports:
 #            - containerPort: 32002 #TODO:pod暴露的端口，此端口仅是额外的信息，对端口是否被暴露没有影响
 ---
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: mass
