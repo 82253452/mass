@@ -1,17 +1,18 @@
-#kind: Service
-#apiVersion: v1
-#metadata:
-#  name: mass  #TODO:zkxy-config改为服务名称
-#spec:
-#  selector:
-#    app: mass #TODO:zkxy-config改为服务名称
+apiVersion: v1
+kind: Service
+metadata:
+  name: mass  #TODO:zkxy-config改为服务名称
+  namespace: default
+spec:
+  selector:
+    app: mass #TODO:zkxy-config改为服务名称
 #  type: NodePort
-#  ports:
-#    - protocol: TCP
-#      port: 33002       #TODO:kubernetes中的服务之间访问的端口
-#      targetPort: 32002 #TODO:容器的端口(最根本的端口)，与制作容器时暴露的端口一致(DockerFile中EXPOSE)
-#      nodePort: 32002   #TODO:外部机器可访问的端口，一个Web应用需要被其他用户访问，需要配置type=NodePort，而且配置nodePort=32002,那么其他机器就可以通过浏览器访问scheme://node:32002访问到该服务;有效端口范围:30000-32767
-#---
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080       #TODO:kubernetes中的服务之间访问的端口
+      targetPort: 8080 #TODO:容器的端口(最根本的端口)，与制作容器时暴露的端口一致(DockerFile中EXPOSE)
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,6 +43,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: mass
+  namespace: default
 spec:
   rules:
     - host: mass.doatu.com
