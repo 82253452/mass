@@ -1,0 +1,39 @@
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: mass  #TODO:zkxy-config改为服务名称
+#spec:
+#  selector:
+#    app: mass #TODO:zkxy-config改为服务名称
+#  type: NodePort
+#  ports:
+#    - protocol: TCP
+#      port: 33002       #TODO:kubernetes中的服务之间访问的端口
+#      targetPort: 32002 #TODO:容器的端口(最根本的端口)，与制作容器时暴露的端口一致(DockerFile中EXPOSE)
+#      nodePort: 32002   #TODO:外部机器可访问的端口，一个Web应用需要被其他用户访问，需要配置type=NodePort，而且配置nodePort=32002,那么其他机器就可以通过浏览器访问scheme://node:32002访问到该服务;有效端口范围:30000-32767
+#---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mass #TODO:zkxy-config改为服务名称
+  namespace: default
+  labels:
+    app: mass #TODO:zkxy-config改为服务名称
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mass #TODO:zkxy-config改为服务名称
+  template:
+    metadata:
+      labels:
+        app: mass #TODO:zkxy-config改为服务名称
+    spec:
+      imagePullSecrets:
+        - name: private-repository
+      containers:
+        - name: mass         #TODO:pod的名称，必须字段，名称唯一且对象创建后不可以被修改
+          image: 62.234.46.46:30738/test:1  #TODO:镜像仓库的路径/镜像的名称:镜像的标签
+          imagePullPolicy: Always  #Always(总是去仓库下载),Never(从不去仓库下载),IfNotPresent(如果本地没有就去仓库下载),默认是"IfNotPresent"
+#          ports:
+#            - containerPort: 32002 #TODO:pod暴露的端口，此端口仅是额外的信息，对端口是否被暴露没有影响
