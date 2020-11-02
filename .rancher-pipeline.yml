@@ -1,28 +1,22 @@
 # 示例
 stages:
-#  - name: Build something
-    # 触发阶段的条件
-#    when:
-#      branch: master
-#      event: [push，pull_request]
-    # 同步运行的多个步骤
-
-#    steps:
-#      - runScriptConfig:
-#          image: maven:3-jdk-8
-#          shellScript: mvn install -DskipTests=true -Dmaven.javadoc.skip=true
-#  - name: Publish my image
-#    steps:
-#      - publishImageConfig:
-#          dockerfilePath: ./Dockerfile
-#          buildContext: .
-#          tag: 62.234.46.46:30738/test:1
-#          # （可选）是否推送到远端仓库
-#          pushRemote: true
-#          registry: 62.234.46.46:30738
-#        env:
-#          PLUGIN_DEBUG: "true"
-#          PLUGIN_INSECURE: "true"
+  - name: Build
+    steps:
+      - runScriptConfig:
+          image: maven:3-jdk-8
+          shellScript: mvn install -DskipTests=true -Dmaven.javadoc.skip=true
+  - name: Publish
+    steps:
+      - publishImageConfig:
+          dockerfilePath: ./Dockerfile
+          buildContext: .
+          tag: 62.234.46.46:30738/test:1
+          # （可选）是否推送到远端仓库
+          pushRemote: true
+          registry: 62.234.46.46:30738
+        env:
+          PLUGIN_DEBUG: "true"
+          PLUGIN_INSECURE: "true"
   - name: Deploy
     steps:
       - applyYamlConfig:
