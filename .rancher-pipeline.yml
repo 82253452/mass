@@ -1,16 +1,16 @@
 # 示例
 stages:
-  - name: Build something
+#  - name: Build something
     # 触发阶段的条件
 #    when:
 #      branch: master
 #      event: [push，pull_request]
     # 同步运行的多个步骤
 
-    steps:
-      - runScriptConfig:
-          image: maven:3-jdk-8
-          shellScript: mvn install -DskipTests=true -Dmaven.javadoc.skip=true
+#    steps:
+#      - runScriptConfig:
+#          image: maven:3-jdk-8
+#          shellScript: mvn install -DskipTests=true -Dmaven.javadoc.skip=true
   - name: Publish my image
     steps:
       - publishImageConfig:
