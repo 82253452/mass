@@ -42,7 +42,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: mass
-  namespace: default
 spec:
   rules:
     - host: mass.doatu.com
