@@ -10,8 +10,8 @@ metadata:
       name: mass
       uid: ec1e40a5-9965-49c2-b908-ee961876bb21
 spec:
-  selector:
-    app: mass #TODO:zkxy-config改为服务名称
+#  selector:
+#    app: mass #TODO:zkxy-config改为服务名称
 #  type: NodePort
   type: ClusterIP
   ports:
