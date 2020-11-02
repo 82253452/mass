@@ -19,3 +19,7 @@ stages:
           # （可选）是否推送到远端仓库
           pushRemote: true
           registry: 62.234.46.46:30738
+  - name: Deploy
+    steps:
+      - applyYamlConfig:
+          path: ./deployment.yaml
