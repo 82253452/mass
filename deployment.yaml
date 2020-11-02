@@ -49,7 +49,7 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: ingress-mass
+              serviceName: mass
               servicePort: 8080
             pathType: ImplementationSpecific
 #  tls:
