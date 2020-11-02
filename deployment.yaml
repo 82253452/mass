@@ -3,6 +3,12 @@ kind: Service
 metadata:
   name: mass  #TODO:zkxy-config改为服务名称
   namespace: default
+  ownerReferences:
+    - apiVersion: apps/v1beta2
+      controller: true
+      kind: deployment
+      name: mass
+      uid: ec1e40a5-9965-49c2-b908-ee961876bb21
 spec:
   selector:
     app: mass #TODO:zkxy-config改为服务名称
