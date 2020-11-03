@@ -8,8 +8,8 @@ VOLUME ${workdir}
 
 WORKDIR ${workdir}
 
-ADD ${APPDIR} app.jar
-EXPOSE ${PORT}
+ADD ./target/app.jar app.jar
+EXPOSE 8080
 
 
 ENTRYPOINT ["java","-jar","-Xms512M","-Xmx1024M","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}","app.jar"]
