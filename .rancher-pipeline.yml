@@ -3,7 +3,7 @@ stages:
   - name: Build
     steps:
       - runScriptConfig:
-          image: maven:3-jdk-8
+          image: 62.234.46.46:30738/maven
           shellScript: mvn install -DskipTests=true -Dmaven.javadoc.skip=true
   - name: Publish
     steps:
