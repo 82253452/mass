@@ -54,8 +54,8 @@ spec:
               serviceName: mass
               servicePort: 8080
             pathType: ImplementationSpecific
-#  tls:
-#    - secretName: drone
+  tls:
+    - secretName: mass
 
 
 
