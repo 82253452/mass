@@ -8,8 +8,7 @@ metadata:
 spec:
   selector:
     workload.user.cattle.io/workloadselector: deployment-default-mass #TODO:zkxy-config改为服务名称
-#  type: NodePort
-  type: ClusterIP
+  type: NodePort
   ports:
     - protocol: TCP
       port: 8080       #TODO:kubernetes中的服务之间访问的端口
