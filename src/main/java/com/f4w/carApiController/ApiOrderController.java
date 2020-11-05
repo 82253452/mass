@@ -87,7 +87,8 @@ public class ApiOrderController {
      * @throws ForeseenException
      */
     @PostMapping("/index/list")
-    public PageInfo<OrderInfoDto> indexList(@RequestBody OrderIndexReq req) throws ForeseenException {
+    public PageInfo<OrderInfoDto> indexList(@CurrentUser SysUser sysUser,@RequestBody OrderIndexReq req) throws ForeseenException {
+        req.setUserId(sysUser.getId());
         PageInfo<OrderInfoDto> page = PageInfo.of(orderMapper.getIndexList(req));
         return page;
     }

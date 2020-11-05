@@ -105,6 +105,9 @@ public interface OrderMapper extends BaseMapper<Order> {
             "<if test='type!=null'>\n" +
             " and o.order_type=#{type}\n" +
             "</if>\n" +
+            "<if test='userId!=null'>\n" +
+            " and o.user_id!=#{userId}\n" +
+            "</if>\n" +
             "<if test='reginFrom!=null'>\n" +
             " and o.address_district_from=#{reginFrom[2],javaType=java.lang.String,jdbcType=VARCHAR}\n" +
             "</if>\n" +
@@ -112,7 +115,7 @@ public interface OrderMapper extends BaseMapper<Order> {
             " and o.address_district_to=#{reginTo[2],javaType=java.lang.String,jdbcType=VARCHAR}\n" +
             "</if>\n" +
             "<if test='keyWrod!=null'>\n" +
-            " and 1=1\n" +
+            " and o.des like CONCAT('%',#{keyWrod},'%')\n" +
             "</if>\n" +
             " and o.status = 0\n" +
             "order by o.mtime desc\n" +
