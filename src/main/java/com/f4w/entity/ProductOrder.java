@@ -29,4 +29,5 @@ public class ProductOrder extends BaseEntity {
     private String des;
     private Integer status;
     private String remark;
+    private String courierNo;
 }

@@ -20,7 +20,7 @@ public interface ProductOrderMapper extends BaseMapper<ProductOrder> {
             "from `product_order` o\n" +
             "         left join sys_user su on o.user_id = su.id\n" +
             "         left join product p on o.product_id = p.id\n" +
-            "where o.delete = 0\n" +
+            "where o.delete = 0 and o.status != 0\n" +
             "order by o.mtime desc\n" +
             "</script>")
     List<ProductOrderDto> getList(CommonPageReq req);
