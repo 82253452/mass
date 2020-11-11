@@ -81,6 +81,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(value = {NullPointerException.class})
     @ResponseStatus(value = HttpStatus.OK)
     public Object handleNullPointerException(final Exception ex, final ServletWebRequest req) {
+        ex.printStackTrace();
         return Result.render(SystemErrorEnum.NULL);
     }
 
