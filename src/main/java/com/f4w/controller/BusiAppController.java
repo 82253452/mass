@@ -477,9 +477,9 @@ public class BusiAppController {
     }
 
     @GetMapping("/getAuthUrl")
-    public R getAuthUrl(@CurrentUser SysUser sysUser) throws WxErrorException {
-        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://mass.zhihuizhan.net/api/notify/authorizerRefreshToken?uid=" + sysUser.getId());
-        return R.renderSuccess("url", url);
+    public String getAuthUrl(@CurrentUser SysUser sysUser) throws WxErrorException {
+        String url = wxOpenService.getWxOpenComponentService().getPreAuthUrl("https://mass.doatu.com/notify/authorizerRefreshToken?uid=" + sysUser.getId());
+        return url;
     }
 
     @GetMapping("/generator")
